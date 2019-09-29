@@ -96,14 +96,15 @@ public class Main extends Applet implements Runnable, KeyListener {
             orient.y+=.2f;
         }else if (e.getKeyCode()==KeyEvent.VK_DOWN){
             orient.y-=.2f;
-        }if (e.getKeyCode()==KeyEvent.VK_A){
-            pos.x+=.2f;
+        }
+        if (e.getKeyCode()==KeyEvent.VK_A){
+            pos.y-=.2f*Math.cos(orient.x);
         }else if (e.getKeyCode()==KeyEvent.VK_D){
-            pos.x-=.2f;
+            pos.y+=.2f*Math.cos(orient.x);
         }if (e.getKeyCode()==KeyEvent.VK_W){
-            pos.y+=.2f;
+            pos.x+=.2f*Math.cos(orient.x);
         }else if (e.getKeyCode()==KeyEvent.VK_S){
-            pos.y-=.2f;
+            pos.x-=.2f*Math.cos(orient.x);
         }
     }
     public void keyReleased(KeyEvent e) {
