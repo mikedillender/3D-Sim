@@ -7,12 +7,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
-public class Main extends Applet implements Runnable, KeyListener {
+public class Main extends Applet implements Runnable, KeyListener, FrameData {
 
     //BASIC VARIABLES
     private final int WIDTH=1280, HEIGHT=900;
     ArrayList<Object> objects=new ArrayList<>();
-    Vec3f pos=new Vec3f(0,0,0);
+    Vec3f pos=new Vec3f(-100,0,0);
     Vec2f orient=new Vec2f(0,0);
     float orientfromcenter=0;
     //GRAPHICS OBJECTS
@@ -30,10 +30,16 @@ public class Main extends Applet implements Runnable, KeyListener {
         this.addKeyListener(this);
         img=createImage(WIDTH,HEIGHT);
         gfx=img.getGraphics();
-        objects.add(new Object(0,new Vec3f(50,0,0),new Vec3f(0,0,0)));
+        objects.add(new Object(0,new Vec3f(50,0,20),new Vec3f(0,0,0)));
         objects.add(new Object(0,new Vec3f(50,20,0),new Vec3f(0,0,0)));
         thread=new Thread(this);
         thread.start();
+    }
+
+    public void addRandParticle(float velmin, float velmax){
+        Vec3f loc=new Vec3f((float)(Math.random()*.8*BOUNDS[0]-(.4*(BOUNDS[0]))),(float)(Math.random()*.8*BOUNDS[1]-(.4*(BOUNDS[1]))),(float)(Math.random()*.8*BOUNDS[2]-(.4*(BOUNDS[2]))));
+        Vec3f vel=new Vec3f((float)(velmax*Math.random()+velmin),(float)(velmax*Math.random()+velmin),(float)(velmax*Math.random()+velmin));
+        objects.add(new Object(0,loc,vel));
     }
 
     public void paint(Graphics g){
@@ -64,8 +70,9 @@ public class Main extends Applet implements Runnable, KeyListener {
     public Color getColorInDir(float xor,float yor){
         Vec2f o1=new Vec2f(orient.x+xor,orient.y+yor);
         for (Object o : objects){
-            if (o.doesLineCross(o1,pos)){
-                return Color.BLUE;
+            Color c=o.doesLineCross(o1,pos);
+            if (c!=null){
+                return c;
             }
         }
         return Color.WHITE;
@@ -78,7 +85,13 @@ public class Main extends Applet implements Runnable, KeyListener {
     public void run() { for (;;){//CALLS UPDATES AND REFRESHES THE GAME
 
             //UPDATES
-
+            for (Object o: objects){
+                o.update(.015f);
+                for (Object o1:objects){
+                    if(objects.indexOf(o)==objects.indexOf(o1)){continue;}
+                    o.attractTo(o1.loc,2f);
+                }
+            }
 
             repaint();//UPDATES FRAME
             try{ Thread.sleep(15); } //ADDS TIME BETWEEN FRAMES (FPS)
@@ -105,6 +118,9 @@ public class Main extends Applet implements Runnable, KeyListener {
             pos.x+=.2f*Math.cos(orient.x);
         }else if (e.getKeyCode()==KeyEvent.VK_S){
             pos.x-=.2f*Math.cos(orient.x);
+        }
+        if(e.getKeyCode()==KeyEvent.VK_SPACE){
+            addRandParticle(10,70);
         }
     }
     public void keyReleased(KeyEvent e) {

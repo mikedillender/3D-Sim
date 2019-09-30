@@ -1,7 +1,9 @@
 import com.sun.javafx.geom.Vec2f;
 import com.sun.javafx.geom.Vec3f;
 
-public class Object {
+import java.awt.*;
+
+public class Object implements FrameData{
     int shape=0;//sphere
     Vec3f loc;
     Vec3f vel;
@@ -12,7 +14,24 @@ public class Object {
         this.shape=shape;
         this.loc=loc;
     }
-    public boolean doesLineCross(Vec2f orient, Vec3f pos){
+    public void update(float dt){
+        Vec3f newv=new Vec3f(loc.x+(vel.x*dt),loc.y+(vel.y*dt),loc.z+(vel.z*dt));
+
+        if (Math.abs(newv.x)+rad<BOUNDS[0]){
+            loc.x=newv.x;
+        }else {
+            vel.x=-vel.x;
+        }if (Math.abs(newv.y)+rad<BOUNDS[1]){
+            loc.y=newv.y;
+        }else {
+            vel.y=-vel.y;
+        }if (Math.abs(newv.z)+rad<BOUNDS[2]){
+            loc.z=newv.z;
+        }else {
+            vel.z=-vel.z;
+        }
+    }
+    public Color doesLineCross(Vec2f orient, Vec3f pos){
         //d=dist from source
         //x^2+y*2+z^2=r
         if (shape==0){
@@ -21,18 +40,30 @@ public class Object {
             //System.out.println("looking in "+orient+", at "+dor);
             float odif=getOrientDif(orient,dor);
             float arclength=(odif*getDistOfDelta(dv));
-            if(arclength<5){
-                return true;
+            if(arclength<rad){
+                Color c=new Color(0,0,1-(arclength/rad));
+                return c;
             }
             //float cr=getDistOfDelta(dv);
         }
-        return false;
+        return null;
     }
     public float getDistOfDelta(Vec3f dp){
         return (float)(Math.sqrt((dp.x*dp.x)+(dp.y*dp.y)+(dp.z*dp.z)));
     }
+
+    public void attractTo(Vec3f p1,float amt){
+        Vec3f dv=getDeltaVecBetween(loc,p1);
+        float r= getDistOfDelta(dv);
+        float acc=amt/(r*r);
+        //Vec3f newv=new Vec3f();
+        if(Math.abs(dv.x)>rad){ vel.x=(dv.x>0) ?vel.x+acc : vel.x-acc;}
+        if(Math.abs(dv.y)>rad){vel.y=(dv.y>0) ?vel.y+acc : vel.y-acc;}
+        if(Math.abs(dv.z)>rad){vel.z=(dv.z>0) ?vel.z+acc : vel.z-acc;}
+    }
+
     public Vec2f getDeltaOrient(Vec3f dp){
-        float r1=(dp.x*dp.x)+(dp.y*dp.y);
+        float r1=(float)(Math.sqrt((dp.x*dp.x)+(dp.y*dp.y)));
         float th1=(float)Math.atan2(dp.z,r1);
         float th0=(float)Math.atan2(dp.y,dp.x);
         return new Vec2f(th0,th1);
