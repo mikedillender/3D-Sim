@@ -36,17 +36,17 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
         thread.start();
     }
 
-    public void addRandParticle(float velmin, float velmax){
+    public void addRandParticle(float velmin, float velmax,float rad){
         Vec3f loc=new Vec3f((float)(Math.random()*.8*BOUNDS[0]-(.4*(BOUNDS[0]))),(float)(Math.random()*.8*BOUNDS[1]-(.4*(BOUNDS[1]))),(float)(Math.random()*.8*BOUNDS[2]-(.4*(BOUNDS[2]))));
         Vec3f vel=new Vec3f((float)(velmax*Math.random()+velmin),(float)(velmax*Math.random()+velmin),(float)(velmax*Math.random()+velmin));
-        objects.add(new Object(0,loc,vel));
+        objects.add(new Object(0,loc,vel,rad));
     }
 
     public void paint(Graphics g){
         //BACKGROUND
         gfx.setColor(background);//background
         gfx.fillRect(0,0,WIDTH,HEIGHT);//background size
-        int pSize=6;
+        int pSize=3;
         int pw=WIDTH/pSize;
         int ph=HEIGHT/pSize;
         //float fovx=3.14f*2/3;
@@ -124,7 +124,9 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
             pos.x-=.2f*Math.cos(orient.x);
         }
         if(e.getKeyCode()==KeyEvent.VK_SPACE){
-            addRandParticle(5,10);
+            addRandParticle(5,10,2);
+        }if(e.getKeyCode()==KeyEvent.VK_B){
+            addRandParticle(5,10,10);
         }
         if(e.getKeyCode()==KeyEvent.VK_L) {
             for (int i=0; i<objects.size(); i++){

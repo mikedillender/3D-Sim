@@ -10,10 +10,11 @@ public class Object implements FrameData{
     Vec3f vel;
     float rad=2;
 
-    public Object(int shape, Vec3f loc, Vec3f vel){
+    public Object(int shape, Vec3f loc, Vec3f vel,float rad){
         this.vel=vel;
         this.shape=shape;
         this.loc=loc;
+        this.rad=rad;
     }
 
     public float getVolume(){
