@@ -30,8 +30,8 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
         this.addKeyListener(this);
         img=createImage(WIDTH,HEIGHT);
         gfx=img.getGraphics();
-        objects.add(new Object(0,new Vec3f(50,0,20),new Vec3f(0,0,0)));
-        objects.add(new Object(0,new Vec3f(50,20,0),new Vec3f(0,0,0)));
+        //objects.add(new Object(0,new Vec3f(50,0,20),new Vec3f(0,0,0)));
+        //objects.add(new Object(0,new Vec3f(50,20,0),new Vec3f(0,0,0)));
         thread=new Thread(this);
         thread.start();
     }
@@ -46,7 +46,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
         //BACKGROUND
         gfx.setColor(background);//background
         gfx.fillRect(0,0,WIDTH,HEIGHT);//background size
-        int pSize=3;
+        int pSize=6;
         int pw=WIDTH/pSize;
         int ph=HEIGHT/pSize;
         //float fovx=3.14f*2/3;
@@ -69,7 +69,8 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
 
     public Color getColorInDir(float xor,float yor){
         Vec2f o1=new Vec2f(orient.x+xor,orient.y+yor);
-        for (Object o : objects){
+        for (int i=0; i<objects.size(); i++){
+            Object o = objects.get(i);
             Color c=o.doesLineCross(o1,pos);
             if (c!=null){
                 return c;
@@ -85,11 +86,14 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
     public void run() { for (;;){//CALLS UPDATES AND REFRESHES THE GAME
 
             //UPDATES
-            for (Object o: objects){
-                o.update(.015f);
-                for (Object o1:objects){
+            for (int i=0; i<objects.size(); i++){
+                Object o = objects.get(i);
+                o.update(.015f,objects);
+                for (int z=0; z<objects.size(); z++){
+                    if(i==z){continue;}
+                    Object o1 = objects.get(z);
                     if(objects.indexOf(o)==objects.indexOf(o1)){continue;}
-                    o.attractTo(o1.loc,2f);
+                    o.attractTo(o1.loc,o.getVolume()*o1.getVolume());
                 }
             }
 
@@ -120,7 +124,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
             pos.x-=.2f*Math.cos(orient.x);
         }
         if(e.getKeyCode()==KeyEvent.VK_SPACE){
-            addRandParticle(10,70);
+            addRandParticle(5,10);
         }
     }
     public void keyReleased(KeyEvent e) {

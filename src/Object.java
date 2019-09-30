@@ -2,6 +2,7 @@ import com.sun.javafx.geom.Vec2f;
 import com.sun.javafx.geom.Vec3f;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public class Object implements FrameData{
     int shape=0;//sphere
@@ -14,9 +15,33 @@ public class Object implements FrameData{
         this.shape=shape;
         this.loc=loc;
     }
-    public void update(float dt){
-        Vec3f newv=new Vec3f(loc.x+(vel.x*dt),loc.y+(vel.y*dt),loc.z+(vel.z*dt));
 
+    public float getVolume(){
+        return (rad*rad*rad*3.14f*4/3);
+    }
+    public void addVolume(float v){
+        float nv=getVolume()+v;
+        float r3=(nv/(3.14f*4f/3f));
+        rad=(float)(Math.pow(r3,.33));
+    }
+
+    public void update(float dt, ArrayList<Object> objects){
+        Vec3f newv=new Vec3f(loc.x+(vel.x*dt),loc.y+(vel.y*dt),loc.z+(vel.z*dt));
+        for (int i=0; i<objects.size(); i++){
+            Object o=objects.get(i);
+            if(o!=this){
+                if(collidesWith(o.loc,rad,o.rad)){
+                    addVolume(o.getVolume());
+                    vel.x+=o.vel.x;
+                    vel.y+=o.vel.y;
+                    vel.z+=o.vel.z;
+                    objects.remove(i);
+                    i--;
+                    //return;
+                }
+            }
+        }
+        //if(newv.)
         if (Math.abs(newv.x)+rad<BOUNDS[0]){
             loc.x=newv.x;
         }else {
@@ -31,6 +56,10 @@ public class Object implements FrameData{
             vel.z=-vel.z;
         }
     }
+    public boolean collidesWith(Vec3f p1, float r1, float r2){
+        float d=getDistOfDelta(getDeltaVecBetween(p1,loc));
+        return d<r1+r2;
+    }
     public Color doesLineCross(Vec2f orient, Vec3f pos){
         //d=dist from source
         //x^2+y*2+z^2=r
@@ -41,7 +70,9 @@ public class Object implements FrameData{
             float odif=getOrientDif(orient,dor);
             float arclength=(odif*getDistOfDelta(dv));
             if(arclength<rad){
-                Color c=new Color(0,0,1-(arclength/rad));
+                float cm=1-(arclength/rad);
+                float cr=(rad<=4)?rad/4:1;
+                Color c=new Color(cr*cm,0,cm);
                 return c;
             }
             //float cr=getDistOfDelta(dv);
