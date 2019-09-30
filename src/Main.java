@@ -12,7 +12,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
     //BASIC VARIABLES
     private final int WIDTH=1280, HEIGHT=900;
     ArrayList<Object> objects=new ArrayList<>();
-    Vec3f pos=new Vec3f(-100,0,0);
+    Vec3f pos=new Vec3f(-130,0,0);
     Vec2f orient=new Vec2f(0,0);
     float orientfromcenter=0;
     //GRAPHICS OBJECTS
@@ -93,7 +93,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
                     if(i==z){continue;}
                     Object o1 = objects.get(z);
                     if(objects.indexOf(o)==objects.indexOf(o1)){continue;}
-                    o.attractTo(o1.loc,o.getVolume()*o1.getVolume());
+                    o.attractTo(o1.loc,10*o1.getVolume());
                 }
             }
 
@@ -125,6 +125,14 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
         }
         if(e.getKeyCode()==KeyEvent.VK_SPACE){
             addRandParticle(5,10);
+        }
+        if(e.getKeyCode()==KeyEvent.VK_L) {
+            for (int i=0; i<objects.size(); i++){
+                Object o=objects.get(i);
+                o.vel.x*=.7f;
+                o.vel.y*=.7f;
+                o.vel.z*=.7f;
+            }
         }
     }
     public void keyReleased(KeyEvent e) {

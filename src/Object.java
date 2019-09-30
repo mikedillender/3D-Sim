@@ -31,10 +31,18 @@ public class Object implements FrameData{
             Object o=objects.get(i);
             if(o!=this){
                 if(collidesWith(o.loc,rad,o.rad)){
-                    addVolume(o.getVolume());
-                    vel.x+=o.vel.x;
-                    vel.y+=o.vel.y;
-                    vel.z+=o.vel.z;
+                    float ov=getVolume();
+                    float othvol=o.getVolume();
+                    addVolume(othvol);
+                    float newvo=getVolume();
+                    float mult=(othvol/newvo);
+                    float mult1=(ov/newvo);
+                    vel.x*=mult1;
+                    vel.y*=mult1;
+                    vel.z*=mult1;
+                    vel.x+=o.vel.x*mult;
+                    vel.y+=o.vel.y*mult;
+                    vel.z+=o.vel.z*mult;
                     objects.remove(i);
                     i--;
                     //return;
