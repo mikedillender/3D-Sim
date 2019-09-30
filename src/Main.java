@@ -88,7 +88,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
             //UPDATES
             for (int i=0; i<objects.size(); i++){
                 Object o = objects.get(i);
-                o.update(.015f,objects);
+                o.update(.03f,objects);
                 for (int z=0; z<objects.size(); z++){
                     if(i==z){continue;}
                     Object o1 = objects.get(z);
@@ -98,7 +98,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
             }
 
             repaint();//UPDATES FRAME
-            try{ Thread.sleep(15); } //ADDS TIME BETWEEN FRAMES (FPS)
+            try{ Thread.sleep(30); } //ADDS TIME BETWEEN FRAMES (FPS)
             catch (InterruptedException e) { e.printStackTrace();System.out.println("GAME FAILED TO RUN"); }//TELLS USER IF GAME CRASHES AND WHY
     } }
 
