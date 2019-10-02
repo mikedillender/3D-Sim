@@ -58,14 +58,14 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
         int lensdist=cy;
         float rld=(HEIGHT/2);
 
-        for (int x=0; x<pw; x++){
+        /*for (int x=0; x<pw; x++){
             float xor=(float)(Math.atan2(x-cx,lensdist));
             for(int y=0; y<ph; y++){
                 float yor=(float)(Math.atan2(y-cy,lensdist));
                 gfx.setColor(getColorInDir(xor,yor));
                 gfx.fillRect(pSize*x,pSize*y,pSize,pSize);
             }
-        }
+        }*/
         gfx.setColor(Color.BLUE);
 
         for (Object o : objects){

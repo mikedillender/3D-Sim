@@ -47,7 +47,7 @@ public class Object implements FrameData{
         Vec3f newv=new Vec3f(loc.x+(vel.x*dt),loc.y+(vel.y*dt),loc.z+(vel.z*dt));
         timer-=dt;
         if(timer<0){
-            timer=.2f;
+            timer=.1f;
             points.add(new Vec3f(loc.x,loc.y,loc.z));
         }
         for (int i=0; i<objects.size(); i++){
@@ -138,8 +138,18 @@ public class Object implements FrameData{
                 }
                 last=new Vec2f(x,y);
                 //System.out.println(x+", "+y+" | "+dor);
-                //g.fillOval((int) x, (int) y, 10, 10);
+                //g.fillOval((int) x-5, (int) y-5, 10, 10);
             }
+            Vec3f dv = getDeltaVecBetween(pos, loc);
+            Vec2f dor = getDeltaOrient(dv);
+            if (getOrientDif(dor, or) > 3.14) {
+                return;
+            }
+            float x = (float) (lensd * (Math.tan(dor.x - or.x))) + (WIDTH / 2);
+            float y = (float) (lensd * (Math.tan(dor.y - or.y))) + (HEIGHT / 2);
+            //System.out.println(x+", "+y+" | "+dor);
+            g.fillOval((int) x-(int)Math.ceil(rad), (int) y-(int)Math.ceil(rad), (int)Math.ceil(2*rad), (int)Math.ceil(2*rad));
+
         }else if (shape==1){
             for (Vec3f p: points){
                 Vec3f dv = getDeltaVecBetween(pos, p);
