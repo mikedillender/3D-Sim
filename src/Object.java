@@ -12,7 +12,9 @@ public class Object implements FrameData{
 
     ArrayList<Vec3f> points;
 
+    float timer=0;
     public Object(int shape, Vec3f loc, Vec3f vel,float rad){
+        points=new ArrayList<>();
         this.vel=vel;
         this.shape=shape;
         this.loc=loc;
@@ -43,6 +45,11 @@ public class Object implements FrameData{
 
     public void update(float dt, ArrayList<Object> objects){
         Vec3f newv=new Vec3f(loc.x+(vel.x*dt),loc.y+(vel.y*dt),loc.z+(vel.z*dt));
+        timer-=dt;
+        if(timer<0){
+            timer=.2f;
+            points.add(new Vec3f(loc.x,loc.y,loc.z));
+        }
         for (int i=0; i<objects.size(); i++){
             Object o=objects.get(i);
             if(o!=this){
@@ -85,16 +92,54 @@ public class Object implements FrameData{
         return d<r1+r2;
     }
 
+    public void magnetize(float c, Object o){
+        Vec3f dvec=getDeltaVecBetween(this.loc,o.loc);
+        float r=getDistOfDelta(dvec);
+        float velmag=getDistOfDelta(vel);
+        Vec2f velor=getDeltaOrient(dvec);
+        velor.x+=3.14f/2;
+        velor.y+=3.14f/2;
+        Vec3f BVec=getVecFromMag(velor,velmag);
+
+        //Vec3f a=new Vec3f();
+        Vec3f a=BVec;
+        float invsq=c/(r*r);
+        //System.out.println(a);
+        o.vel.x+=a.x*invsq;
+        o.vel.y+=a.y*invsq;
+        o.vel.z+=a.z*invsq;
+
+        //Vec3f Bor=new Vec3f(vel.x)
+    }
+
+    public Vec3f getVecFromMag(Vec2f or, float mag){
+        Vec3f newv=new Vec3f();
+        float r1=(float)(mag*Math.cos(or.y));
+        newv.z=(float)(mag*Math.sin(or.y));
+        newv.x=(float)(r1*Math.cos(or.x));
+        newv.y=(float)(r1*Math.sin(or.x));
+        return newv;
+    }
 
     public void render(Graphics g, int WIDTH, int HEIGHT, float lensd, Vec3f pos, Vec2f or){
         if (shape==0) {
-            Vec3f dv = getDeltaVecBetween(pos, loc);
-            Vec2f dor = getDeltaOrient(dv);
-            if (getOrientDif(dor,or)>3.14){return;}
-            float x=(float)(lensd*(Math.tan(dor.x-or.x)))+(WIDTH/2);
-            float y=(float)(lensd*(Math.tan(dor.y-or.y)))+(HEIGHT/2);
-            //System.out.println(x+", "+y+" | "+dor);
-            g.fillOval((int)x,(int)y,10,10);
+            if (points.size()<2){return;}
+            Vec2f last=null;
+            for (int i=0; i<points.size(); i++) {
+                Vec3f dv = getDeltaVecBetween(pos, points.get(i));
+                Vec2f dor = getDeltaOrient(dv);
+                if (getOrientDif(dor, or) > 3.14) {
+                    return;
+                }
+                float x = (float) (lensd * (Math.tan(dor.x - or.x))) + (WIDTH / 2);
+                float y = (float) (lensd * (Math.tan(dor.y - or.y))) + (HEIGHT / 2);
+                if (last!=null){
+                    g.drawLine((int)(last.x),(int)(last.y),(int)(x),(int)(y));
+                }
+                last=new Vec2f(x,y);
+                //System.out.println(x+", "+y+" | "+dor);
+                //g.fillOval((int) x, (int) y, 10, 10);
+            }
         }else if (shape==1){
             for (Vec3f p: points){
                 Vec3f dv = getDeltaVecBetween(pos, p);

@@ -19,7 +19,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
     private Thread thread;
     Graphics gfx;
     Image img;
-    boolean gravon=true;
+    boolean gravon=false;
     Object frame=new Object(1,null,null,0);
 
     //COLORS
@@ -66,7 +66,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
                 gfx.fillRect(pSize*x,pSize*y,pSize,pSize);
             }
         }
-        gfx.setColor(Color.GREEN);
+        gfx.setColor(Color.BLUE);
 
         for (Object o : objects){
             o.render(gfx,WIDTH,HEIGHT,rld, pos,orient);
@@ -100,12 +100,12 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
             for (int i=0; i<objects.size(); i++){
                 Object o = objects.get(i);
                 o.update(.03f,objects);
-                if (!gravon){continue;}
                 for (int z=0; z<objects.size(); z++){
                     if(i==z){continue;}
                     Object o1 = objects.get(z);
-                    if(objects.indexOf(o)==objects.indexOf(o1)){continue;}
-                    o.attractTo(o1.loc,1*o1.getVolume());
+                    //if(objects.indexOf(o)==objects.indexOf(o1)){continue;}
+                    if (gravon){ o.attractTo(o1.loc,1*o1.getVolume());}
+                    o.magnetize(10,o1);
                 }
             }
 
