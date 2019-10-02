@@ -104,8 +104,8 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
                     if(i==z){continue;}
                     Object o1 = objects.get(z);
                     //if(objects.indexOf(o)==objects.indexOf(o1)){continue;}
-                    if (gravon){ o.attractTo(o1.loc,1*o1.getVolume());}
-                    o.magnetize(10,o1);
+                    if (gravon){ o.attractTo(o1.loc,10*o1.getVolume());}
+                    //o.magnetize(10,o1);
                 }
             }
 
