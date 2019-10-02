@@ -12,7 +12,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
     //BASIC VARIABLES
     private final int WIDTH=1280, HEIGHT=900;
     ArrayList<Object> objects=new ArrayList<>();
-    Vec3f pos=new Vec3f(-130,0,0);
+    Vec3f pos=new Vec3f(-200,0,0);
     Vec2f orient=new Vec2f(0,0);
     float orientfromcenter=0;
     //GRAPHICS OBJECTS
@@ -134,20 +134,22 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode()==KeyEvent.VK_RIGHT){
             rotateAround(orient.x+.2f,orient.y);
-            //orient.x+=.2f;
         }else if (e.getKeyCode()==KeyEvent.VK_LEFT){
             rotateAround(orient.x-.2f,orient.y);
-
-            //orient.x-=.2f;
         }if (e.getKeyCode()==KeyEvent.VK_UP){
+            //orient.y+=.2;
             rotateAround(orient.x,orient.y+.2f);
-
-            //orient.y+=.2f;
         }else if (e.getKeyCode()==KeyEvent.VK_DOWN){
+            //orient.y-=.2;
             rotateAround(orient.x,orient.y-.2f);
+        }
 
-            //orient.y-=.2f;
-        }/*
+        /*if(e.getKeyCode()==KeyEvent.VK_S){
+            pos.z-=5;
+        }else if(e.getKeyCode()==KeyEvent.VK_W){
+            pos.z+=5;
+        }*/
+        /*
         if (e.getKeyCode()==KeyEvent.VK_A){
             pos.y-=.2f*Math.cos(orient.x);
         }else if (e.getKeyCode()==KeyEvent.VK_D){
