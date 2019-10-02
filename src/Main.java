@@ -93,7 +93,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
                     if(i==z){continue;}
                     Object o1 = objects.get(z);
                     if(objects.indexOf(o)==objects.indexOf(o1)){continue;}
-                    o.attractTo(o1.loc,10*o1.getVolume());
+                    o.attractTo(o1.loc,1*o1.getVolume());
                 }
             }
 
@@ -103,16 +103,36 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
     } }
 
 
+    public void rotateAround(float xor, float yor){
+        float r=150;
+        System.out.println(pos+", "+orient);
+        orient.x=xor;
+        orient.y=yor;
+        float r1=r*(float)(Math.cos(-yor));
+        pos.z=r*(float)(Math.sin(-yor));
+        pos.x=-r1*(float)(Math.cos(-xor));
+        pos.y=r1*(float)(Math.sin(-xor));
+        System.out.println(pos+", "+orient);
+
+
+    }
     //INPUT
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode()==KeyEvent.VK_RIGHT){
-            orient.x+=.2f;
+            rotateAround(orient.x+.2f,orient.y);
+            //orient.x+=.2f;
         }else if (e.getKeyCode()==KeyEvent.VK_LEFT){
-            orient.x-=.2f;
+            rotateAround(orient.x-.2f,orient.y);
+
+            //orient.x-=.2f;
         }if (e.getKeyCode()==KeyEvent.VK_UP){
-            orient.y+=.2f;
+            rotateAround(orient.x,orient.y+.2f);
+
+            //orient.y+=.2f;
         }else if (e.getKeyCode()==KeyEvent.VK_DOWN){
-            orient.y-=.2f;
+            rotateAround(orient.x,orient.y-.2f);
+
+            //orient.y-=.2f;
         }
         if (e.getKeyCode()==KeyEvent.VK_A){
             pos.y-=.2f*Math.cos(orient.x);
