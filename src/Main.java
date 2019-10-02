@@ -19,6 +19,8 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
     private Thread thread;
     Graphics gfx;
     Image img;
+    boolean gravon=true;
+    Object frame=new Object(1,null,null,0);
 
     //COLORS
     Color background=new Color(255, 255, 255);
@@ -54,6 +56,8 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
         int cx=pw/2;
         int cy=ph/2;
         int lensdist=cy;
+        float rld=(HEIGHT/2);
+
         for (int x=0; x<pw; x++){
             float xor=(float)(Math.atan2(x-cx,lensdist));
             for(int y=0; y<ph; y++){
@@ -62,6 +66,13 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
                 gfx.fillRect(pSize*x,pSize*y,pSize,pSize);
             }
         }
+        gfx.setColor(Color.GREEN);
+
+        for (Object o : objects){
+            o.render(gfx,WIDTH,HEIGHT,rld, pos,orient);
+        }
+        gfx.setColor(Color.BLACK);
+        frame.render(gfx,WIDTH,HEIGHT,rld, pos,orient);
 
         //FINAL
         g.drawImage(img,0,0,this);
@@ -89,6 +100,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
             for (int i=0; i<objects.size(); i++){
                 Object o = objects.get(i);
                 o.update(.03f,objects);
+                if (!gravon){continue;}
                 for (int z=0; z<objects.size(); z++){
                     if(i==z){continue;}
                     Object o1 = objects.get(z);
@@ -104,10 +116,12 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
 
 
     public void rotateAround(float xor, float yor){
-        float r=150;
+        float r=200;
         System.out.println(pos+", "+orient);
         orient.x=xor;
         orient.y=yor;
+        if (orient.x>6.28){orient.x-=6.28f;}else if (orient.x<-6.28f){orient.x+=6.28f;}
+        if (orient.y>6.28){orient.y-=6.28f;}else if (orient.y<-6.28f){orient.y+=6.28f;}
         float r1=r*(float)(Math.cos(-yor));
         pos.z=r*(float)(Math.sin(-yor));
         pos.x=-r1*(float)(Math.cos(-xor));
@@ -133,7 +147,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
             rotateAround(orient.x,orient.y-.2f);
 
             //orient.y-=.2f;
-        }
+        }/*
         if (e.getKeyCode()==KeyEvent.VK_A){
             pos.y-=.2f*Math.cos(orient.x);
         }else if (e.getKeyCode()==KeyEvent.VK_D){
@@ -142,11 +156,13 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
             pos.x+=.2f*Math.cos(orient.x);
         }else if (e.getKeyCode()==KeyEvent.VK_S){
             pos.x-=.2f*Math.cos(orient.x);
-        }
+        }*/
         if(e.getKeyCode()==KeyEvent.VK_SPACE){
             addRandParticle(5,10,2);
         }if(e.getKeyCode()==KeyEvent.VK_B){
             addRandParticle(5,10,10);
+        }if(e.getKeyCode()==KeyEvent.VK_N){
+            addRandParticle(0,0,10);
         }
         if(e.getKeyCode()==KeyEvent.VK_L) {
             for (int i=0; i<objects.size(); i++){
@@ -158,7 +174,13 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
         }
     }
     public void keyReleased(KeyEvent e) {
-
+        if (e.getKeyCode()==KeyEvent.VK_G){
+            gravon=!gravon;
+        }if (e.getKeyCode()==KeyEvent.VK_R){
+            if (objects.size()>0){
+                objects.remove(0);
+            }
+        }
     }
     public void keyTyped(KeyEvent e) { }
 

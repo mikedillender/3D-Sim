@@ -10,16 +10,31 @@ public class Object implements FrameData{
     Vec3f vel;
     float rad=2;
 
+    ArrayList<Vec3f> points;
+
     public Object(int shape, Vec3f loc, Vec3f vel,float rad){
         this.vel=vel;
         this.shape=shape;
         this.loc=loc;
         this.rad=rad;
+        if (shape==1){createPoints();}
     }
 
-    public float getVolume(){
-        return (rad*rad*rad*3.14f*4/3);
+    public void createPoints(){
+        if (shape==1){
+            points=new ArrayList<>();
+            for (int x=-1; x<=1;x+=2){
+                for (int y=-1; y<=1; y+=2) {
+                    for (int z = -1; z <= 1; z += 2) {
+                        points.add(new Vec3f(x * BOUNDS[0], y * BOUNDS[1], z * BOUNDS[2]));
+                    }
+                }
+            }
+        }
     }
+
+    public float getVolume(){ return (rad*rad*rad*3.14f*4/3); }
+
     public void addVolume(float v){
         float nv=getVolume()+v;
         float r3=(nv/(3.14f*4f/3f));
@@ -69,6 +84,43 @@ public class Object implements FrameData{
         float d=getDistOfDelta(getDeltaVecBetween(p1,loc));
         return d<r1+r2;
     }
+
+
+    public void render(Graphics g, int WIDTH, int HEIGHT, float lensd, Vec3f pos, Vec2f or){
+        if (shape==0) {
+            Vec3f dv = getDeltaVecBetween(pos, loc);
+            Vec2f dor = getDeltaOrient(dv);
+            if (getOrientDif(dor,or)>3.14){return;}
+            float x=(float)(lensd*(Math.tan(dor.x-or.x)))+(WIDTH/2);
+            float y=(float)(lensd*(Math.tan(dor.y-or.y)))+(HEIGHT/2);
+            //System.out.println(x+", "+y+" | "+dor);
+            g.fillOval((int)x,(int)y,10,10);
+        }else if (shape==1){
+            for (Vec3f p: points){
+                Vec3f dv = getDeltaVecBetween(pos, p);
+                Vec2f dor = getDeltaOrient(dv);
+                if (getOrientDif(dor,or)>3.14){return;}
+                float x=(float)(lensd*(Math.tan(dor.x-or.x)))+(WIDTH/2);
+                float y=(float)(lensd*(Math.tan(dor.y-or.y)))+(HEIGHT/2);
+                g.fillOval((int)x,(int)y,10,10);
+                for (Vec3f p2: points){
+                    int sim=0;if(p2.x==p.x){sim++;}if(p2.y==p.y){sim++;}if(p2.z==p.z){sim++;}
+                    if (sim!=2){continue;}
+                    //if (!(p2.x==p.x || p.y==p2.y || p.z==p2.z)){continue;}
+                    Vec3f dv1 = getDeltaVecBetween(pos, p2);
+                    Vec2f dor1 = getDeltaOrient(dv1);
+                    if (getOrientDif(dor,or)>3.14){continue;}
+                    float x1=(float)(lensd*(Math.tan(dor1.x-or.x)))+(WIDTH/2);
+                    float y1=(float)(lensd*(Math.tan(dor1.y-or.y)))+(HEIGHT/2);
+                    g.drawLine((int)x,(int)y,(int)x1,(int)y1);
+
+                }
+            }
+        }
+
+
+    }
+
     public Color doesLineCross(Vec2f orient, Vec3f pos){
         //d=dist from source
         //x^2+y*2+z^2=r
