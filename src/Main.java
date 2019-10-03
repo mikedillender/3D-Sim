@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class Main extends Applet implements Runnable, KeyListener, FrameData {
 
     //BASIC VARIABLES
-    private final int WIDTH=1280, HEIGHT=900;
+    private final int WIDTH=1480, HEIGHT=1200;
     ArrayList<Object> objects=new ArrayList<>();
     Vec3f pos=new Vec3f(-200,0,0);
     Vec2f orient=new Vec2f(0,0);
@@ -39,8 +39,8 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
     }
 
     public void addRandParticle(float velmin, float velmax,float rad){
-        Vec3f loc=new Vec3f((float)(Math.random()*.8*BOUNDS[0]-(.4*(BOUNDS[0]))),(float)(Math.random()*.8*BOUNDS[1]-(.4*(BOUNDS[1]))),(float)(Math.random()*.8*BOUNDS[2]-(.4*(BOUNDS[2]))));
-        Vec3f vel=new Vec3f((float)(velmax*Math.random()+velmin),(float)(velmax*Math.random()+velmin),(float)(velmax*Math.random()+velmin));
+        Vec3f loc=new Vec3f((float)(Math.random()*.95*BOUNDS[0]-(.475*(BOUNDS[0]))),(float)(Math.random()*.95*BOUNDS[1]-(.475*(BOUNDS[1]))),(float)(Math.random()*.95*BOUNDS[2]-(.475*(BOUNDS[2]))));
+        Vec3f vel=new Vec3f((float)((velmax-velmin)*Math.random()+velmin),(float)((velmax-velmin)*Math.random()+velmin),(float)((velmax-velmin)*Math.random()+velmin));
         objects.add(new Object(0,loc,vel,rad));
     }
 
@@ -104,7 +104,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
                     if(i==z){continue;}
                     Object o1 = objects.get(z);
                     //if(objects.indexOf(o)==objects.indexOf(o1)){continue;}
-                    if (gravon){ o.attractTo(o1.loc,10*o1.getVolume());}
+                    if (gravon){ o.attractTo(o1.loc,.04f*o1.getVolume());}
                     //o.magnetize(10,o1);
                 }
             }
@@ -133,9 +133,9 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
     //INPUT
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode()==KeyEvent.VK_RIGHT){
-            rotateAround(orient.x+.2f,orient.y);
+            rotateAround(orient.x+.05f,orient.y);
         }else if (e.getKeyCode()==KeyEvent.VK_LEFT){
-            rotateAround(orient.x-.2f,orient.y);
+            rotateAround(orient.x-.05f,orient.y);
         }if (e.getKeyCode()==KeyEvent.VK_UP){
             //orient.y+=.2;
             rotateAround(orient.x,orient.y+.2f);
@@ -160,9 +160,11 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
             pos.x-=.2f*Math.cos(orient.x);
         }*/
         if(e.getKeyCode()==KeyEvent.VK_SPACE){
-            addRandParticle(5,10,2);
+            addRandParticle(-10,10,2);
+        }if(e.getKeyCode()==KeyEvent.VK_T){
+            for (int i=0; i<50; i++){ addRandParticle(-10,10,2);}
         }if(e.getKeyCode()==KeyEvent.VK_B){
-            addRandParticle(5,10,10);
+            addRandParticle(-10,10,10);
         }if(e.getKeyCode()==KeyEvent.VK_N){
             addRandParticle(0,0,10);
         }

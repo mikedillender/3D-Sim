@@ -9,12 +9,13 @@ public class Object implements FrameData{
     Vec3f loc;
     Vec3f vel;
     float rad=2;
-
+    Color color;
     ArrayList<Vec3f> points;
 
     float timer=0;
     public Object(int shape, Vec3f loc, Vec3f vel,float rad){
         points=new ArrayList<>();
+        this.color=new Color((int)(Math.random()*255),(int)(Math.random()*255),(int)(Math.random()*255));
         this.vel=vel;
         this.shape=shape;
         this.loc=loc;
@@ -49,10 +50,13 @@ public class Object implements FrameData{
         if(timer<0){
             timer=.1f;
             points.add(new Vec3f(loc.x,loc.y,loc.z));
+            if (points.size()>50){
+                points.remove(0);
+            }
         }
         for (int i=0; i<objects.size(); i++){
             Object o=objects.get(i);
-            if(o!=this){
+            if(o!=this&&o!=null){
                 if(collidesWith(o.loc,rad,o.rad)){
                     float ov=getVolume();
                     float othvol=o.getVolume();
@@ -124,6 +128,7 @@ public class Object implements FrameData{
     public void render(Graphics g, int WIDTH, int HEIGHT, float lensd, Vec3f pos, Vec2f or){
         if (shape==0) {
             if (points.size()<2){return;}
+            g.setColor(color);
             Vec2f last=null;
             for (int i=0; i<points.size(); i++) {
                 Vec3f dv = getDeltaVecBetween(pos, points.get(i));
