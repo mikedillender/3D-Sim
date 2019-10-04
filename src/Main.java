@@ -97,12 +97,13 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
     }
 
     public void run() { for (;;){//CALLS UPDATES AND REFRESHES THE GAME
-            Vec2f field=new Vec2f(0,0);
+            Vec2f field=new Vec2f(0,3.1415f/2);
+            //Vec3f f=new Vec3f();
             //UPDATES
             for (int i=0; i<objects.size(); i++){
                 Object o = objects.get(i);
                 o.update(.03f,objects);
-                o.applyField(field,20);
+                o.applyField(field,.01f);
                 for (int z=0; z<objects.size(); z++){
                     if(i==z){continue;}
                     Object o1 = objects.get(z);

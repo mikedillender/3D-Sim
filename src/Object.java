@@ -106,8 +106,26 @@ public class Object implements FrameData{
     }
 
     public void applyField(Vec2f o, float B){
+        Vec3f accelv=new Vec3f();
+        Vec3f nv=new Vec3f();// v = vin + vnot
+        Vec2f dirOfVel=getDeltaOrient(vel);
+        float mag=B*(float)Math.sin(o.y-dirOfVel.y)*vel.length();
+        Vec2f forceDir=new Vec2f(dirOfVel.x+(3.14f/2),o.y+3.14f/2);
 
+        float r1=(float)(mag*Math.cos(forceDir.y));
+        accelv.z=(float)(mag*Math.sin(forceDir.y));
+        accelv.x=(float)(r1*Math.cos(forceDir.x));
+        accelv.y=(float)(r1*Math.sin(forceDir.x));
+        System.out.println("applying "+accelv);
+        //accelv.normalize();
+        //System.out.println("applying "+accelv+" now");
+        vel.x+=accelv.x;
+        vel.y+=accelv.y;
+        vel.z+=accelv.z;
+        //vel.add(accelv);
     }
+
+
 
     public boolean collidesWith(Vec3f tp, Vec3f p1, float r1, float r2){
         float d=getDistOfDelta(getDeltaVecBetween(p1,tp));
