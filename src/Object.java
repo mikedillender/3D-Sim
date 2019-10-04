@@ -54,10 +54,23 @@ public class Object implements FrameData{
                 points.remove(0);
             }
         }
+        int cind=objects.indexOf(this);
         for (int i=0; i<objects.size(); i++){
             Object o=objects.get(i);
-            if(o!=this&&o!=null){
-                if(collidesWith(o.loc,rad,o.rad)){
+            if(i!=cind){
+            //if(o!=this&&o!=null){
+                if (collidesWith(newv,o.loc,rad,o.rad)){
+                    /*vel.x=0;
+                    vel.y=0;
+                    vel.z=0;
+                    return;*/
+                    System.out.println("collides "+newv+" "+o.loc);
+                    vel.x=-vel.x;
+                    vel.y=-vel.y;
+                    vel.z=-vel.z;
+                    return;
+                }
+                /*if(collidesWith(newv,o.loc,rad,o.rad)){
                     float ov=getVolume();
                     float othvol=o.getVolume();
                     addVolume(othvol);
@@ -73,7 +86,7 @@ public class Object implements FrameData{
                     objects.remove(i);
                     i--;
                     //return;
-                }
+                }*/
             }
         }
         //if(newv.)
@@ -91,8 +104,13 @@ public class Object implements FrameData{
             vel.z=-vel.z;
         }
     }
-    public boolean collidesWith(Vec3f p1, float r1, float r2){
-        float d=getDistOfDelta(getDeltaVecBetween(p1,loc));
+
+    public void applyField(Vec2f o, float B){
+
+    }
+
+    public boolean collidesWith(Vec3f tp, Vec3f p1, float r1, float r2){
+        float d=getDistOfDelta(getDeltaVecBetween(p1,tp));
         return d<r1+r2;
     }
 
@@ -150,10 +168,12 @@ public class Object implements FrameData{
             if (getOrientDif(dor, or) > 3.14) {
                 return;
             }
+            float dist=getDistOfDelta(dv);
             float x = (float) (lensd * (Math.tan(dor.x - or.x))) + (WIDTH / 2);
             float y = (float) (lensd * (Math.tan(dor.y - or.y))) + (HEIGHT / 2);
             //System.out.println(x+", "+y+" | "+dor);
-            g.fillOval((int) x-(int)Math.ceil(rad), (int) y-(int)Math.ceil(rad), (int)Math.ceil(2*rad), (int)Math.ceil(2*rad));
+            float arad=(float)(lensd*Math.tan((rad)/(dist)));
+            g.fillOval((int) x-(int)Math.ceil(arad), (int) y-(int)Math.ceil(arad), (int)Math.ceil(2*arad), (int)Math.ceil(2*arad));
 
         }else if (shape==1){
             for (Vec3f p: points){

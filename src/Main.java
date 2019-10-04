@@ -21,7 +21,9 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
     Image img;
     boolean gravon=false;
     Object frame=new Object(1,null,null,0);
-
+    float graconstant=2;
+    boolean magon=false;
+    float magc=50;
     //COLORS
     Color background=new Color(255, 255, 255);
     Color gridColor=new Color(150, 150,150);
@@ -95,17 +97,18 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
     }
 
     public void run() { for (;;){//CALLS UPDATES AND REFRESHES THE GAME
-
+            Vec2f field=new Vec2f(0,0);
             //UPDATES
             for (int i=0; i<objects.size(); i++){
                 Object o = objects.get(i);
                 o.update(.03f,objects);
+                o.applyField(field,20);
                 for (int z=0; z<objects.size(); z++){
                     if(i==z){continue;}
                     Object o1 = objects.get(z);
                     //if(objects.indexOf(o)==objects.indexOf(o1)){continue;}
-                    if (gravon){ o.attractTo(o1.loc,.04f*o1.getVolume());}
-                    //o.magnetize(10,o1);
+                    if (gravon){ o.attractTo(o1.loc,graconstant*o1.getVolume());}
+                    //if(magon){o.magnetize(magc,o1);}
                 }
             }
 
@@ -175,15 +178,19 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
                 o.vel.y*=.7f;
                 o.vel.z*=.7f;
             }
+        }if (e.getKeyCode()==KeyEvent.VK_R){
+            if (objects.size()>0){
+                objects.remove(0);
+            }
         }
     }
     public void keyReleased(KeyEvent e) {
         if (e.getKeyCode()==KeyEvent.VK_G){
             gravon=!gravon;
-        }if (e.getKeyCode()==KeyEvent.VK_R){
-            if (objects.size()>0){
-                objects.remove(0);
-            }
+            System.out.println("grav = "+gravon);
+        }if (e.getKeyCode()==KeyEvent.VK_M){
+            magon=!magon;
+            //System.out.println("grav = "+gravon);
         }
     }
     public void keyTyped(KeyEvent e) { }
