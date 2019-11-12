@@ -11,7 +11,8 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
     //BASIC VARIABLES
     private final int WIDTH=1480, HEIGHT=1200;
     ArrayList<Object> objects=new ArrayList<>();
-    Vec3f pos=new Vec3f(-200,0,0);
+    float rad=200;
+    Vec3f pos=new Vec3f(-rad,0,0);
     Vec2f orient=new Vec2f(0,0);
     //GRAPHICS OBJECTS
     private Thread thread;
@@ -151,7 +152,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
 
     public void rotateAround(float xor, float yor){
         boolean up=(orient.y==yor);
-        float r=200;
+        float r=rad;
         System.out.println(pos+", "+orient);
         orient.x=xor;
         orient.y=yor;
@@ -181,6 +182,14 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
             //orient.y-=.2;
             rotateAround(orient.x,orient.y-.2f);
         }
+        if (e.getKeyCode()==KeyEvent.VK_EQUALS){
+            rad*=.9f;
+            rotateAround(orient.x,orient.y);
+
+        }if (e.getKeyCode()==KeyEvent.VK_MINUS){
+            rad*=1.1f;
+            rotateAround(orient.x,orient.y);
+        }
 
         /*if(e.getKeyCode()==KeyEvent.VK_S){
             pos.z-=5;
@@ -198,7 +207,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
             pos.x-=.2f*Math.cos(orient.x);
         }*/
         if(e.getKeyCode()==KeyEvent.VK_SPACE){
-            addRandParticle(-10,10,2);
+            addRandParticle(-10,10,1.2f);
         }if(e.getKeyCode()==KeyEvent.VK_T){
             for (int i=0; i<50; i++){ addRandParticle(-10,10,2);}
         }if(e.getKeyCode()==KeyEvent.VK_B){
