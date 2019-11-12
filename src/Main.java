@@ -1,6 +1,5 @@
 import com.sun.javafx.geom.Vec2f;
 import com.sun.javafx.geom.Vec3f;
-
 import java.applet.Applet;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -70,6 +69,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
         }*/
         gfx.setColor(Color.BLUE);
 
+        sortObjects();
         for (Object o : objects){
             o.render(gfx,WIDTH,HEIGHT,rld, pos,orient);
         }
@@ -78,6 +78,39 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
 
         //FINAL
         g.drawImage(img,0,0,this);
+    }
+
+
+    public void sortObjects(){
+        ArrayList<Object> o1=new ArrayList<>();
+        float[] dists=new float[objects.size()];
+        int i1=0;
+        for (Object o: objects){
+            Vec3f vd=new Vec3f(pos.x-o.loc.x,pos.y-o.loc.y,pos.z-o.loc.z);
+            dists[i1]=vd.length();
+            i1++;
+        }
+        ArrayList<Integer> s=new ArrayList<>();
+        for (int i=0; i<dists.length; i++){
+            if(s.size()==0){s.add(i);}else {
+                int addin = s.size() - 1;
+                for (Integer f : s) {
+                    if (dists[f] > dists[i]) {
+                        addin=s.indexOf(f);
+                        break;
+                    }
+                }
+                s.add(addin,i);
+            }
+        }
+        //System.out.println("");
+        for (Integer i:s){
+            //System.out.print(i+", ");
+            o1.add(0,objects.get(i));
+        }
+        //System.out.println("");
+        //System.out.println(objects.size()+", "+o1.size());
+        objects=o1;
     }
 
     public Color getColorInDir(float xor,float yor){
