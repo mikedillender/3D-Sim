@@ -13,7 +13,6 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
     ArrayList<Object> objects=new ArrayList<>();
     Vec3f pos=new Vec3f(-200,0,0);
     Vec2f orient=new Vec2f(0,0);
-    float orientfromcenter=0;
     //GRAPHICS OBJECTS
     private Thread thread;
     Graphics gfx;
@@ -22,10 +21,8 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
     Object frame=new Object(1,null,null,0);
     float graconstant=2;
     boolean magon=false;
-    float magc=50;
     //COLORS
     Color background=new Color(255, 255, 255);
-    Color gridColor=new Color(150, 150,150);
 
 
     public void init(){//STARTS THE PROGRAM
