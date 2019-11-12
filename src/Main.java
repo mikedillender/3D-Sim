@@ -103,7 +103,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
             for (int i=0; i<objects.size(); i++){
                 Object o = objects.get(i);
                 o.update(.03f,objects);
-                o.applyField(field,.01f);
+                //o.applyField(field,.01f);
                 for (int z=0; z<objects.size(); z++){
                     if(i==z){continue;}
                     Object o1 = objects.get(z);
@@ -120,16 +120,20 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
 
 
     public void rotateAround(float xor, float yor){
+        boolean up=(orient.y==yor);
         float r=200;
         System.out.println(pos+", "+orient);
         orient.x=xor;
         orient.y=yor;
         if (orient.x>6.28){orient.x-=6.28f;}else if (orient.x<-6.28f){orient.x+=6.28f;}
         if (orient.y>6.28){orient.y-=6.28f;}else if (orient.y<-6.28f){orient.y+=6.28f;}
-        float r1=r*(float)(Math.cos(-yor));
-        pos.z=r*(float)(Math.sin(-yor));
-        pos.x=-r1*(float)(Math.cos(-xor));
-        pos.y=r1*(float)(Math.sin(-xor));
+        if (up) {
+            System.out.println("not u[");
+            float r1 = r * (float) (Math.cos(-yor));
+            pos.z = r * (float) (Math.sin(-yor));
+            pos.x = -r1 * (float) (Math.cos(-xor));
+            pos.y = r1 * (float) (Math.sin(-xor));
+        }
         System.out.println(pos+", "+orient);
 
 
