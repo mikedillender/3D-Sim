@@ -73,7 +73,10 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
         }
         gfx.setColor(Color.BLACK);
         frame.render(gfx,WIDTH,HEIGHT,rld, pos,orient);
-
+        String msg="particles : "+objects.size();
+        gfx.setColor(Color.BLACK);
+        gfx.setFont(gfx.getFont().deriveFont(30f));
+        gfx.drawString(msg,20,20);
         //FINAL
         g.drawImage(img,0,0,this);
     }
@@ -136,10 +139,16 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
                 o.update(.03f,objects);
                 //o.applyField(field,.01f);
                 for (int z=0; z<objects.size(); z++){
-                    if(i==z){continue;}
+                    if(i==z||!objects.contains(o)){continue;}
                     Object o1 = objects.get(z);
                     //if(objects.indexOf(o)==objects.indexOf(o1)){continue;}
-                    if (gravon){ o.attractTo(o1.loc,graconstant*o1.getVolume());}
+                    try {
+                        if (gravon) {
+                            o.attractTo(o1.loc, graconstant * o1.getVolume());
+                        }
+                    }catch (NullPointerException e){
+                        System.out.println("ERROR");
+                    }
                     //if(magon){o.magnetize(magc,o1);}
                 }
             }
