@@ -82,6 +82,18 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
     }
 
 
+    public void addRandCluster(float velmin, float velmax,float rad, int num, float sr){
+        Vec3f loc=new Vec3f((float)(Math.random()*.95*BOUNDS[0]-(.475*(BOUNDS[0]))),(float)(Math.random()*.95*BOUNDS[1]-(.475*(BOUNDS[1]))),(float)(Math.random()*.95*BOUNDS[2]-(.475*(BOUNDS[2]))));
+        Vec3f vel=new Vec3f((float)((velmax-velmin)*Math.random()+velmin),(float)((velmax-velmin)*Math.random()+velmin),(float)((velmax-velmin)*Math.random()+velmin));
+        for (int i=0; i<num; i++){
+            Vec3f p=new Vec3f(loc.x-(rad)+(float)(rad*2*Math.random()),loc.y-(rad)+(float)(rad*2*Math.random()),loc.z-(rad)+(float)(rad*2*Math.random()));
+            Vec3f v=new Vec3f(vel.x*(float)(.5+Math.random()),vel.y*(float)(.5+Math.random()),vel.z*(float)(.5+Math.random()));
+            Object o=new Object(0,p,v,sr);
+            objects.add(o);
+
+        }
+    }
+
     public void sortObjects(){
         ArrayList<Object> o1=new ArrayList<>();
         float[] dists=new float[objects.size()];
@@ -217,6 +229,8 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
         }*/
         if(e.getKeyCode()==KeyEvent.VK_SPACE){
             addRandParticle(-10,10,1.2f);
+        }if(e.getKeyCode()==KeyEvent.VK_C){
+            addRandCluster(-10,10,30,40,1.2f);
         }if(e.getKeyCode()==KeyEvent.VK_T){
             for (int i=0; i<50; i++){ addRandParticle(-10,10,2);}
         }if(e.getKeyCode()==KeyEvent.VK_B){
