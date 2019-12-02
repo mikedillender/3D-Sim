@@ -1,13 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a50123d0-a48a-4304-a1fd-c6a509348a7a" name="Default" comment="add random cluster">
+    <list default="true" id="a50123d0-a48a-4304-a1fd-c6a509348a7a" name="Default" comment="trying to make yaxis rotation work">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/3D-Sim/FrameData.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/3D-Sim/FrameData.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/3D-Sim/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/3D-Sim/Main.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/3D-Sim/Object.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/3D-Sim/Object.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/FrameData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FrameData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Object.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Object.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -20,14 +15,14 @@
     <session id="-1452248798">
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="java" value="4456" />
-          <entry key="txt" value="138" />
+          <entry key="java" value="4495" />
+          <entry key="txt" value="172" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JAVA" value="4456" />
-          <entry key="PLAIN_TEXT" value="138" />
+          <entry key="JAVA" value="4495" />
+          <entry key="PLAIN_TEXT" value="172" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -61,11 +56,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="136">
-              <caret line="74" column="79" selection-start-line="74" selection-start-column="79" selection-end-line="74" selection-end-column="79" />
+            <state relative-caret-position="17">
+              <caret line="116" column="41" selection-start-line="116" selection-start-column="41" selection-end-line="116" selection-end-column="41" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -91,11 +86,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Object.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="170">
-              <caret line="206" column="54" selection-start-line="206" selection-start-column="54" selection-end-line="206" selection-end-column="54" />
+            <state relative-caret-position="271">
+              <caret line="208" column="96" selection-start-line="208" selection-start-column="96" selection-end-line="208" selection-end-column="96" />
             </state>
           </provider>
         </entry>
@@ -146,8 +141,8 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/src/FrameData.java" />
-        <option value="$PROJECT_DIR$/src/Object.java" />
         <option value="$PROJECT_DIR$/src/Main.java" />
+        <option value="$PROJECT_DIR$/src/Object.java" />
       </list>
     </option>
   </component>
@@ -343,7 +338,14 @@
       <option name="project" value="LOCAL" />
       <updated>1573661551973</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="trying to make yaxis rotation work">
+      <created>1575319293683</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1575319293683</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -408,7 +410,8 @@
     <MESSAGE value="added try catch method to run" />
     <MESSAGE value="default bounds" />
     <MESSAGE value="add random cluster" />
-    <option name="LAST_COMMIT_MESSAGE" value="add random cluster" />
+    <MESSAGE value="trying to make yaxis rotation work" />
+    <option name="LAST_COMMIT_MESSAGE" value="trying to make yaxis rotation work" />
   </component>
   <component name="editorHistoryManager">
     <entry file="jar://C:/Program Files/Java/jdk1.8.0_191/src.zip!/java/util/ArrayList.java">
@@ -425,20 +428,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Object.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="206" column="54" selection-start-line="206" selection-start-column="54" selection-end-line="206" selection-end-column="54" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="74" column="79" selection-start-line="74" selection-start-column="79" selection-end-line="74" selection-end-column="79" />
+        <state relative-caret-position="17">
+          <caret line="116" column="41" selection-start-line="116" selection-start-column="41" selection-end-line="116" selection-end-column="41" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Object.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="271">
+          <caret line="208" column="96" selection-start-line="208" selection-start-column="96" selection-end-line="208" selection-end-column="96" />
         </state>
       </provider>
     </entry>

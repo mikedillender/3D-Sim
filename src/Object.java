@@ -206,7 +206,7 @@ public class Object implements FrameData{
                 float x=(float)(lensd*(Math.tan(dor.x-or.x)))+(WIDTH/2);
                 float y=(float)(lensd*(Math.tan(dor.y+or.y)))+(HEIGHT/2);
                 if (f){
-                    System.out.println(dv+" | from p : "+dor+" | p : "+or);
+                    System.out.println(dv+" | from p : "+dor+" | p : "+or);//TODO dor seems to be whats messed up
                     f=false;
                 }
                 /*float fovx=3.14f*65/180f;
