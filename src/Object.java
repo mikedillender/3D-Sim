@@ -194,25 +194,44 @@ public class Object implements FrameData{
             g.fillOval((int) x-(int)Math.ceil(arad), (int) y-(int)Math.ceil(arad), (int)Math.ceil(2*arad), (int)Math.ceil(2*arad));
 
         }else if (shape==1){
+            boolean f=true;
             for (Vec3f p: points){
-                Vec3f dv = getDeltaVecBetween(pos, p);
+                Vec3f dv = getDeltaVecBetween( p,pos);
                 Vec2f dor = getDeltaOrient(dv);
-                if (getOrientDif(dor,or)>3.14){return;}
+
+                /*if (getOrientDif(dor,or)>3.14159){
+                    System.out.println(getOrientDif(dor,or)+">3.14");
+                    return;}*/
+
                 float x=(float)(lensd*(Math.tan(dor.x-or.x)))+(WIDTH/2);
-                float y=(float)(lensd*(Math.tan(dor.y-or.y)))+(HEIGHT/2);
-                g.fillOval((int)x,(int)y,10,10);
+                float y=(float)(lensd*(Math.tan(dor.y+or.y)))+(HEIGHT/2);
+                if (f){
+                    System.out.println(dv+" | from p : "+dor+" | p : "+or);
+                    f=false;
+                }
+                /*float fovx=3.14f*65/180f;
+                float fovy=3.14f*65/180f;
+                g.setColor(Color.BLUE);
+                System.out.println(dor.x+"-"+or.x+"="+(dor.x-or.x));
+                float x0=(float)((WIDTH/2f)*((dor.x-or.x)/fovx))+(WIDTH/2);
+                float y0=(float)((HEIGHT/2f)*((dor.y-or.y)/fovy))+(HEIGHT/2);
+                System.out.println(x0+", "+y0);
+                g.fillOval((int)x0-5,(int)y0-5,15,15);*/
+                g.setColor(Color.BLACK);
+                g.fillOval((int)x-5,(int)y-5,10,10);
                 for (Vec3f p2: points){
                     int sim=0;if(p2.x==p.x){sim++;}if(p2.y==p.y){sim++;}if(p2.z==p.z){sim++;}
-                    if (sim!=2){continue;}
+                    if (sim!=2&&sim!=1){continue;}
                     //if (!(p2.x==p.x || p.y==p2.y || p.z==p2.z)){continue;}
                     Vec3f dv1 = getDeltaVecBetween(pos, p2);
                     Vec2f dor1 = getDeltaOrient(dv1);
                     if (getOrientDif(dor,or)>3.14){continue;}
                     float x1=(float)(lensd*(Math.tan(dor1.x-or.x)))+(WIDTH/2);
                     float y1=(float)(lensd*(Math.tan(dor1.y-or.y)))+(HEIGHT/2);
-                    g.drawLine((int)x,(int)y,(int)x1,(int)y1);
+                    //g.drawLine((int)x,(int)y,(int)x1,(int)y1);
 
                 }
+                //System.out.println("rendering at "+x+", "+y);
             }
         }
 
@@ -268,10 +287,10 @@ public class Object implements FrameData{
     }
     public float getAngDif(float a1, float a2){
         float ad=a1-a2;
-        if(ad<-3.15){
-            ad+=6.28;
-        }else if(ad>3.15){
-            ad-=6.28;
+        if(ad<-3.14159){
+            ad+=6.28318;
+        }else if(ad>3.14159){
+            ad-=6.28318;
         }
         return ad;
     }

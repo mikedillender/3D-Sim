@@ -9,9 +9,9 @@ import java.util.ArrayList;
 public class Main extends Applet implements Runnable, KeyListener, FrameData {
 
     //BASIC VARIABLES
-    private final int WIDTH=1480, HEIGHT=1200;
+    private final int WIDTH=1180, HEIGHT=(int)(WIDTH*1f);
     ArrayList<Object> objects=new ArrayList<>();
-    float rad=-BOUNDS[0]*2f;
+    float rad=-BOUNDS[0]*500f;
     Vec3f pos=new Vec3f(-rad,0,0);
     Vec2f orient=new Vec2f(0,0);
     //GRAPHICS OBJECTS
@@ -24,7 +24,8 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
     boolean magon=false;
     //COLORS
     Color background=new Color(255, 255, 255);
-
+    float rld=((WIDTH/2f)/2f);
+    String fov="";
 
     public void init(){//STARTS THE PROGRAM
         this.resize(WIDTH, HEIGHT);
@@ -33,6 +34,9 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
         gfx=img.getGraphics();
         //objects.add(new Object(0,new Vec3f(50,0,20),new Vec3f(0,0,0)));
         //objects.add(new Object(0,new Vec3f(50,20,0),new Vec3f(0,0,0)));
+        float hd=(float)(2*(180f/3.1415f)*Math.atan((HEIGHT/2f)/rld));
+        float wd=(float)(2*(180f/3.1415f)*Math.atan((WIDTH/2f)/rld));
+        fov="fov : "+hd+", "+wd;
         thread=new Thread(this);
         thread.start();
     }
@@ -54,8 +58,9 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
         //float fovy=3.14f/2;
         int cx=pw/2;
         int cy=ph/2;
-        int lensdist=cy;
-        float rld=(HEIGHT/2);
+        //int lensdist=cy;
+        //System.out.println("fov : "+hd+", "+wd);
+
 
         /*for (int x=0; x<pw; x++){
             float xor=(float)(Math.atan2(x-cx,lensdist));
@@ -66,13 +71,16 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
             }
         }*/
         gfx.setColor(Color.BLUE);
-
+        gfx.drawString(fov,50,50);
+        gfx.drawString((int)(orient.x*180/3.14f)+", "+(int)(orient.y*180/3.14f),50,80);
         sortObjects();
+        Vec2f or1=new Vec2f(orient.x,0);//TODO REMOVE THIS LATER
+        or1=new Vec2f(orient.x,orient.y);//TODO REMOVE THIS LATER
         for (Object o : objects){
             o.render(gfx,WIDTH,HEIGHT,rld, pos,orient);
         }
         gfx.setColor(Color.BLACK);
-        frame.render(gfx,WIDTH,HEIGHT,rld, pos,orient);
+        frame.render(gfx,WIDTH,HEIGHT,rld, pos,or1);
         String msg="particles : "+objects.size();
         gfx.setColor(Color.BLACK);
         gfx.setFont(gfx.getFont().deriveFont(30f));
@@ -174,22 +182,32 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
     public void rotateAround(float xor, float yor){
         boolean up=(orient.y==yor);
         float r=rad;
-        System.out.println(pos+", "+orient);
+        //System.out.println(pos+", "+orient);
         orient.x=xor;
         orient.y=yor;
         if (orient.x>6.28){orient.x-=6.28f;}else if (orient.x<-6.28f){orient.x+=6.28f;}
         if (orient.y>6.28){orient.y-=6.28f;}else if (orient.y<-6.28f){orient.y+=6.28f;}
-        if (up) {
-            System.out.println("not u[");
+        //if (up) {
+            //System.out.println("not u[");
             float r1 = r * (float) (Math.cos(-yor));
-            pos.z = r * (float) (Math.sin(-yor));
+            pos.z = r * (float) (Math.sin(yor));
             pos.x = -r1 * (float) (Math.cos(-xor));
             pos.y = r1 * (float) (Math.sin(-xor));
-        }
-        System.out.println(pos+", "+orient);
+        //}
+        //System.out.println(pos+", "+orient);
+        //System.out.println("->");
+        //printPosData();
+        System.out.println("");
+        printPosData();
 
 
     }
+
+    public void printPosData(){
+        String s="pos["+(int)pos.x+", "+(int)pos.y+", "+(int)pos.z+"] o["+(int)(orient.x*180/3.1415)+", "+(int)(orient.y*180/3.1415)+"]";
+        System.out.println(s);
+    }
+
     //INPUT
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode()==KeyEvent.VK_RIGHT){
@@ -198,45 +216,39 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
             rotateAround(orient.x-.05f,orient.y);
         }if (e.getKeyCode()==KeyEvent.VK_UP){
             //orient.y+=.2;
-            rotateAround(orient.x,orient.y+.2f);
+            rotateAround(orient.x,orient.y+.05f);
         }else if (e.getKeyCode()==KeyEvent.VK_DOWN){
             //orient.y-=.2;
-            rotateAround(orient.x,orient.y-.2f);
-        }
-        if (e.getKeyCode()==KeyEvent.VK_EQUALS){
+            rotateAround(orient.x,orient.y-.05f);
+        }else if (e.getKeyCode()==KeyEvent.VK_EQUALS){
             rad*=.9f;
             rotateAround(orient.x,orient.y);
 
-        }if (e.getKeyCode()==KeyEvent.VK_MINUS){
+        }else if (e.getKeyCode()==KeyEvent.VK_MINUS){
             rad*=1.1f;
             rotateAround(orient.x,orient.y);
-        }
-
-        /*if(e.getKeyCode()==KeyEvent.VK_S){
-            pos.z-=5;
-        }else if(e.getKeyCode()==KeyEvent.VK_W){
-            pos.z+=5;
-        }*/
-        /*
-        if (e.getKeyCode()==KeyEvent.VK_A){
-            pos.y-=.2f*Math.cos(orient.x);
-        }else if (e.getKeyCode()==KeyEvent.VK_D){
-            pos.y+=.2f*Math.cos(orient.x);
-        }if (e.getKeyCode()==KeyEvent.VK_W){
-            pos.x+=.2f*Math.cos(orient.x);
-        }else if (e.getKeyCode()==KeyEvent.VK_S){
-            pos.x-=.2f*Math.cos(orient.x);
-        }*/
-        if(e.getKeyCode()==KeyEvent.VK_SPACE){
+        }else if(e.getKeyCode()==KeyEvent.VK_SPACE){
             addRandParticle(-10,10,1.2f);
-        }if(e.getKeyCode()==KeyEvent.VK_C){
+        }else if(e.getKeyCode()==KeyEvent.VK_C){
             addRandCluster(-10,10,30,40,1.2f);
-        }if(e.getKeyCode()==KeyEvent.VK_T){
+        }else if(e.getKeyCode()==KeyEvent.VK_T){
             for (int i=0; i<50; i++){ addRandParticle(-10,10,2);}
-        }if(e.getKeyCode()==KeyEvent.VK_B){
+        }else if(e.getKeyCode()==KeyEvent.VK_B){
             addRandParticle(-10,10,10);
-        }if(e.getKeyCode()==KeyEvent.VK_N){
+        }else if(e.getKeyCode()==KeyEvent.VK_N){
             addRandParticle(0,0,10);
+        }else if (e.getKeyCode()==KeyEvent.VK_Y){
+
+            pos=new Vec3f(0,0,rad);
+            orient=new Vec2f(0,3.14159f/2f);
+        }else if (e.getKeyCode()==KeyEvent.VK_A){
+
+            pos=new Vec3f(0,0,rad);
+            orient=new Vec2f(0,3.14159f/2f);
+        }else if (e.getKeyCode()==KeyEvent.VK_V){
+
+            pos=new Vec3f(-rad,0,0);
+            orient=new Vec2f(0,0);
         }
         if(e.getKeyCode()==KeyEvent.VK_L) {
             for (int i=0; i<objects.size(); i++){
