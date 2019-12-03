@@ -11,7 +11,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
     //BASIC VARIABLES
     private final int WIDTH=1180, HEIGHT=(int)(WIDTH*1f);
     ArrayList<Object> objects=new ArrayList<>();
-    float rad=-BOUNDS[0]*500f;
+    float rad=-BOUNDS[0]*50f;
     Vec3f pos=new Vec3f(-rad,0,0);
     Vec2f orient=new Vec2f(0,0);
     //GRAPHICS OBJECTS

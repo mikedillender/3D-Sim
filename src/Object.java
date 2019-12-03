@@ -169,8 +169,8 @@ public class Object implements FrameData{
             for (int i=0; i<points.size(); i++) {
                 Vec3f dv = getDeltaVecBetween(pos, points.get(i));
                 Vec2f dor = getDeltaOrient(dv);
-                if (getOrientDif(dor, or) > 3.14) {
-                    return;
+                if (getOrientDif(dor, or) > 3.14159) {
+                    continue;
                 }
                 float x = (float) (lensd * (Math.tan(dor.x - or.x))) + (WIDTH / 2);
                 float y = (float) (lensd * (Math.tan(dor.y - or.y))) + (HEIGHT / 2);
@@ -183,7 +183,7 @@ public class Object implements FrameData{
             }
             Vec3f dv = getDeltaVecBetween(pos, loc);
             Vec2f dor = getDeltaOrient(dv);
-            if (getOrientDif(dor, or) > 3.14) {
+            if (getOrientDif(dor, or) > 3.14159) {
                 return;
             }
             float dist=getDistOfDelta(dv);
@@ -221,14 +221,14 @@ public class Object implements FrameData{
                 g.fillOval((int)x-5,(int)y-5,10,10);
                 for (Vec3f p2: points){
                     int sim=0;if(p2.x==p.x){sim++;}if(p2.y==p.y){sim++;}if(p2.z==p.z){sim++;}
-                    if (sim!=2&&sim!=1){continue;}
+                    if (sim!=2){continue;}
                     //if (!(p2.x==p.x || p.y==p2.y || p.z==p2.z)){continue;}
-                    Vec3f dv1 = getDeltaVecBetween(pos, p2);
+                    Vec3f dv1 = getDeltaVecBetween(p2,pos);
                     Vec2f dor1 = getDeltaOrient(dv1);
                     if (getOrientDif(dor,or)>3.14){continue;}
                     float x1=(float)(lensd*(Math.tan(dor1.x-or.x)))+(WIDTH/2);
-                    float y1=(float)(lensd*(Math.tan(dor1.y-or.y)))+(HEIGHT/2);
-                    //g.drawLine((int)x,(int)y,(int)x1,(int)y1);
+                    float y1=(float)(lensd*(Math.tan(dor1.y+or.y)))+(HEIGHT/2);
+                    g.drawLine((int)x,(int)y,(int)x1,(int)y1);
 
                 }
                 //System.out.println("rendering at "+x+", "+y);
