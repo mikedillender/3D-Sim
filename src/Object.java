@@ -11,6 +11,7 @@ public class Object implements FrameData{
     float rad=2;
     Color color;
     ArrayList<Vec3f> points;
+    Vec3f[][] pointmap;
 
     float timer=0;
     public Object(int shape, Vec3f loc, Vec3f vel,float rad){
@@ -20,7 +21,7 @@ public class Object implements FrameData{
         this.shape=shape;
         this.loc=loc;
         this.rad=rad;
-        if (shape==1){createPoints();}
+        if (shape==1||shape==2){createPoints();}
     }
 
     public void createPoints(){
@@ -31,6 +32,20 @@ public class Object implements FrameData{
                     for (int z = -1; z <= 1; z += 2) {
                         points.add(new Vec3f(x * BOUNDS[0], y * BOUNDS[1], z * BOUNDS[2]));
                     }
+                }
+            }
+        }else if (shape==2){
+            float sep=30;
+            int size=10;
+            pointmap=new Vec3f[size*2+1][size*2+1];
+            for (int x=-size; x<=size;x+=1){
+                for (int y=-size; y<=size; y+=1) {
+                    //float z=size*((size-Math.abs(x))*(size-Math.abs(y))/(float)(size*size));
+                    //points.add(new Vec3f(x * sep, y * sep, z * sep));
+                    float c=(size*size)-(x*x)-(y*y);
+                    float z=(c>0)?(float)(Math.sqrt(c)):0;
+                    pointmap[size+x][size+y]=(new Vec3f(x * sep, y * sep, z * sep));
+
                 }
             }
         }
@@ -209,14 +224,6 @@ public class Object implements FrameData{
                     System.out.println(dv+" | from p : "+dor+" | p : "+or);//TODO dor seems to be whats messed up
                     f=false;
                 }
-                /*float fovx=3.14f*65/180f;
-                float fovy=3.14f*65/180f;
-                g.setColor(Color.BLUE);
-                System.out.println(dor.x+"-"+or.x+"="+(dor.x-or.x));
-                float x0=(float)((WIDTH/2f)*((dor.x-or.x)/fovx))+(WIDTH/2);
-                float y0=(float)((HEIGHT/2f)*((dor.y-or.y)/fovy))+(HEIGHT/2);
-                System.out.println(x0+", "+y0);
-                g.fillOval((int)x0-5,(int)y0-5,15,15);*/
                 g.setColor(Color.BLACK);
                 g.fillOval((int)x-5,(int)y-5,10,10);
                 for (Vec3f p2: points){
@@ -232,6 +239,54 @@ public class Object implements FrameData{
 
                 }
                 //System.out.println("rendering at "+x+", "+y);
+            }
+        }else if (shape==2){
+            boolean f=true;
+            for (int x=0; x<pointmap.length; x++){
+                for (int y=0; y<pointmap[0].length; y++) {
+                    Vec3f p=pointmap[x][y];
+                    Vec3f dv = getDeltaVecBetween(p, pos);
+                    Vec2f dor = getDeltaOrient(dv);
+
+                    /*if (getOrientDif(dor,or)>3.14159){
+                    System.out.println(getOrientDif(dor,or)+">3.14");
+                    return;}*/
+
+                    float x1 = (float) (lensd * (Math.tan(dor.x - or.x))) + (WIDTH / 2);
+                    float y1 = (float) (lensd * (Math.tan(dor.y + or.y))) + (HEIGHT / 2);
+                    if (f) {
+                        System.out.println(dv + " | from p : " + dor + " | p : " + or);//TODO dor seems to be whats messed up
+                        f = false;
+                    }
+                    g.setColor(Color.BLACK);
+                    g.fillOval((int) x1 - 5, (int) y1 - 5, 10, 10);
+                    for (int d=0; d<4; d++){
+                        int x2=x+((d%2==0)?0:((d==1)?1:-1));
+                        int y2=y+((d%2==1)?0:((d==0)?1:-1));
+                        if (x2>=0&&y2>=0&&y2<pointmap[0].length&&x2<pointmap.length){
+                            Vec3f p2=pointmap[x2][y2];
+                            Vec3f dv1 = getDeltaVecBetween(p2,pos);
+                            Vec2f dor1 = getDeltaOrient(dv1);
+                            if (getOrientDif(dor,or)>3.14){continue;}
+                            float x3=(float)(lensd*(Math.tan(dor1.x-or.x)))+(WIDTH/2);
+                            float y3=(float)(lensd*(Math.tan(dor1.y+or.y)))+(HEIGHT/2);
+                            g.drawLine((int)x1,(int)y1,(int)x3,(int)y3);
+                        }
+                    }
+                    /*for (Vec3f p2: points){
+                    int sim=0;if(p2.x==p.x){sim++;}if(p2.y==p.y){sim++;}if(p2.z==p.z){sim++;}
+                    if (sim!=2){continue;}
+                    //if (!(p2.x==p.x || p.y==p2.y || p.z==p2.z)){continue;}
+                    Vec3f dv1 = getDeltaVecBetween(p2,pos);
+                    Vec2f dor1 = getDeltaOrient(dv1);
+                    if (getOrientDif(dor,or)>3.14){continue;}
+                    float x1=(float)(lensd*(Math.tan(dor1.x-or.x)))+(WIDTH/2);
+                    float y1=(float)(lensd*(Math.tan(dor1.y+or.y)))+(HEIGHT/2);
+                    g.drawLine((int)x,(int)y,(int)x1,(int)y1);
+
+                    }*/
+                    //System.out.println("rendering at "+x+", "+y);
+                }
             }
         }
 
