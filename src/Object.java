@@ -42,8 +42,10 @@ public class Object implements FrameData{
                 for (int y=-size; y<=size; y+=1) {
                     //float z=size*((size-Math.abs(x))*(size-Math.abs(y))/(float)(size*size));
                     //points.add(new Vec3f(x * sep, y * sep, z * sep));
-                    float c=(size*size)-(x*x)-(y*y);
-                    float z=(c>0)?(float)(Math.sqrt(c)):0;
+                    //float z=(float)(Math.sin(x/4f)*size)/(Math.abs(y)+.5f);
+                    float z=sep/4f*(float)(Math.sin(x/4f)+Math.sin(2.1+x*y/10f)-Math.cos(1.21+(x+y)/4f));
+                    //float c=(size*size)-(x*x)-(y*y);//DOme
+                    //float z=(c>0)?(float)(Math.sqrt(c)):0;
                     pointmap[size+x][size+y]=(new Vec3f(x * sep, y * sep, z * sep));
 
                 }
@@ -259,7 +261,7 @@ public class Object implements FrameData{
                         f = false;
                     }
                     g.setColor(Color.BLACK);
-                    g.fillOval((int) x1 - 5, (int) y1 - 5, 10, 10);
+                    //g.fillOval((int) x1 - 5, (int) y1 - 5, 10, 10);
                     for (int d=0; d<4; d++){
                         int x2=x+((d%2==0)?0:((d==1)?1:-1));
                         int y2=y+((d%2==1)?0:((d==0)?1:-1));
