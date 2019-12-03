@@ -197,13 +197,13 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
         //System.out.println(pos+", "+orient);
         //System.out.println("->");
         //printPosData();
-        System.out.println("");
-        printPosData();
+        //printPosData();
 
 
     }
 
     public void printPosData(){
+        System.out.println("");
         String s="pos["+(int)pos.x+", "+(int)pos.y+", "+(int)pos.z+"] o["+(int)(orient.x*180/3.1415)+", "+(int)(orient.y*180/3.1415)+"]";
         System.out.println(s);
     }

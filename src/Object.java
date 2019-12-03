@@ -43,9 +43,11 @@ public class Object implements FrameData{
                     //float z=size*((size-Math.abs(x))*(size-Math.abs(y))/(float)(size*size));
                     //points.add(new Vec3f(x * sep, y * sep, z * sep));
                     //float z=(float)(Math.sin(x/4f)*size)/(Math.abs(y)+.5f);
-                    float z=sep/4f*(float)(Math.sin(x/4f)+Math.sin(2.1+x*y/10f)-Math.cos(1.21+(x+y)/4f));
+                    //float z=sep/4f*(float)(Math.sin(x/4f)+Math.sin(2.1+x*y/10f)-Math.cos(1.21+(x+y)/4f));
                     //float c=(size*size)-(x*x)-(y*y);//DOme
                     //float z=(c>0)?(float)(Math.sqrt(c)):0;
+                    float z=1;
+
                     pointmap[size+x][size+y]=(new Vec3f(x * sep, y * sep, z * sep));
 
                 }
@@ -244,6 +246,87 @@ public class Object implements FrameData{
             }
         }else if (shape==2){
             boolean f=true;
+            int msize=pointmap.length;
+            float m=-(pos.x/pos.y);
+            boolean small=Math.abs(m)<1;
+            //boolean small=true;
+            if (small){m=1f/m;}
+            if (Math.abs(m)>msize){small=!small;m=0;}
+            int im=Math.round(m);
+            int aim=Math.abs(im);
+            int q=(pos.x<0)?((pos.y>0)?2:3):((pos.y>0)?1:4);
+            //System.out.println("in quadrant "+q+" | p : "+pos);
+            System.out.println("in quad "+q+", angle small? =  "+small+" |  m = "+aim);
+            int rn=0;
+            int mssq=msize*msize+(msize*4);
+            for (int c=0; c<msize; c++){
+                int x=0;
+                int y=c;
+                while (x>=0&&x<msize&&y>=0&&y<msize){
+                    //Vec3f p=(!small)?pointmap[x][y]:pointmap[y][x];
+                    int x2=(small)?x:y;
+                    int y2=(small)?y:x;
+                    if(q==2){
+                        x2=msize-1-x2;
+                    }else if(q==1){
+                        x2=msize-1-x2;
+                        y2=msize-1-y2;
+                    }else if(q==4){
+                        y2=msize-1-y2;
+                    }
+                    Vec3f p=pointmap[x2][y2];
+                    Vec3f dv = getDeltaVecBetween(p, pos);
+                    Vec2f dor = getDeltaOrient(dv);
+                    float x1 = (float) (lensd * (Math.tan(dor.x - or.x))) + (WIDTH / 2);
+                    float y1 = (float) (lensd * (Math.tan(dor.y + or.y))) + (HEIGHT / 2);
+                    if (f) {
+                        //System.out.println(dv + " | from p : " + dor + " | p : " + or);//TODO dor seems to be whats messed up
+                        f = false;
+                    }
+                    //g.setColor(new Color((int)(255*x2/(float)msize),255-(int)(255*x2/(float)msize),(int)(255*y2/(float)msize)));
+                    //float v=(c/(float)msize);
+                    g.setColor(new Color((int)((c%3==0)?255:0),(int)(255*rn/(float)mssq),(int)(255*rn/(float)mssq)));
+                    g.fillOval((int) x1 - 5, (int) y1 - 5, 10, 10);
+                    rn++;
+                    x++;
+                    if(x%aim==0){ y+=(im<0)?-1:1; }
+                }
+            }
+            for (int c=aim; c<msize; c+=aim){
+                int x=c;
+                int y=msize-1;
+                while (x>=0&&x<msize&&y>=0&&y<msize){
+                    //Vec3f p=(!small)?pointmap[x][y]:pointmap[y][x];
+                    int x2=(!small)?x:y;
+                    int y2=(!small)?y:x;
+                    if(q==2){
+                        x2=msize-1-x2;
+                    }else if(q==1){
+                        x2=msize-1-x2;
+                        y2=msize-1-y2;
+                    }else if(q==4){
+                        y2=msize-1-y2;
+                    }
+                    Vec3f p=pointmap[x2][y2];
+                    Vec3f dv = getDeltaVecBetween(p, pos);
+                    Vec2f dor = getDeltaOrient(dv);
+                    float x1 = (float) (lensd * (Math.tan(dor.x - or.x))) + (WIDTH / 2);
+                    float y1 = (float) (lensd * (Math.tan(dor.y + or.y))) + (HEIGHT / 2);
+                    if (f) {
+                        //System.out.println(dv + " | from p : " + dor + " | p : " + or);//TODO dor seems to be whats messed up
+                        f = false;
+                    }
+                    //g.setColor(new Color((int)(255*x2/(float)msize),255-(int)(255*x2/(float)msize),(int)(255*y2/(float)msize)));
+                    //float v=(c/(float)msize);
+                    g.setColor(new Color((int)(255*rn/(float)mssq),(int)((c%3==0)?255:0),(int)(255*rn/(float)mssq)));
+                    g.fillOval((int) x1 - 5, (int) y1 - 5, 10, 10);
+                    rn++;
+                    x++;
+                    if(x%aim==0){ y+=((im<0)?-1:1); }
+                }
+            }
+            //for (int x=0; x<)
+            /*
             for (int x=0; x<pointmap.length; x++){
                 for (int y=0; y<pointmap[0].length; y++) {
                     Vec3f p=pointmap[x][y];
@@ -253,11 +336,11 @@ public class Object implements FrameData{
                     /*if (getOrientDif(dor,or)>3.14159){
                     System.out.println(getOrientDif(dor,or)+">3.14");
                     return;}*/
-
+                    /*
                     float x1 = (float) (lensd * (Math.tan(dor.x - or.x))) + (WIDTH / 2);
                     float y1 = (float) (lensd * (Math.tan(dor.y + or.y))) + (HEIGHT / 2);
                     if (f) {
-                        System.out.println(dv + " | from p : " + dor + " | p : " + or);//TODO dor seems to be whats messed up
+                        //System.out.println(dv + " | from p : " + dor + " | p : " + or);//TODO dor seems to be whats messed up
                         f = false;
                     }
                     g.setColor(Color.BLACK);
@@ -275,21 +358,8 @@ public class Object implements FrameData{
                             g.drawLine((int)x1,(int)y1,(int)x3,(int)y3);
                         }
                     }
-                    /*for (Vec3f p2: points){
-                    int sim=0;if(p2.x==p.x){sim++;}if(p2.y==p.y){sim++;}if(p2.z==p.z){sim++;}
-                    if (sim!=2){continue;}
-                    //if (!(p2.x==p.x || p.y==p2.y || p.z==p2.z)){continue;}
-                    Vec3f dv1 = getDeltaVecBetween(p2,pos);
-                    Vec2f dor1 = getDeltaOrient(dv1);
-                    if (getOrientDif(dor,or)>3.14){continue;}
-                    float x1=(float)(lensd*(Math.tan(dor1.x-or.x)))+(WIDTH/2);
-                    float y1=(float)(lensd*(Math.tan(dor1.y+or.y)))+(HEIGHT/2);
-                    g.drawLine((int)x,(int)y,(int)x1,(int)y1);
-
-                    }*/
-                    //System.out.println("rendering at "+x+", "+y);
                 }
-            }
+            }*/
         }
 
 
