@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a50123d0-a48a-4304-a1fd-c6a509348a7a" name="Default" comment="fix for m=0">
+    <list default="true" id="a50123d0-a48a-4304-a1fd-c6a509348a7a" name="Default" comment="neater organization">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/3D-Sim/Object.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/3D-Sim/Object.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Object.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Object.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -15,14 +16,14 @@
     <session id="-1452248798">
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="java" value="7559" />
-          <entry key="txt" value="351" />
+          <entry key="java" value="7655" />
+          <entry key="txt" value="378" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JAVA" value="7559" />
-          <entry key="PLAIN_TEXT" value="351" />
+          <entry key="JAVA" value="7655" />
+          <entry key="PLAIN_TEXT" value="378" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -89,8 +90,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Object.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="5270">
-              <caret line="353" column="20" selection-start-line="353" selection-start-column="20" selection-end-line="353" selection-end-column="20" />
+            <state relative-caret-position="425">
+              <caret line="74" column="46" selection-start-line="74" selection-start-column="46" selection-end-line="74" selection-end-column="46" />
               <folding>
                 <element signature="e#18849#18850#0" expanded="true" />
                 <element signature="e#18927#18928#0" expanded="true" />
@@ -228,7 +229,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1575486902551" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1575487354105" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/src/java.policy.applet" />
     <property name="settings.editor.selected.configurable" value="preferences.keymap" />
   </component>
@@ -418,7 +419,14 @@
       <option name="project" value="LOCAL" />
       <updated>1575476674248</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="neater organization">
+      <created>1575487072815</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1575487072816</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -492,7 +500,8 @@
     <MESSAGE value="full rendering of 3d shapes" />
     <MESSAGE value="can make a torus!" />
     <MESSAGE value="fix for m=0" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix for m=0" />
+    <MESSAGE value="neater organization" />
+    <option name="LAST_COMMIT_MESSAGE" value="neater organization" />
   </component>
   <component name="editorHistoryManager">
     <entry file="jar://C:/Program Files/Java/jdk1.8.0_191/src.zip!/java/util/ArrayList.java">
@@ -528,8 +537,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Object.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5270">
-          <caret line="353" column="20" selection-start-line="353" selection-start-column="20" selection-end-line="353" selection-end-column="20" />
+        <state relative-caret-position="425">
+          <caret line="74" column="46" selection-start-line="74" selection-start-column="46" selection-end-line="74" selection-end-column="46" />
           <folding>
             <element signature="e#18849#18850#0" expanded="true" />
             <element signature="e#18927#18928#0" expanded="true" />

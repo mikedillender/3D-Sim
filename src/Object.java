@@ -39,10 +39,10 @@ public class Object implements FrameData{
             }
         }else if (shape==2){
             float sep=30;
-            int size=20;
+            int size=30;
             int maxv=4;
             int v=(int)(Math.floor(Math.random()*(maxv+.99)));
-            v=4;
+            v=6;
             pointmap=new Vec3f[size*2+1][size*2+1];
             for (int x=-size; x<=size;x+=1){
                 for (int y=-size; y<=size; y+=1) {
@@ -69,6 +69,10 @@ public class Object implements FrameData{
                             break;
                         case 5:
                             z=(float)(sep*sep*Math.sin(x+y));
+                            break;
+                        case 6:
+                            float c3=(float)Math.sqrt((x*x)+(y*y));
+                            z=(float)(sep*sep/4f*Math.sin(c3/2f));
                             break;
                     }
                     if (z>maxz){
