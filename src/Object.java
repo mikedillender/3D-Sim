@@ -401,7 +401,7 @@ public class Object implements FrameData{
                             if (x % aim == 0) {
                                 y += ((im < 0) ? -1 : 1);
                             }
-                        }
+                        }else { y += ((im < 0) ? -1 : 1);}
                     }
                 }
             }
