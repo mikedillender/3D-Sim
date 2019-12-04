@@ -214,7 +214,7 @@ public class Object implements FrameData{
         return newv;
     }
 
-    public void render(Graphics g, int WIDTH, int HEIGHT, float lensd, Vec3f pos, Vec2f or){
+    public void render(Graphics g, int WIDTH, int HEIGHT, float lensd, Vec3f pos, Vec2f or,float roty){
         if (shape==0) {
             if (points.size()<2){return;}
             g.setColor(color);
@@ -310,7 +310,8 @@ public class Object implements FrameData{
                     }
                     Vec3f p=pointmap[x2][y2];
                     if (p==null){ rn++;x++;if (aim!=0){ if(x%aim==0){ y+=(im<0)?-1:1; }}continue; }
-                    Vec3f dv = getDeltaVecBetween(p, pos);
+                    //Vec3f dv = getDeltaVecBetween(p, pos);
+                    Vec3f dv = getDeltaVecBetween(rotate(p,roty), pos);
                     Vec2f dor = getDeltaOrient(dv);
                     float x1 = (float) (lensd * (Math.tan(dor.x - or.x))) + (WIDTH / 2);
                     float y1 = (float) (lensd * (Math.tan(dor.y + or.y))) + (HEIGHT / 2);
@@ -337,7 +338,7 @@ public class Object implements FrameData{
                         if (x4>=0&&y4>=0&&y4<pointmap[0].length&&x4<pointmap.length){
                             Vec3f p2=pointmap[x4][y4];
                             if (p2==null){ cancel[((d<2)?0:1)]=true;continue; }
-                            Vec3f dv1 = getDeltaVecBetween(p2,pos);
+                            Vec3f dv1 = getDeltaVecBetween(rotate(p2,roty),pos);
                             Vec2f dor1 = getDeltaOrient(dv1);
                             if (getOrientDif(dor,or)>3.14){continue;}
                             float x3=(float)(lensd*(Math.tan(dor1.x-or.x)))+(WIDTH/2);
@@ -381,7 +382,7 @@ public class Object implements FrameData{
                         }
                         Vec3f p = pointmap[x2][y2];
                         if (p==null){ rn++;x++;if (aim!=0){ if(x%aim==0){ y+=(im<0)?-1:1; }}continue; }
-                        Vec3f dv = getDeltaVecBetween(p, pos);
+                        Vec3f dv = getDeltaVecBetween(rotate(p,roty), pos);
                         Vec2f dor = getDeltaOrient(dv);
                         float x1 = (float) (lensd * (Math.tan(dor.x - or.x))) + (WIDTH / 2);
                         float y1 = (float) (lensd * (Math.tan(dor.y + or.y))) + (HEIGHT / 2);
@@ -403,7 +404,7 @@ public class Object implements FrameData{
                             if (x4>=0&&y4>=0&&y4<pointmap[0].length&&x4<pointmap.length){
                                 Vec3f p2=pointmap[x4][y4];
                                 if (p2==null){ cancel[((d<2)?0:1)]=true;continue; }
-                                Vec3f dv1 = getDeltaVecBetween(p2,pos);
+                                Vec3f dv1 = getDeltaVecBetween(rotate(p2,roty),pos);
                                 Vec2f dor1 = getDeltaOrient(dv1);
                                 if (getOrientDif(dor,or)>3.14){continue;}
                                 float x3=(float)(lensd*(Math.tan(dor1.x-or.x)))+(WIDTH/2);
@@ -437,6 +438,15 @@ public class Object implements FrameData{
         }
 
 
+    }
+
+    public Vec3f rotate(Vec3f p,float orient){
+        float r=(float)(Math.sqrt((p.x*p.x)+(p.z*p.z)));
+        float o=(float)(Math.atan2(p.z,p.x));
+        float o1=o+orient;
+        float x1=r*(float)Math.cos(o1);
+        float z1=r*(float)Math.sin(o1);
+        return new Vec3f(x1,p.y,z1);
     }
 
     public Color doesLineCross(Vec2f orient, Vec3f pos){

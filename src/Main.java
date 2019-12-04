@@ -75,12 +75,12 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
         gfx.drawString((int)(orient.x*180/3.14f)+", "+(int)(orient.y*180/3.14f),50,80);
         sortObjects();
         Vec2f or1=new Vec2f(orient.x,0);//TODO REMOVE THIS LATER
-        or1=new Vec2f(orient.x,orient.y);//TODO REMOVE THIS LATER
+        or1=new Vec2f(orient.x,0);//TODO REMOVE THIS LATER
         for (Object o : objects){
-            o.render(gfx,WIDTH,HEIGHT,rld, pos,orient);
+            o.render(gfx,WIDTH,HEIGHT,rld, pos,or1,orient.y);
         }
         gfx.setColor(Color.BLACK);
-        frame.render(gfx,WIDTH,HEIGHT,rld, pos,or1);
+        frame.render(gfx,WIDTH,HEIGHT,rld, pos,or1,orient.y);
         String msg="particles : "+objects.size();
         gfx.setColor(Color.BLACK);
         gfx.setFont(gfx.getFont().deriveFont(30f));
@@ -187,13 +187,14 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
         orient.y=yor;
         if (orient.x>6.28){orient.x-=6.28f;}else if (orient.x<-6.28f){orient.x+=6.28f;}
         if (orient.y>6.28){orient.y-=6.28f;}else if (orient.y<-6.28f){orient.y+=6.28f;}
-        //if (up) {
+        if (up) {
             //System.out.println("not u[");
+            orient.y=0;
             float r1 = r * (float) (Math.cos(-yor));
-            pos.z = r * (float) (Math.sin(yor));
+            pos.z = 0;//r * (float) (Math.sin(yor));
             pos.x = -r1 * (float) (Math.cos(-xor));
             pos.y = r1 * (float) (Math.sin(-xor));
-        //}
+        }
         //System.out.println(pos+", "+orient);
         //System.out.println("->");
         //printPosData();
