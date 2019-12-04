@@ -16,6 +16,7 @@ public class Object implements FrameData{
     int minz=0;
     int zrange=0;
     float timer=0;
+    boolean side=false;
     public Object(int shape, Vec3f loc, Vec3f vel,float rad){
         points=new ArrayList<>();
         this.color=new Color((int)(Math.random()*255),(int)(Math.random()*255),(int)(Math.random()*255));
@@ -38,26 +39,45 @@ public class Object implements FrameData{
             }
         }else if (shape==2){
             float sep=30;
-            int size=10;
+            int size=20;
+            int maxv=4;
+            int v=(int)(Math.floor(Math.random()*(maxv+.99)));
+            v=4;
             pointmap=new Vec3f[size*2+1][size*2+1];
             for (int x=-size; x<=size;x+=1){
                 for (int y=-size; y<=size; y+=1) {
-                    //float z=size*((size-Math.abs(x))*(size-Math.abs(y))/(float)(size*size));
-                    //points.add(new Vec3f(x * sep, y * sep, z * sep));
-                    //float z=(float)(Math.sin(x/4f)*size)/(Math.abs(y)+.5f);
-                    //float z=sep*sep/4f*(float)(Math.sin(x/4f)+Math.sin(2.1+x*y/10f)-Math.cos(1.21+(x+y)/4f));
-                    /*float c=(size*size)-(x*x)-(y*y);//DOme
-                    float z=(c>0)?(float)(Math.sqrt(c)*sep):0;*/
-                    float c1=(float)Math.sqrt((x*x)+(y*y));
-                    float c2=9-(float)Math.pow(Math.abs((6-c1)),2);
-                    float z=(c2>0)?(sep*(float)Math.sqrt(c2)):0;
-                    //float z=1;
+                    float z=0;
+                    switch (v){
+                        case 0:
+                            z=size*((size-Math.abs(x))*(size-Math.abs(y))/(float)(size*size));
+                            break;
+                        case 1:
+                            z=(float)(Math.sin(x/4f)*size)/(Math.abs(y)+.5f);
+                            break;
+                        case 2:
+                            z=sep*sep/4f*(float)(Math.sin(x/3f)+Math.sin(2.1+x/12f+y/4f)-Math.cos(1.21+(x+y)/8f));
+                            break;
+                        case 3:
+                            float c=(size*size)-(x*x)-(y*y);//DOme
+                            z=(c>0)?(float)(Math.sqrt(c)*sep):0;
+                            break;
+                        case 4:
+                            float c1=(float)Math.sqrt((x*x)+(y*y));
+                            float c2=25-(float)Math.pow(Math.abs((14-c1)),2);
+                            if (c2<-20){continue;}
+                            z=(c2>0)?(sep*(float)Math.sqrt(c2)):0;
+                            break;
+                        case 5:
+                            z=(float)(sep*sep*Math.sin(x+y));
+                            break;
+                    }
                     if (z>maxz){
                         maxz=(int)Math.ceil(z);
                     }else if (z<minz){
                         minz=(int)(Math.floor(z));
                     }
-                    pointmap[size+x][size+y]=(new Vec3f(x * sep, y * sep, z));
+
+                    pointmap[size+x][size+y]=(new Vec3f(x * sep, (side)?z:(y * sep), (side)?(y*sep):z));
 
                 }
             }
@@ -285,6 +305,7 @@ public class Object implements FrameData{
                         y2=msize-1-y2;
                     }
                     Vec3f p=pointmap[x2][y2];
+                    if (p==null){ rn++;x++;if (aim!=0){ if(x%aim==0){ y+=(im<0)?-1:1; }}continue; }
                     Vec3f dv = getDeltaVecBetween(p, pos);
                     Vec2f dor = getDeltaOrient(dv);
                     float x1 = (float) (lensd * (Math.tan(dor.x - or.x))) + (WIDTH / 2);
@@ -292,7 +313,8 @@ public class Object implements FrameData{
                     if (f) {
                         //System.out.println(dv + " | from p : " + dor + " | p : " + or);//TODO dor seems to be whats messed up
                         f = false;
-                    }                        float zmult=(p.z-minz)/zrange;
+                    }
+                    float zmult=(((!side)?p.z:p.y)-minz)/zrange;
 
                     g.setColor(new Color((int)(255*x2*zmult/(float)msize),(int)(zmult*(255-(255*x2/(float)msize))),(int)(zmult*255*y2/(float)msize)));
 
@@ -310,6 +332,7 @@ public class Object implements FrameData{
                         int y4=y2+((d%2==1)?0:((d==0)?1:-1));
                         if (x4>=0&&y4>=0&&y4<pointmap[0].length&&x4<pointmap.length){
                             Vec3f p2=pointmap[x4][y4];
+                            if (p2==null){ cancel[((d<2)?0:1)]=true;continue; }
                             Vec3f dv1 = getDeltaVecBetween(p2,pos);
                             Vec2f dor1 = getDeltaOrient(dv1);
                             if (getOrientDif(dor,or)>3.14){continue;}
@@ -353,6 +376,7 @@ public class Object implements FrameData{
                             y2 = msize - 1 - y2;
                         }
                         Vec3f p = pointmap[x2][y2];
+                        if (p==null){ rn++;x++;if (aim!=0){ if(x%aim==0){ y+=(im<0)?-1:1; }}continue; }
                         Vec3f dv = getDeltaVecBetween(p, pos);
                         Vec2f dor = getDeltaOrient(dv);
                         float x1 = (float) (lensd * (Math.tan(dor.x - or.x))) + (WIDTH / 2);
@@ -361,7 +385,7 @@ public class Object implements FrameData{
                             //System.out.println(dv + " | from p : " + dor + " | p : " + or);//TODO dor seems to be whats messed up
                             f = false;
                         }
-                        float zmult=(p.z-minz)/zrange;
+                        float zmult=(((!side)?p.z:p.y)-minz)/zrange;
                         g.setColor(new Color((int)(255*x2*zmult/(float)msize),(int)(zmult*(255-(255*x2/(float)msize))),(int)(zmult*255*y2/(float)msize)));
                         //float v=(c/(float)msize);
                         //g.setColor(new Color((int) (255 * rn / (float) mssq), (int) ((c % 3 == 0) ? 255 : 0), (int) (255 * rn / (float) mssq)));
@@ -374,6 +398,7 @@ public class Object implements FrameData{
                             int y4=y2+((d%2==1)?0:((d==0)?1:-1));
                             if (x4>=0&&y4>=0&&y4<pointmap[0].length&&x4<pointmap.length){
                                 Vec3f p2=pointmap[x4][y4];
+                                if (p2==null){ cancel[((d<2)?0:1)]=true;continue; }
                                 Vec3f dv1 = getDeltaVecBetween(p2,pos);
                                 Vec2f dor1 = getDeltaOrient(dv1);
                                 if (getOrientDif(dor,or)>3.14){continue;}
