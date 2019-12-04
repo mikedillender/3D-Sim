@@ -45,9 +45,12 @@ public class Object implements FrameData{
                     //float z=size*((size-Math.abs(x))*(size-Math.abs(y))/(float)(size*size));
                     //points.add(new Vec3f(x * sep, y * sep, z * sep));
                     //float z=(float)(Math.sin(x/4f)*size)/(Math.abs(y)+.5f);
-                    //float z=sep/4f*(float)(Math.sin(x/4f)+Math.sin(2.1+x*y/10f)-Math.cos(1.21+(x+y)/4f));
-                    float c=(size*size)-(x*x)-(y*y);//DOme
-                    float z=(c>0)?(float)(Math.sqrt(c)*sep):0;
+                    //float z=sep*sep/4f*(float)(Math.sin(x/4f)+Math.sin(2.1+x*y/10f)-Math.cos(1.21+(x+y)/4f));
+                    /*float c=(size*size)-(x*x)-(y*y);//DOme
+                    float z=(c>0)?(float)(Math.sqrt(c)*sep):0;*/
+                    float c1=(float)Math.sqrt((x*x)+(y*y));
+                    float c2=9-(float)Math.pow(Math.abs((6-c1)),2);
+                    float z=(c2>0)?(sep*(float)Math.sqrt(c2)):0;
                     //float z=1;
                     if (z>maxz){
                         maxz=(int)Math.ceil(z);
