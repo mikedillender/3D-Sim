@@ -11,7 +11,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
     //BASIC VARIABLES
     private final int WIDTH=1180, HEIGHT=(int)(WIDTH*1f);
     ArrayList<Object> objects=new ArrayList<>();
-    float rad=-BOUNDS[0]*20f;
+    float rad=-BOUNDS[0]*10f;
     Vec3f pos=new Vec3f(-rad,0,0);
     Vec2f orient=new Vec2f(0,0);
     //GRAPHICS OBJECTS
@@ -185,11 +185,12 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
         //System.out.println(pos+", "+orient);
         orient.x=xor;
         orient.y=yor;
+        yor=0;
         if (orient.x>6.28){orient.x-=6.28f;}else if (orient.x<-6.28f){orient.x+=6.28f;}
         if (orient.y>6.28){orient.y-=6.28f;}else if (orient.y<-6.28f){orient.y+=6.28f;}
         if (up) {
             //System.out.println("not u[");
-            orient.y=0;
+            //orient.y=0;
             float r1 = r * (float) (Math.cos(-yor));
             pos.z = 0;//r * (float) (Math.sin(yor));
             pos.x = -r1 * (float) (Math.cos(-xor));

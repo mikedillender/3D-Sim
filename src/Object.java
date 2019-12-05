@@ -17,6 +17,9 @@ public class Object implements FrameData{
     int zrange=0;
     float timer=0;
     boolean side=false;
+    float avg=0;
+    boolean polar=false;
+
     public Object(int shape, Vec3f loc, Vec3f vel,float rad){
         points=new ArrayList<>();
         this.color=new Color((int)(Math.random()*255),(int)(Math.random()*255),(int)(Math.random()*255));
@@ -28,6 +31,8 @@ public class Object implements FrameData{
     }
 
     public void createPoints(){
+        int numAdded=0;
+        float sum=0;
         if (shape==1){
             points=new ArrayList<>();
             for (int x=-1; x<=1;x+=2){
@@ -39,14 +44,28 @@ public class Object implements FrameData{
             }
         }else if (shape==2){
             float sep=30;
-            int size=30;
+            int size=18;
             int maxv=4;
             int v=(int)(Math.floor(Math.random()*(maxv+.99)));
-            v=6;
+            v=7;
+
+            float vr=25;
+            int vs=(int)(Math.random()*5)+5;
+            float[][] vecs=new float[vs][];
+
+            for (int i=0; i<vs; i++) {
+                vecs[i]=new float[]{(float)(Math.random()*vr-(vr/2)),(float)(Math.random()*vr-(vr/2)),(float)(Math.random()*vr-(vr/2)),(float)(Math.random()*vr-(vr/2))};
+            }
+            for (float[] vc:vecs) {
+                if (Math.abs(vc[1])<1){ vc[1]=(vc[1]<0)?-1:1; }
+                if (Math.abs(vc[3])<1){ vc[3]=(vc[3]<0)?-1:1; }
+            }
             pointmap=new Vec3f[size*2+1][size*2+1];
             for (int x=-size; x<=size;x+=1){
                 for (int y=-size; y<=size; y+=1) {
                     float z=0;
+                    float x1=x*sep;
+                    float y1=y*sep;
                     switch (v){
                         case 0:
                             z=size*((size-Math.abs(x))*(size-Math.abs(y))/(float)(size*size));
@@ -55,7 +74,12 @@ public class Object implements FrameData{
                             z=(float)(Math.sin(x/4f)*size)/(Math.abs(y)+.5f);
                             break;
                         case 2:
-                            z=sep*sep/4f*(float)(Math.sin(x/3f)+Math.sin(2.1+x/12f+y/4f)-Math.cos(1.21+(x+y)/8f));
+                            for (float[] vc:vecs){
+                                z=z+(float)(Math.sin(((x+vc[0])/vc[1])+((y+vc[2])/vc[3])));
+                            }
+                            z=z/vecs.length;
+                            //z=sep*sep/8f*(float)(Math.sin(x/3f)+Math.sin(2.1+x/12f+y/4f)-Math.cos(1.21+(x+y)/8f));
+                            z*=sep*sep/4f;
                             break;
                         case 3:
                             float c=(size*size)-(x*x)-(y*y);//DOme
@@ -72,7 +96,18 @@ public class Object implements FrameData{
                             break;
                         case 6:
                             float c3=(float)Math.sqrt((x*x)+(y*y));
-                            z=(float)(sep*sep/4f*Math.sin(c3/2f));
+                            z=(float)(sep*sep/4f*Math.cos(c3/2f));
+                            break;
+                        case 7://polar attempt
+                            //float r=(float)(200*Math.sin((y)/(size*2f)));
+                            float xor=(3.14159f*((x+size)/(float)size));
+                            float yor=(3.14159f*((y+size)/(float)size));
+                            float r=(float)(200*Math.sin(2*(yor)));
+                            float r1 = r * (float) (Math.cos(-yor));
+                            z = r * (float) (Math.sin(yor));
+                            x1 = -r1 * (float) (Math.cos(-xor));
+                            y1 = r1 * (float) (Math.sin(-xor));
+                            polar=true;
                             break;
                     }
                     if (z>maxz){
@@ -80,12 +115,14 @@ public class Object implements FrameData{
                     }else if (z<minz){
                         minz=(int)(Math.floor(z));
                     }
-
-                    pointmap[size+x][size+y]=(new Vec3f(x * sep, (side)?z:(y * sep), (side)?(y*sep):z));
+                    sum+=z;
+                    numAdded++;
+                    pointmap[size+x][size+y]=(new Vec3f(x1, (side)?z:(y1), (side)?(y*sep):z));
 
                 }
             }
         }
+        avg=sum/numAdded;
         zrange=maxz-minz;
     }
 
@@ -290,9 +327,13 @@ public class Object implements FrameData{
             int aim=Math.abs(im);
             int q=(pos.x<0)?((pos.y>0)?2:3):((pos.y>0)?1:4);
             //System.out.println("in quadrant "+q+" | p : "+pos);
-            System.out.println("in quad "+q+", angle small? =  "+small+" |  m = "+aim);
+            //System.out.println("in quad "+q+", angle small? =  "+small+" |  m = "+aim);
+            boolean net=false;
+            if (polar){net=true;}
             int rn=0;
             int mssq=msize*msize+(msize*4);
+            boolean land=true;
+            if (polar){land=false;}
             for (int c=0; c<msize; c++){
                 int x=0;
                 int y=c;
@@ -315,18 +356,14 @@ public class Object implements FrameData{
                     Vec2f dor = getDeltaOrient(dv);
                     float x1 = (float) (lensd * (Math.tan(dor.x - or.x))) + (WIDTH / 2);
                     float y1 = (float) (lensd * (Math.tan(dor.y + or.y))) + (HEIGHT / 2);
-                    if (f) {
-                        //System.out.println(dv + " | from p : " + dor + " | p : " + or);//TODO dor seems to be whats messed up
-                        f = false;
-                    }
                     float zmult=(((!side)?p.z:p.y)-minz)/zrange;
-
-                    g.setColor(new Color((int)(255*x2*zmult/(float)msize),(int)(zmult*(255-(255*x2/(float)msize))),(int)(zmult*255*y2/(float)msize)));
-
-                    //g.setColor(new Color((int)(255*x2/(float)msize),255-(int)(255*x2/(float)msize),(int)(255*y2/(float)msize)));
-                    //float v=(c/(float)msize);
-                    //g.setColor(new Color((int)((c%3==0)?255:0),(int)(255*rn/(float)mssq),(int)(255*rn/(float)mssq)));
-                    //g.setColor((int)(25));
+                    if (land){
+                        boolean abvavg=(((!side)?p.z:p.y)>avg);
+                        //if (!abvavg){rn++;x++;if (aim!=0){ if(x%aim==0){ y+=(im<0)?-1:1; }}continue;}
+                        g.setColor(new Color((int)(100*zmult),(int)(zmult*255),(int)((abvavg)?80:(int)((zmult*500>255)?255:(zmult*500)))));
+                    }else {
+                        g.setColor(new Color((int) (255 * x2 * zmult / (float) msize), (int) (zmult * (255 - (255 * x2 / (float) msize))), (int) (zmult * 255 * y2 / (float) msize)));
+                    }
                     int[] t1x=new int[]{(int)x1,0,0};
                     int[] t1y=new int[]{(int)y1,0,0};
                     int[] t2x=new int[]{(int)x1,0,0};
@@ -350,13 +387,12 @@ public class Object implements FrameData{
                                 t2x[((d==2)?1:2)]=(int)x3;
                                 t2y[((d==2)?1:2)]=(int)y3;
                             }
-                            //g.drawLine((int)x1,(int)y1,(int)x3,(int)y3);
+                            if(net){g.drawLine((int)x1,(int)y1,(int)x3,(int)y3);}
                         }else {
                             cancel[((d<2)?0:1)]=true;
                         }
                     }
-                    if (!cancel[0]){ g.fillPolygon(t1x,t1y,3);}
-                    if(!cancel[1]) { g.fillPolygon(t2x, t2y, 3); }
+                    if (!net){ if (!cancel[0]){ g.fillPolygon(t1x,t1y,3);}if(!cancel[1]) { g.fillPolygon(t2x, t2y, 3); }}
 
                     //g.fillOval((int) x1 - 5, (int) y1 - 5, 10, 10);
                     rn++;
@@ -386,14 +422,14 @@ public class Object implements FrameData{
                         Vec2f dor = getDeltaOrient(dv);
                         float x1 = (float) (lensd * (Math.tan(dor.x - or.x))) + (WIDTH / 2);
                         float y1 = (float) (lensd * (Math.tan(dor.y + or.y))) + (HEIGHT / 2);
-                        if (f) {
-                            //System.out.println(dv + " | from p : " + dor + " | p : " + or);//TODO dor seems to be whats messed up
-                            f = false;
-                        }
                         float zmult=(((!side)?p.z:p.y)-minz)/zrange;
-                        g.setColor(new Color((int)(255*x2*zmult/(float)msize),(int)(zmult*(255-(255*x2/(float)msize))),(int)(zmult*255*y2/(float)msize)));
-                        //float v=(c/(float)msize);
-                        //g.setColor(new Color((int) (255 * rn / (float) mssq), (int) ((c % 3 == 0) ? 255 : 0), (int) (255 * rn / (float) mssq)));
+                        if (land){
+                            boolean abvavg=(((!side)?p.z:p.y)>avg);
+                            //if (!abvavg){rn++;x++;if (aim!=0){ if(x%aim==0){ y+=(im<0)?-1:1; }}continue;}
+                            g.setColor(new Color((int)(100*zmult),(int)(zmult*255),(int)((abvavg)?80:(int)((zmult*500>255)?255:(zmult*500)))));
+                        }else {
+                            g.setColor(new Color((int) (255 * x2 * zmult / (float) msize), (int) (zmult * (255 - (255 * x2 / (float) msize))), (int) (zmult * 255 * y2 / (float) msize)));
+                        }
                         int[] t1x=new int[]{(int)x1,0,0};int[] t1y=new int[]{(int)y1,0,0};
                         int[] t2x=new int[]{(int)x1,0,0};int[] t2y=new int[]{(int)y1,0,0};
 
@@ -416,13 +452,12 @@ public class Object implements FrameData{
                                     t2x[((d==2)?1:2)]=(int)x3;
                                     t2y[((d==2)?1:2)]=(int)y3;
                                 }
-                                //g.drawLine((int)x1,(int)y1,(int)x3,(int)y3);
+                                if(net){g.drawLine((int)x1,(int)y1,(int)x3,(int)y3);}
                             }else {
                                 cancel[((d<2)?0:1)]=true;
                             }
                         }
-                        if (!cancel[0]){ g.fillPolygon(t1x,t1y,3);}
-                        if(!cancel[1]) { g.fillPolygon(t2x, t2y, 3); }
+                        if (!net){ if (!cancel[0]){ g.fillPolygon(t1x,t1y,3);}if(!cancel[1]) { g.fillPolygon(t2x, t2y, 3); }}
 
                         //g.fillOval((int) x1 - 5, (int) y1 - 5, 10, 10);
                         rn++;
