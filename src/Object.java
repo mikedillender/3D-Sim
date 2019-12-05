@@ -19,6 +19,7 @@ public class Object implements FrameData{
     boolean side=false;
     float avg=0;
     boolean polar=false;
+    boolean land=false;
 
     public Object(int shape, Vec3f loc, Vec3f vel,float rad){
         points=new ArrayList<>();
@@ -44,10 +45,10 @@ public class Object implements FrameData{
             }
         }else if (shape==2){
             float sep=30;
-            int size=18;
+            int size=32;
             int maxv=4;
             int v=(int)(Math.floor(Math.random()*(maxv+.99)));
-            v=7;
+            v=8;
 
             float vr=25;
             int vs=(int)(Math.random()*5)+5;
@@ -80,6 +81,7 @@ public class Object implements FrameData{
                             z=z/vecs.length;
                             //z=sep*sep/8f*(float)(Math.sin(x/3f)+Math.sin(2.1+x/12f+y/4f)-Math.cos(1.21+(x+y)/8f));
                             z*=sep*sep/4f;
+                            land=true;
                             break;
                         case 3:
                             float c=(size*size)-(x*x)-(y*y);//DOme
@@ -102,8 +104,26 @@ public class Object implements FrameData{
                             //float r=(float)(200*Math.sin((y)/(size*2f)));
                             float xor=(3.14159f*((x+size)/(float)size));
                             float yor=(3.14159f*((y+size)/(float)size));
-                            float r=(float)(200*Math.sin(2*(yor)));
+
+                            float r=200*(float)(Math.sin(xor*2));
+
+                            if (Float.isNaN(r)||Float.isInfinite(r)){r=maxz;}
                             float r1 = r * (float) (Math.cos(-yor));
+                            z = r * (float) (Math.sin(yor));
+                            x1 = -r1 * (float) (Math.cos(-xor));
+                            y1 = r1 * (float) (Math.sin(-xor));
+                            polar=true;
+                            break;
+                        case 8:
+                            xor=(float)(Math.PI*((x+size)/(float)size));
+                            yor=(float)(Math.PI*((y+size)/(float)size));
+
+                            //if (Math.abs(xor)%3.1415>.2){continue;}
+                            r=(float)Math.sqrt((Math.pow((100/Math.cos(Math.abs((xor%(3.14159f/2))-(3.14159f/4)))),2)+Math.pow(100/Math.cos(Math.abs((yor%(3.14159f/2))-(3.14159f/4))),2)));
+                            //r=(float)((100f/Math.cos(Math.abs(((xor%(Math.PI/2))-(Math.PI/4))))));
+
+                            if (Float.isNaN(r)||Float.isInfinite(r)){continue;}
+                            r1 = r * (float) (Math.cos(-yor));
                             z = r * (float) (Math.sin(yor));
                             x1 = -r1 * (float) (Math.cos(-xor));
                             y1 = r1 * (float) (Math.sin(-xor));
@@ -332,7 +352,7 @@ public class Object implements FrameData{
             if (polar){net=true;}
             int rn=0;
             int mssq=msize*msize+(msize*4);
-            boolean land=true;
+            land=true;
             if (polar){land=false;}
             for (int c=0; c<msize; c++){
                 int x=0;
@@ -362,7 +382,9 @@ public class Object implements FrameData{
                         //if (!abvavg){rn++;x++;if (aim!=0){ if(x%aim==0){ y+=(im<0)?-1:1; }}continue;}
                         g.setColor(new Color((int)(100*zmult),(int)(zmult*255),(int)((abvavg)?80:(int)((zmult*500>255)?255:(zmult*500)))));
                     }else {
-                        g.setColor(new Color((int) (255 * x2 * zmult / (float) msize), (int) (zmult * (255 - (255 * x2 / (float) msize))), (int) (zmult * 255 * y2 / (float) msize)));
+                        try {
+                            g.setColor(new Color((int) (255 * x2 * zmult / (float) msize), (int) (zmult * (255 - (255 * x2 / (float) msize))), (int) (zmult * 255 * y2 / (float) msize)));
+                        }catch (java.lang.IllegalArgumentException e){ System.out.println("fail"); }
                     }
                     int[] t1x=new int[]{(int)x1,0,0};
                     int[] t1y=new int[]{(int)y1,0,0};
@@ -428,8 +450,8 @@ public class Object implements FrameData{
                             //if (!abvavg){rn++;x++;if (aim!=0){ if(x%aim==0){ y+=(im<0)?-1:1; }}continue;}
                             g.setColor(new Color((int)(100*zmult),(int)(zmult*255),(int)((abvavg)?80:(int)((zmult*500>255)?255:(zmult*500)))));
                         }else {
-                            g.setColor(new Color((int) (255 * x2 * zmult / (float) msize), (int) (zmult * (255 - (255 * x2 / (float) msize))), (int) (zmult * 255 * y2 / (float) msize)));
-                        }
+                            try{g.setColor(new Color((int) (255 * x2 * zmult / (float) msize), (int) (zmult * (255 - (255 * x2 / (float) msize))), (int) (zmult * 255 * y2 / (float) msize)));
+                            }catch (java.lang.IllegalArgumentException e){ }}
                         int[] t1x=new int[]{(int)x1,0,0};int[] t1y=new int[]{(int)y1,0,0};
                         int[] t2x=new int[]{(int)x1,0,0};int[] t2y=new int[]{(int)y1,0,0};
 

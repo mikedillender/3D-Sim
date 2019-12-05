@@ -11,7 +11,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
     //BASIC VARIABLES
     private final int WIDTH=1180, HEIGHT=(int)(WIDTH*1f);
     ArrayList<Object> objects=new ArrayList<>();
-    float rad=-BOUNDS[0]*10f;
+    float rad=-500f;
     Vec3f pos=new Vec3f(-rad,0,0);
     Vec2f orient=new Vec2f(0,0);
     //GRAPHICS OBJECTS
@@ -73,6 +73,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
         gfx.setColor(Color.BLUE);
         gfx.drawString(fov,50,50);
         gfx.drawString((int)(orient.x*180/3.14f)+", "+(int)(orient.y*180/3.14f),50,80);
+        gfx.drawString("rad = "+(int)(rad),50,120);
         sortObjects();
         Vec2f or1=new Vec2f(orient.x,0);//TODO REMOVE THIS LATER
         or1=new Vec2f(orient.x,0);//TODO REMOVE THIS LATER
