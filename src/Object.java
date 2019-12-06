@@ -12,14 +12,12 @@ public class Object implements FrameData{
     Color color;
     ArrayList<Vec3f> points;
     Vec3f[][] pointmap;
-    int maxz=0;
-    int minz=0;
-    int zrange=0;
     float timer=0;
     boolean side=false;
     float avg=0;
     boolean polar=false;
     boolean land=false;
+    float[][] vrngs=new float[3][3];
 
     public Object(int shape, Vec3f loc, Vec3f vel,float rad){
         points=new ArrayList<>();
@@ -64,41 +62,39 @@ public class Object implements FrameData{
             pointmap=new Vec3f[size*2+1][size*2+1];
             for (int x=-size; x<=size;x+=1){
                 for (int y=-size; y<=size; y+=1) {
-                    float z=0;
-                    float x1=x*sep;
-                    float y1=y*sep;
+                    float[] v1=new float[]{x*sep,y*sep,0};
                     switch (v){
                         case 0:
-                            z=size*((size-Math.abs(x))*(size-Math.abs(y))/(float)(size*size));
+                            v1[2]=size*((size-Math.abs(x))*(size-Math.abs(y))/(float)(size*size));
                             break;
                         case 1:
-                            z=(float)(Math.sin(x/4f)*size)/(Math.abs(y)+.5f);
+                            v1[2]=(float)(Math.sin(x/4f)*size)/(Math.abs(y)+.5f);
                             break;
                         case 2:
                             for (float[] vc:vecs){
-                                z=z+(float)(Math.sin(((x+vc[0])/vc[1])+((y+vc[2])/vc[3])));
+                                v1[2]=v1[2]+(float)(Math.sin(((x+vc[0])/vc[1])+((y+vc[2])/vc[3])));
                             }
-                            z=z/vecs.length;
+                            v1[2]=v1[2]/vecs.length;
                             //z=sep*sep/8f*(float)(Math.sin(x/3f)+Math.sin(2.1+x/12f+y/4f)-Math.cos(1.21+(x+y)/8f));
-                            z*=sep*sep/4f;
+                            v1[2]*=sep*sep/4f;
                             land=true;
                             break;
                         case 3:
                             float c=(size*size)-(x*x)-(y*y);//DOme
-                            z=(c>0)?(float)(Math.sqrt(c)*sep):0;
+                            v1[2]=(c>0)?(float)(Math.sqrt(c)*sep):0;
                             break;
                         case 4:
                             float c1=(float)Math.sqrt((x*x)+(y*y));
                             float c2=25-(float)Math.pow(Math.abs((14-c1)),2);
                             if (c2<-20){continue;}
-                            z=(c2>0)?(sep*(float)Math.sqrt(c2)):0;
+                            v1[2]=(c2>0)?(sep*(float)Math.sqrt(c2)):0;
                             break;
                         case 5:
-                            z=(float)(sep*sep*Math.sin(x+y));
+                            v1[2]=(float)(sep*sep*Math.sin(x+y));
                             break;
                         case 6:
                             float c3=(float)Math.sqrt((x*x)+(y*y));
-                            z=(float)(sep*sep/4f*Math.cos(c3/2f));
+                            v1[2]=(float)(sep*sep/4f*Math.cos(c3/2f));
                             break;
                         case 7://polar attempt
                             //float r=(float)(200*Math.sin((y)/(size*2f)));
@@ -107,11 +103,11 @@ public class Object implements FrameData{
 
                             float r=200*(float)(Math.sin(xor*2));
 
-                            if (Float.isNaN(r)||Float.isInfinite(r)){r=maxz;}
+                            if (Float.isNaN(r)||Float.isInfinite(r)){r=200;}
                             float r1 = r * (float) (Math.cos(-yor));
-                            z = r * (float) (Math.sin(yor));
-                            x1 = -r1 * (float) (Math.cos(-xor));
-                            y1 = r1 * (float) (Math.sin(-xor));
+                            v1[2] = r * (float) (Math.sin(yor));
+                            v1[0] = -r1 * (float) (Math.cos(-xor));
+                            v1[1] = r1 * (float) (Math.sin(-xor));
                             polar=true;
                             break;
                         case 8:
@@ -119,31 +115,35 @@ public class Object implements FrameData{
                             yor=(float)(Math.PI*((y+size)/(float)size));
 
                             //if (Math.abs(xor)%3.1415>.2){continue;}
-                            r=(float)Math.sqrt((Math.pow((100/Math.cos(Math.abs((xor%(3.14159f/2))-(3.14159f/4)))),2)+Math.pow(100/Math.cos(Math.abs((yor%(3.14159f/2))-(3.14159f/4))),2)));
+                            r=(float)Math.sqrt((Math.pow((100/Math.cos(Math.abs((xor%(3.14159f/2))-(3.14159f/4)))),2)+Math.pow(100/Math.cos(Math.abs(((yor+(3.14159f/4))%(3.14159f/2))-(3.14159f/4))),2)));
+                            //r=(float)(((100/Math.cos(Math.abs((xor%(3.14159f/2))-(3.14159f/4))))/Math.cos(Math.abs(((yor+(3.14159f/4))%(3.14159f/2))-(3.14159f/4)))));
                             //r=(float)((100f/Math.cos(Math.abs(((xor%(Math.PI/2))-(Math.PI/4))))));
-
+                            //r=200*xor;
                             if (Float.isNaN(r)||Float.isInfinite(r)){continue;}
                             r1 = r * (float) (Math.cos(-yor));
-                            z = r * (float) (Math.sin(yor));
-                            x1 = -r1 * (float) (Math.cos(-xor));
-                            y1 = r1 * (float) (Math.sin(-xor));
+                            v1[2] = r * (float) (Math.sin(yor));
+                            v1[0] = -r1 * (float) (Math.cos(-xor));
+                            v1[1] = r1 * (float) (Math.sin(-xor));
                             polar=true;
                             break;
                     }
-                    if (z>maxz){
-                        maxz=(int)Math.ceil(z);
-                    }else if (z<minz){
-                        minz=(int)(Math.floor(z));
+
+                    for (int i=0; i<3; i++){
+                        if (v1[i]>vrngs[i][1]){ vrngs[i][1]=(float)Math.ceil(v1[i]); }
+                        if (v1[i]<vrngs[i][0]){ vrngs[i][0]=(float)Math.floor(v1[i]); }
                     }
-                    sum+=z;
+                    sum+=v1[2];
                     numAdded++;
-                    pointmap[size+x][size+y]=(new Vec3f(x1, (side)?z:(y1), (side)?(y*sep):z));
+                    pointmap[size+x][size+y]=(new Vec3f(v1[0], (side)?v1[2]:(v1[1]), (side)?v1[1]:v1[2]));
 
                 }
             }
         }
         avg=sum/numAdded;
-        zrange=maxz-minz;
+        for (int i=0; i<3; i++) {
+            System.out.println(i+" | "+vrngs[i][0]+" - "+vrngs[i][1]);
+            vrngs[i][2]=vrngs[i][1]-vrngs[i][0];
+        }
     }
 
     public float getVolume(){ return (rad*rad*rad*3.14f*4/3); }
@@ -376,7 +376,9 @@ public class Object implements FrameData{
                     Vec2f dor = getDeltaOrient(dv);
                     float x1 = (float) (lensd * (Math.tan(dor.x - or.x))) + (WIDTH / 2);
                     float y1 = (float) (lensd * (Math.tan(dor.y + or.y))) + (HEIGHT / 2);
-                    float zmult=(((!side)?p.z:p.y)-minz)/zrange;
+                    float zmult=(((!side)?((p.z-vrngs[2][0])/vrngs[2][2]):((p.y-vrngs[1][0])/vrngs[1][2])));
+
+
                     if (land){
                         boolean abvavg=(((!side)?p.z:p.y)>avg);
                         //if (!abvavg){rn++;x++;if (aim!=0){ if(x%aim==0){ y+=(im<0)?-1:1; }}continue;}
@@ -444,7 +446,7 @@ public class Object implements FrameData{
                         Vec2f dor = getDeltaOrient(dv);
                         float x1 = (float) (lensd * (Math.tan(dor.x - or.x))) + (WIDTH / 2);
                         float y1 = (float) (lensd * (Math.tan(dor.y + or.y))) + (HEIGHT / 2);
-                        float zmult=(((!side)?p.z:p.y)-minz)/zrange;
+                        float zmult=(((!side)?((p.z-vrngs[2][0])/vrngs[2][2]):((p.y-vrngs[1][0])/vrngs[1][2])));
                         if (land){
                             boolean abvavg=(((!side)?p.z:p.y)>avg);
                             //if (!abvavg){rn++;x++;if (aim!=0){ if(x%aim==0){ y+=(im<0)?-1:1; }}continue;}
