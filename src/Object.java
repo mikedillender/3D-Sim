@@ -32,6 +32,8 @@ public class Object implements FrameData{
     public void createPoints(){
         int numAdded=0;
         float sum=0;
+        float minr=0;
+        float maxr=0;
         if (shape==1){
             points=new ArrayList<>();
             for (int x=-1; x<=1;x+=2){
@@ -43,7 +45,7 @@ public class Object implements FrameData{
             }
         }else if (shape==2){
             float sep=30;
-            int size=32;
+            int size=64;
             int maxv=4;
             int v=(int)(Math.floor(Math.random()*(maxv+.99)));
             v=8;
@@ -115,8 +117,17 @@ public class Object implements FrameData{
                             yor=(float)(Math.PI*((y+size)/(float)size));
 
                             //if (Math.abs(xor)%3.1415>.2){continue;}
-                            r=(float)Math.sqrt((Math.pow((100/Math.cos(Math.abs((xor%(3.14159f/2))-(3.14159f/4)))),2)+Math.pow(100/Math.cos(Math.abs(((yor+(3.14159f/4))%(3.14159f/2))-(3.14159f/4))),2)));
-                            //r=(float)(((100/Math.cos(Math.abs((xor%(3.14159f/2))-(3.14159f/4))))/Math.cos(Math.abs(((yor+(3.14159f/4))%(3.14159f/2))-(3.14159f/4)))));
+                            float s=50;
+                            //float
+                            //r=(float)Math.sqrt((Math.pow((100/Math.cos(Math.abs((xor%(3.14159f/2))-(3.14159f/4)))),2)+Math.pow(100/Math.cos(Math.abs(((yor+(3.14159f/4))%(3.14159f/2))-(3.14159f/4))),2)));
+                            //r=(float)(((100/((Math.cos(Math.abs((xor%(3.14159f/2))-(3.14159f/4))))*Math.cos(Math.abs(((yor+(3.14159f/4))%(3.14159f/2))-(3.14159f/4)))))));
+                            //if (r<minr){minr=r;}
+                            //if (r>maxr){maxr=r;}
+                            r=100;
+                            r=(float)(100/Math.cos(Math.abs((yor%(3.14159f/2)))));
+                            //if (r>Math.sqrt(30000)){r=(float)(Math.sqrt(30000));}
+                            if (Math.abs((yor%(3.14159f)))>(Math.PI/4f)){r=0;}
+                            //r=(float)(((100/(Math.cos(xor)*Math.sin(yor)))));
                             //r=(float)((100f/Math.cos(Math.abs(((xor%(Math.PI/2))-(Math.PI/4))))));
                             //r=200*xor;
                             if (Float.isNaN(r)||Float.isInfinite(r)){continue;}
@@ -139,6 +150,7 @@ public class Object implements FrameData{
                 }
             }
         }
+        System.out.println("radius:"+minr+"-"+maxr);
         avg=sum/numAdded;
         for (int i=0; i<3; i++) {
             System.out.println(i+" | "+vrngs[i][0]+" - "+vrngs[i][1]);
