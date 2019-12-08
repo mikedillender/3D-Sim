@@ -45,10 +45,10 @@ public class Object implements FrameData{
             }
         }else if (shape==2){
             float sep=30;
-            int size=64;
-            int maxv=4;
+            int size=32;
+            int maxv=7;
             int v=(int)(Math.floor(Math.random()*(maxv+.99)));
-            v=8;
+            v=7;
 
             float vr=25;
             int vs=(int)(Math.random()*5)+5;
@@ -102,7 +102,6 @@ public class Object implements FrameData{
                             //float r=(float)(200*Math.sin((y)/(size*2f)));
                             float xor=(3.14159f*((x+size)/(float)size));
                             float yor=(3.14159f*((y+size)/(float)size));
-
                             float r=200*(float)(Math.sin(xor*2));
 
                             if (Float.isNaN(r)||Float.isInfinite(r)){r=200;}
@@ -117,24 +116,37 @@ public class Object implements FrameData{
                             yor=(float)(Math.PI*((y+size)/(float)size));
 
                             //if (Math.abs(xor)%3.1415>.2){continue;}
-                            float s=50;
+                            float s=100;
                             //float
                             //r=(float)Math.sqrt((Math.pow((100/Math.cos(Math.abs((xor%(3.14159f/2))-(3.14159f/4)))),2)+Math.pow(100/Math.cos(Math.abs(((yor+(3.14159f/4))%(3.14159f/2))-(3.14159f/4))),2)));
                             //r=(float)(((100/((Math.cos(Math.abs((xor%(3.14159f/2))-(3.14159f/4))))*Math.cos(Math.abs(((yor+(3.14159f/4))%(3.14159f/2))-(3.14159f/4)))))));
-                            //if (r<minr){minr=r;}
-                            //if (r>maxr){maxr=r;}
                             r=100;
-                            r=(float)(100/Math.cos(Math.abs((yor%(3.14159f/2)))));
+                            float cornerx=(float)Math.abs(((yor+(Math.PI/4))%(Math.PI/2))-(Math.PI/4));
+                            float cornery=(float)Math.abs(((xor+(Math.PI/4))%(Math.PI/2))-(Math.PI/4));
+                            float r3=(float)(s/Math.cos(xor));
+
+                            r=(float)((100/(Math.cos(cornery)))/Math.cos(cornerx));
+                            if (r>190){
+                                System.out.println(r+" at "+(int)(cornerx*180/3.14)+", "+(int)(cornery*180/3.14));
+                            }
+                            //r=(float)(100/Math.cos(Math.abs((yor%(3.14159f/2)))));
+                            //if (yor>Math.PI/4){
+                                //r=(float)(100/Math.cos(Math.abs((xor%(3.14159f/2)))));
+                            r=100;
+                            //}
                             //if (r>Math.sqrt(30000)){r=(float)(Math.sqrt(30000));}
-                            if (Math.abs((yor%(3.14159f)))>(Math.PI/4f)){r=0;}
+                            //if (Math.abs((yor%(3.14159f)))>(Math.PI/4f)){r=0;}
                             //r=(float)(((100/(Math.cos(xor)*Math.sin(yor)))));
                             //r=(float)((100f/Math.cos(Math.abs(((xor%(Math.PI/2))-(Math.PI/4))))));
                             //r=200*xor;
+                            //if (xor>Math.PI/4||yor>Math.PI/4){ r=10;}
                             if (Float.isNaN(r)||Float.isInfinite(r)){continue;}
-                            r1 = r * (float) (Math.cos(-yor));
+                            if (r<minr){minr=r;}
+                            if (r>maxr){maxr=r;}
+                            r1 = r * (float) (Math.cos(yor));
                             v1[2] = r * (float) (Math.sin(yor));
-                            v1[0] = -r1 * (float) (Math.cos(-xor));
-                            v1[1] = r1 * (float) (Math.sin(-xor));
+                            v1[0] = r1 * (float) (Math.cos(xor));
+                            v1[1] = r1 * (float) (Math.sin(xor));
                             polar=true;
                             break;
                     }
@@ -153,8 +165,8 @@ public class Object implements FrameData{
         System.out.println("radius:"+minr+"-"+maxr);
         avg=sum/numAdded;
         for (int i=0; i<3; i++) {
-            System.out.println(i+" | "+vrngs[i][0]+" - "+vrngs[i][1]);
             vrngs[i][2]=vrngs[i][1]-vrngs[i][0];
+            System.out.println(i+" | "+vrngs[i][0]+" - "+vrngs[i][1]+" ("+vrngs[i][2]+")");
         }
     }
 
@@ -364,7 +376,7 @@ public class Object implements FrameData{
             if (polar){net=true;}
             int rn=0;
             int mssq=msize*msize+(msize*4);
-            land=true;
+            land=false;
             if (polar){land=false;}
             for (int c=0; c<msize; c++){
                 int x=0;

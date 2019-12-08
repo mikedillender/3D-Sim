@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a50123d0-a48a-4304-a1fd-c6a509348a7a" name="Default" comment="i just want to make a cube but it wont work :(">
+    <list default="true" id="a50123d0-a48a-4304-a1fd-c6a509348a7a" name="Default" comment="I need to study for gov ive wasted too much time on this, here is a cylinder tho">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/3D-Sim/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/3D-Sim/Main.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/3D-Sim/Object.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/3D-Sim/Object.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Object.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Object.java" afterDir="false" />
     </list>
@@ -17,14 +16,14 @@
     <session id="-1452248798">
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="java" value="10050" />
-          <entry key="txt" value="507" />
+          <entry key="java" value="10843" />
+          <entry key="txt" value="603" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JAVA" value="10050" />
-          <entry key="PLAIN_TEXT" value="507" />
+          <entry key="JAVA" value="10843" />
+          <entry key="PLAIN_TEXT" value="603" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -83,13 +82,13 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Object.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="265">
-              <caret line="118" column="105" selection-start-line="118" selection-start-column="105" selection-end-line="118" selection-end-column="105" />
+            <state relative-caret-position="634">
+              <caret line="47" column="23" selection-start-line="47" selection-start-column="23" selection-end-line="47" selection-end-column="23" />
               <folding>
-                <element signature="e#23232#23233#0" expanded="true" />
-                <element signature="e#23310#23311#0" expanded="true" />
-                <element signature="e#24021#24022#0" expanded="true" />
-                <element signature="e#24084#24085#0" expanded="true" />
+                <element signature="e#24886#24887#0" expanded="true" />
+                <element signature="e#24964#24965#0" expanded="true" />
+                <element signature="e#25675#25676#0" expanded="true" />
+                <element signature="e#25738#25739#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -115,9 +114,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>updat</find>
-      <find>addran</find>
-      <find>colli</find>
       <find>collid</find>
       <find>update</find>
       <find>attra</find>
@@ -145,6 +141,9 @@
       <find>draws</find>
       <find>valueranges</find>
       <find>shape==2</find>
+      <find>|</find>
+      <find>|</find>
+      <find>land=</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -224,7 +223,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1575649669441" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1575834744348" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/src/java.policy.applet" />
     <property name="settings.editor.selected.configurable" value="preferences.keymap" />
   </component>
@@ -449,7 +448,21 @@
       <option name="project" value="LOCAL" />
       <updated>1575578719730</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="cube is closer">
+      <created>1575649691028</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1575649691028</updated>
+    </task>
+    <task id="LOCAL-00023" summary="I need to study for gov ive wasted too much time on this, here is a cylinder tho">
+      <created>1575657460802</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1575657460802</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -473,7 +486,7 @@
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" type="SLIDING" weight="0.32938388" />
       <window_info anchor="bottom" id="Version Control" order="8" />
       <window_info anchor="bottom" id="Messages" order="9" weight="0.32938388" />
-      <window_info active="true" anchor="bottom" x="23" y="352" width="1459" height="258" id="Run" order="10" visible="true" weight="0.3163507" />
+      <window_info anchor="bottom" x="23" y="352" width="1459" height="258" id="Run" order="10" weight="0.3163507" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -528,7 +541,9 @@
     <MESSAGE value="full y-rotation" />
     <MESSAGE value="IT CAN GRAPH 3D POLAR FUNCTIONS NOW :D" />
     <MESSAGE value="i just want to make a cube but it wont work :(" />
-    <option name="LAST_COMMIT_MESSAGE" value="i just want to make a cube but it wont work :(" />
+    <MESSAGE value="cube is closer" />
+    <MESSAGE value="I need to study for gov ive wasted too much time on this, here is a cylinder tho" />
+    <option name="LAST_COMMIT_MESSAGE" value="I need to study for gov ive wasted too much time on this, here is a cylinder tho" />
   </component>
   <component name="editorHistoryManager">
     <entry file="jar://C:/Program Files/Java/jdk1.8.0_191/src.zip!/java/util/ArrayList.java">
@@ -564,13 +579,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Object.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="265">
-          <caret line="118" column="105" selection-start-line="118" selection-start-column="105" selection-end-line="118" selection-end-column="105" />
+        <state relative-caret-position="634">
+          <caret line="47" column="23" selection-start-line="47" selection-start-column="23" selection-end-line="47" selection-end-column="23" />
           <folding>
-            <element signature="e#23232#23233#0" expanded="true" />
-            <element signature="e#23310#23311#0" expanded="true" />
-            <element signature="e#24021#24022#0" expanded="true" />
-            <element signature="e#24084#24085#0" expanded="true" />
+            <element signature="e#24886#24887#0" expanded="true" />
+            <element signature="e#24964#24965#0" expanded="true" />
+            <element signature="e#25675#25676#0" expanded="true" />
+            <element signature="e#25738#25739#0" expanded="true" />
           </folding>
         </state>
       </provider>
