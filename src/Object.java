@@ -374,6 +374,8 @@ public class Object implements FrameData{
             //System.out.println("in quad "+q+", angle small? =  "+small+" |  m = "+aim);
             boolean net=false;
             if (polar){net=true;}
+            boolean panels=false;if (polar){panels=true;};
+            ArrayList<int[][]> pls=new ArrayList<>();
             int rn=0;
             int mssq=msize*msize+(msize*4);
             land=false;
@@ -397,12 +399,13 @@ public class Object implements FrameData{
                     if (p==null){ rn++;x++;if (aim!=0){ if(x%aim==0){ y+=(im<0)?-1:1; }}continue; }
                     //Vec3f dv = getDeltaVecBetween(p, pos);
                     Vec3f dv = getDeltaVecBetween(rotate(p,roty), pos);
+                    int dist=(int)(dv.length()*10);
                     Vec2f dor = getDeltaOrient(dv);
                     float x1 = (float) (lensd * (Math.tan(dor.x - or.x))) + (WIDTH / 2);
                     float y1 = (float) (lensd * (Math.tan(dor.y + or.y))) + (HEIGHT / 2);
                     float zmult=(((!side)?((p.z-vrngs[2][0])/vrngs[2][2]):((p.y-vrngs[1][0])/vrngs[1][2])));
 
-
+                    int[] col=new int[]{(int) (255 * x2 * zmult / (float) msize), (int) (zmult * (255 - (255 * x2 / (float) msize))), (int) (zmult * 255 * y2 / (float) msize)};
                     if (land){
                         boolean abvavg=(((!side)?p.z:p.y)>avg);
                         //if (!abvavg){rn++;x++;if (aim!=0){ if(x%aim==0){ y+=(im<0)?-1:1; }}continue;}
@@ -441,7 +444,7 @@ public class Object implements FrameData{
                         }
                     }
                     if (!net){ if (!cancel[0]){ g.fillPolygon(t1x,t1y,3);}if(!cancel[1]) { g.fillPolygon(t2x, t2y, 3); }}
-
+                    if (panels&&!cancel[0]&&!cancel[1]){pls.add(new int[][]{{dist},t1x,t1y,t2x,t2y,col});}
                     //g.fillOval((int) x1 - 5, (int) y1 - 5, 10, 10);
                     rn++;
                     x++;
@@ -467,10 +470,13 @@ public class Object implements FrameData{
                         Vec3f p = pointmap[x2][y2];
                         if (p==null){ rn++;x++;if (aim!=0){ if(x%aim==0){ y+=(im<0)?-1:1; }}continue; }
                         Vec3f dv = getDeltaVecBetween(rotate(p,roty), pos);
+                        int dist=(int)(dv.length()*10);
                         Vec2f dor = getDeltaOrient(dv);
                         float x1 = (float) (lensd * (Math.tan(dor.x - or.x))) + (WIDTH / 2);
                         float y1 = (float) (lensd * (Math.tan(dor.y + or.y))) + (HEIGHT / 2);
                         float zmult=(((!side)?((p.z-vrngs[2][0])/vrngs[2][2]):((p.y-vrngs[1][0])/vrngs[1][2])));
+                        int[] col=new int[]{(int) (255 * x2 * zmult / (float) msize), (int) (zmult * (255 - (255 * x2 / (float) msize))), (int) (zmult * 255 * y2 / (float) msize)};
+
                         if (land){
                             boolean abvavg=(((!side)?p.z:p.y)>avg);
                             //if (!abvavg){rn++;x++;if (aim!=0){ if(x%aim==0){ y+=(im<0)?-1:1; }}continue;}
@@ -506,7 +512,7 @@ public class Object implements FrameData{
                             }
                         }
                         if (!net){ if (!cancel[0]){ g.fillPolygon(t1x,t1y,3);}if(!cancel[1]) { g.fillPolygon(t2x, t2y, 3); }}
-
+                        if (panels&&!cancel[0]&&!cancel[1]){pls.add(new int[][]{{dist},t1x,t1y,t2x,t2y,col});}
                         //g.fillOval((int) x1 - 5, (int) y1 - 5, 10, 10);
                         rn++;
                         x++;
@@ -516,6 +522,41 @@ public class Object implements FrameData{
                             }
                         }else { y += ((im < 0) ? -1 : 1);}
                     }
+                }
+            }
+            //ORDER PANELS
+            if (panels) {
+                ArrayList<int[][]> o1 = new ArrayList<>();
+                float[] dists = new float[pls.size()];
+                int i1 = 0;
+                for (int[][] o : pls) {
+                    //Vec3f vd=new Vec3f(pos.x-o.loc.x,pos.y-o.loc.y,pos.z-o.loc.z);
+                    dists[i1] = o[0][0];
+                    i1++;
+                }
+                ArrayList<Integer> s = new ArrayList<>();
+                for (int i = 0; i < dists.length; i++) {
+                    if (s.size() == 0) {
+                        s.add(i);
+                    } else {
+                        int addin = s.size() - 1;
+                        for (Integer k : s) {
+                            if (dists[k] > dists[i]) {
+                                addin = s.indexOf(k);
+                                break;
+                            }
+                        }
+                        s.add(addin, i);
+                    }
+                }
+                for (Integer i : s) {
+                    o1.add(0, pls.get(i));
+                }
+                pls = o1;
+                for (int[][] p : pls) {
+                    g.setColor(new Color(p[5][0],p[5][1],p[5][2]));
+                    g.fillPolygon(p[1], p[2], 3);
+                    g.fillPolygon(p[3], p[4], 3);
                 }
             }
         }

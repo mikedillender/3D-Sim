@@ -125,13 +125,9 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
                 s.add(addin,i);
             }
         }
-        //System.out.println("");
         for (Integer i:s){
-            //System.out.print(i+", ");
             o1.add(0,objects.get(i));
         }
-        //System.out.println("");
-        //System.out.println(objects.size()+", "+o1.size());
         objects=o1;
     }
 
