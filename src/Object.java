@@ -48,7 +48,7 @@ public class Object implements FrameData{
             int size=32;
             int maxv=7;
             int v=(int)(Math.floor(Math.random()*(maxv+.99)));
-            v=7;
+            v=9;
 
             float vr=25;
             int vs=(int)(Math.random()*5)+5;
@@ -100,8 +100,8 @@ public class Object implements FrameData{
                             break;
                         case 7://polar attempt
                             //float r=(float)(200*Math.sin((y)/(size*2f)));
-                            float xor=(3.14159f*((x+size)/(float)size));
-                            float yor=(3.14159f*((y+size)/(float)size));
+                            float xor=((3.14159f)*((x+size)/(float)size));
+                            float yor=((3.14159f/2f)*((y)/(float)size));
                             float r=200*(float)(Math.sin(xor*2));
 
                             if (Float.isNaN(r)||Float.isInfinite(r)){r=200;}
@@ -112,9 +112,8 @@ public class Object implements FrameData{
                             polar=true;
                             break;
                         case 8:
-                            xor=(float)(Math.PI*((x+size)/(float)size));
-                            yor=(float)(Math.PI*((y+size)/(float)size));
-
+                            xor=((3.14159f)*((x+size)/(float)size));
+                            yor=((3.14159f/2f)*((y)/(float)size));
                             //if (Math.abs(xor)%3.1415>.2){continue;}
                             float s=100;
                             //float
@@ -143,6 +142,24 @@ public class Object implements FrameData{
                             if (Float.isNaN(r)||Float.isInfinite(r)){continue;}
                             if (r<minr){minr=r;}
                             if (r>maxr){maxr=r;}
+                            r1 = r * (float) (Math.cos(yor));
+                            v1[2] = r * (float) (Math.sin(yor));
+                            v1[0] = r1 * (float) (Math.cos(xor));
+                            v1[1] = r1 * (float) (Math.sin(xor));
+                            polar=true;
+                            break;
+                        case 9://polar attempt
+                            //float r=(float)(200*Math.sin((y)/(size*2f)));
+                            xor=((3.14159f)*((x+size)/(float)size));
+                            yor=((3.14159f/2f)*((y)/(float)size));
+                            //System.out.println(xor+", "+yor);
+                            r=200*(float)(Math.sin(xor*2)*Math.cos(yor*2));
+                            //r=200;
+                            //r=200*(float)(xor*yor/36);
+                            //r=200*(float)Math.sqrt(xor/(yor+1));
+                            //r=200*(float)((Math.abs(yor-Math.PI)));
+                            //r=(float)(200*(xor));
+                            if (Float.isNaN(r)||Float.isInfinite(r)){r=200;}
                             r1 = r * (float) (Math.cos(yor));
                             v1[2] = r * (float) (Math.sin(yor));
                             v1[0] = r1 * (float) (Math.cos(xor));
@@ -295,6 +312,24 @@ public class Object implements FrameData{
         return newv;
     }
 
+    public int[] getColorAt(int x, int y, Vec3f p){
+        float zmult=(((!side)?((p.z-vrngs[2][0])/vrngs[2][2]):((p.y-vrngs[1][0])/vrngs[1][2])));
+        int msize=pointmap.length;
+        if (land){
+            boolean abvavg=(((!side)?p.z:p.y)>avg);
+            //if (!abvavg){rn++;x++;if (aim!=0){ if(x%aim==0){ y+=(im<0)?-1:1; }}continue;}
+            return new int[]{(int)(100*zmult),(int)(zmult*255),(int)((abvavg)?80:(int)((zmult*500>255)?255:(zmult*500)))};
+        }else {
+            //return new int[]{(int) (255 * x * zmult / (float) msize), (int) (zmult * (255 - (255 * x / (float) msize))), (int) (zmult * 255 * y / (float) msize)};
+            int r=(int)(zmult*((x>(msize/2))?240:0));
+            int g=(int)(zmult*((y>(msize/2))?240:0));
+            int b=(int)(zmult*150);
+
+            //return new int[]{(int)(255*x/(float)msize),(int)(255*y/(float)msize),100};
+            return new int[]{r,g,b};
+        }
+    }
+
     public void render(Graphics g, int WIDTH, int HEIGHT, float lensd, Vec3f pos, Vec2f or,float roty){
         if (shape==0) {
             if (points.size()<2){return;}
@@ -403,18 +438,9 @@ public class Object implements FrameData{
                     Vec2f dor = getDeltaOrient(dv);
                     float x1 = (float) (lensd * (Math.tan(dor.x - or.x))) + (WIDTH / 2);
                     float y1 = (float) (lensd * (Math.tan(dor.y + or.y))) + (HEIGHT / 2);
-                    float zmult=(((!side)?((p.z-vrngs[2][0])/vrngs[2][2]):((p.y-vrngs[1][0])/vrngs[1][2])));
 
-                    int[] col=new int[]{(int) (255 * x2 * zmult / (float) msize), (int) (zmult * (255 - (255 * x2 / (float) msize))), (int) (zmult * 255 * y2 / (float) msize)};
-                    if (land){
-                        boolean abvavg=(((!side)?p.z:p.y)>avg);
-                        //if (!abvavg){rn++;x++;if (aim!=0){ if(x%aim==0){ y+=(im<0)?-1:1; }}continue;}
-                        g.setColor(new Color((int)(100*zmult),(int)(zmult*255),(int)((abvavg)?80:(int)((zmult*500>255)?255:(zmult*500)))));
-                    }else {
-                        try {
-                            g.setColor(new Color((int) (255 * x2 * zmult / (float) msize), (int) (zmult * (255 - (255 * x2 / (float) msize))), (int) (zmult * 255 * y2 / (float) msize)));
-                        }catch (java.lang.IllegalArgumentException e){ System.out.println("fail"); }
-                    }
+                    int[] col=getColorAt(x2,y2,p);
+                    if (!panels){g.setColor(new Color(col[0],col[1],col[2]));}
                     int[] t1x=new int[]{(int)x1,0,0};
                     int[] t1y=new int[]{(int)y1,0,0};
                     int[] t2x=new int[]{(int)x1,0,0};
@@ -438,13 +464,14 @@ public class Object implements FrameData{
                                 t2x[((d==2)?1:2)]=(int)x3;
                                 t2y[((d==2)?1:2)]=(int)y3;
                             }
-                            if(net){g.drawLine((int)x1,(int)y1,(int)x3,(int)y3);}
+                            if(net&&!panels){g.drawLine((int)x1,(int)y1,(int)x3,(int)y3);}
                         }else {
                             cancel[((d<2)?0:1)]=true;
                         }
                     }
                     if (!net){ if (!cancel[0]){ g.fillPolygon(t1x,t1y,3);}if(!cancel[1]) { g.fillPolygon(t2x, t2y, 3); }}
-                    if (panels&&!cancel[0]&&!cancel[1]){pls.add(new int[][]{{dist},t1x,t1y,t2x,t2y,col});}
+                    //if (panels&&!cancel[0]&&!cancel[1]){pls.add(new int[][]{{dist},t1x,t1y,t2x,t2y,col});}
+                    if (panels){pls.add(new int[][]{{dist},(!cancel[0])?t1x:null,(!cancel[0])?t1y:null,(!cancel[1])?t2x:null,(!cancel[1])?t2y:null,col});}
                     //g.fillOval((int) x1 - 5, (int) y1 - 5, 10, 10);
                     rn++;
                     x++;
@@ -474,16 +501,10 @@ public class Object implements FrameData{
                         Vec2f dor = getDeltaOrient(dv);
                         float x1 = (float) (lensd * (Math.tan(dor.x - or.x))) + (WIDTH / 2);
                         float y1 = (float) (lensd * (Math.tan(dor.y + or.y))) + (HEIGHT / 2);
-                        float zmult=(((!side)?((p.z-vrngs[2][0])/vrngs[2][2]):((p.y-vrngs[1][0])/vrngs[1][2])));
-                        int[] col=new int[]{(int) (255 * x2 * zmult / (float) msize), (int) (zmult * (255 - (255 * x2 / (float) msize))), (int) (zmult * 255 * y2 / (float) msize)};
 
-                        if (land){
-                            boolean abvavg=(((!side)?p.z:p.y)>avg);
-                            //if (!abvavg){rn++;x++;if (aim!=0){ if(x%aim==0){ y+=(im<0)?-1:1; }}continue;}
-                            g.setColor(new Color((int)(100*zmult),(int)(zmult*255),(int)((abvavg)?80:(int)((zmult*500>255)?255:(zmult*500)))));
-                        }else {
-                            try{g.setColor(new Color((int) (255 * x2 * zmult / (float) msize), (int) (zmult * (255 - (255 * x2 / (float) msize))), (int) (zmult * 255 * y2 / (float) msize)));
-                            }catch (java.lang.IllegalArgumentException e){ }}
+                        int[] col=getColorAt(x2,y2,p);
+                        if (!panels){g.setColor(new Color(col[0],col[1],col[2]));}
+
                         int[] t1x=new int[]{(int)x1,0,0};int[] t1y=new int[]{(int)y1,0,0};
                         int[] t2x=new int[]{(int)x1,0,0};int[] t2y=new int[]{(int)y1,0,0};
 
@@ -506,13 +527,14 @@ public class Object implements FrameData{
                                     t2x[((d==2)?1:2)]=(int)x3;
                                     t2y[((d==2)?1:2)]=(int)y3;
                                 }
-                                if(net){g.drawLine((int)x1,(int)y1,(int)x3,(int)y3);}
+                                if(net&!panels){g.drawLine((int)x1,(int)y1,(int)x3,(int)y3);}
                             }else {
                                 cancel[((d<2)?0:1)]=true;
                             }
                         }
                         if (!net){ if (!cancel[0]){ g.fillPolygon(t1x,t1y,3);}if(!cancel[1]) { g.fillPolygon(t2x, t2y, 3); }}
-                        if (panels&&!cancel[0]&&!cancel[1]){pls.add(new int[][]{{dist},t1x,t1y,t2x,t2y,col});}
+                        //if (panels&&!cancel[0]&&!cancel[1]){pls.add(new int[][]{{dist},t1x,t1y,t2x,t2y,col});}
+                        if (panels){pls.add(new int[][]{{dist},(!cancel[0])?t1x:null,(!cancel[0])?t1y:null,(!cancel[1])?t2x:null,(!cancel[1])?t2y:null,col});}
                         //g.fillOval((int) x1 - 5, (int) y1 - 5, 10, 10);
                         rn++;
                         x++;
@@ -555,8 +577,12 @@ public class Object implements FrameData{
                 pls = o1;
                 for (int[][] p : pls) {
                     g.setColor(new Color(p[5][0],p[5][1],p[5][2]));
-                    g.fillPolygon(p[1], p[2], 3);
-                    g.fillPolygon(p[3], p[4], 3);
+                    if (p[1]!=null) {
+                        g.fillPolygon(p[1], p[2], 3);
+                    }
+                    if (p[3]!=null) {
+                        g.fillPolygon(p[3], p[4], 3);
+                    }
                 }
             }
         }
