@@ -61,9 +61,25 @@ public class Object implements FrameData{
                 if (Math.abs(vc[1])<1){ vc[1]=(vc[1]<0)?-1:1; }
                 if (Math.abs(vc[3])<1){ vc[3]=(vc[3]<0)?-1:1; }
             }
+
+            boolean parametric=(v==10);
+            float step=25;
+
+            int xmin=(!parametric)?-size:1;
+            int ymin=(!parametric)?-size:1;
+            int xmax=(!parametric)?size:size*2-1;
+            int ymax=(!parametric)?size:size*2-1;
+
             pointmap=new Vec3f[size*2+1][size*2+1];
-            for (int x=-size; x<=size;x+=1){
-                for (int y=-size; y<=size; y+=1) {
+
+            if (parametric){
+                for (int x=0; x<size*2+1; x++){
+                    pointmap[x][0]=new Vec3f((float)(x*sep),(float)(0),(float)(0));
+                }
+            }
+
+            for (int x=xmin; x<=xmax;x+=1){
+                for (int y=ymin; y<=ymax; y+=1) {
                     float[] v1=new float[]{x*sep,y*sep,0};
                     switch (v){
                         case 0:
@@ -154,6 +170,13 @@ public class Object implements FrameData{
                             yor=((3.14159f/2f)*((y)/(float)size));
                             //System.out.println(xor+", "+yor);
                             r=200*(float)(Math.sin(xor*2)*Math.cos(yor*2));
+                            if (Math.abs(yor)>Math.PI/4){
+                                r=30;
+                            }else if (xor<Math.PI*.5){r=30;
+                            }else if(Math.abs(xor-(Math.PI*.5)-(Math.PI*.75))>Math.PI/4){
+                                r=(float)r/2;
+                            }
+                            //if (r<30){r=30;}
                             //r=200;
                             //r=200*(float)(xor*yor/36);
                             //r=200*(float)Math.sqrt(xor/(yor+1));
@@ -166,6 +189,10 @@ public class Object implements FrameData{
                             v1[1] = r1 * (float) (Math.sin(xor));
                             polar=true;
                             break;
+                        case 10://Parametric
+                            Vec3f lp=pointmap[x][y-1];
+                            //v1[0]=lp.x+(float)(step*());
+                            break;
                     }
 
                     for (int i=0; i<3; i++){
@@ -174,7 +201,12 @@ public class Object implements FrameData{
                     }
                     sum+=v1[2];
                     numAdded++;
-                    pointmap[size+x][size+y]=(new Vec3f(v1[0], (side)?v1[2]:(v1[1]), (side)?v1[1]:v1[2]));
+                    if (!parametric) {
+                        pointmap[size + x][size + y] = (new Vec3f(v1[0], (side) ? v1[2] : (v1[1]), (side) ? v1[1] : v1[2]));
+                    }else {
+                        pointmap[x][y] = (new Vec3f(v1[0], (side) ? v1[2] : (v1[1]), (side) ? v1[1] : v1[2]));
+
+                    }
 
                 }
             }
