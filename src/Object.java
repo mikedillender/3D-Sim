@@ -505,6 +505,8 @@ public class Object implements FrameData{
                     Vec3f dv = getDeltaVecBetween(rotate(p,roty), pos);
                     int dist=(int)(dv.length()*10);
                     Vec2f dor = getDeltaOrient(dv);
+                    if (getOrientDif(dor, or) > 3.14159) {rn++;x++;if (aim!=0){ if(x%aim==0){ y+=(im<0)?-1:1; }}continue; }
+
                     float x1 = (float) (lensd * (Math.tan(dor.x - or.x))) + (WIDTH / 2);
                     float y1 = (float) (lensd * (Math.tan(dor.y + or.y))) + (HEIGHT / 2);
 
@@ -525,7 +527,7 @@ public class Object implements FrameData{
                             if (p2==null){ cancel[((d<2)?0:1)]=true;continue; }
                             Vec3f dv1 = getDeltaVecBetween(rotate(p2,roty),pos);
                             Vec2f dor1 = getDeltaOrient(dv1);
-                            if (getOrientDif(dor,or)>3.14){continue;}
+                            if (getOrientDif(dor1,or)>3.14){cancel[((d<2)?0:1)]=true;continue;}
                             float x3=(float)(lensd*(Math.tan(dor1.x-or.x)))+(WIDTH/2);
                             float y3=(float)(lensd*(Math.tan(dor1.y+or.y)))+(HEIGHT/2);
                             if (d<2){
@@ -571,6 +573,7 @@ public class Object implements FrameData{
                         Vec3f dv = getDeltaVecBetween(rotate(p,roty), pos);
                         int dist=(int)(dv.length()*10);
                         Vec2f dor = getDeltaOrient(dv);
+                        if (getOrientDif(dor, or) > 3.14159) {rn++;x++;if (aim!=0){ if(x%aim==0){ y+=(im<0)?-1:1; }}continue; }
                         float x1 = (float) (lensd * (Math.tan(dor.x - or.x))) + (WIDTH / 2);
                         float y1 = (float) (lensd * (Math.tan(dor.y + or.y))) + (HEIGHT / 2);
 
@@ -591,7 +594,8 @@ public class Object implements FrameData{
                                 if (p2==null){ cancel[((d<2)?0:1)]=true;continue; }
                                 Vec3f dv1 = getDeltaVecBetween(rotate(p2,roty),pos);
                                 Vec2f dor1 = getDeltaOrient(dv1);
-                                if (getOrientDif(dor,or)>3.14){continue;}
+                                if (getOrientDif(dor1,or)>3.14){cancel[((d<2)?0:1)]=true;continue;}
+
                                 float x3=(float)(lensd*(Math.tan(dor1.x-or.x)))+(WIDTH/2);
                                 float y3=(float)(lensd*(Math.tan(dor1.y+or.y)))+(HEIGHT/2);
                                 if (d<2){
