@@ -19,6 +19,8 @@ public class Object implements FrameData{
     boolean land=false;
     boolean parametric=false;
     float[][] vrngs=new float[3][3];
+    int wd=100;
+    int ht=6;
 
     public Object(int shape, Vec3f loc, Vec3f vel,float rad){
         points=new ArrayList<>();
@@ -46,7 +48,7 @@ public class Object implements FrameData{
             }
         }else if (shape==2){
             float sep=30;
-            int size=32;
+            //int size=42;
 
             int maxv=7;
             int v=(int)(Math.floor(Math.random()*(maxv+.99)));
@@ -66,18 +68,20 @@ public class Object implements FrameData{
             boolean slopeField=v==10;
 
             parametric=(v==10||v==11);
+            polar=(v==7||v==8||v==9);
             float step=5;
+            if (!polar&&!parametric){wd=ht;}
 
-            int xmin=(!parametric)?-size:0;
-            int ymin=(!parametric)?-size:1;
-            int xmax=(!parametric)?size:size*2-1;
-            int ymax=(!parametric)?size:size*2-1;
+            int xmin=(!parametric)?-wd:0;
+            int ymin=(!parametric)?-ht:1;
+            int xmax=(!parametric)?wd:wd*2-1;
+            int ymax=(!parametric)?ht:ht*2-1;
             if (parametric&&!slopeField){ymin=0;}
 
-            pointmap=new Vec3f[size*2+1][size*2+1];
-            float linesep=1.3f;
+            pointmap=new Vec3f[wd*2+1][ht*2+1];
+            float linesep=.8f;
             if (parametric&&slopeField){
-                for (int x=0; x<size*2+1; x++){
+                for (int x=0; x<wd*2+1; x++){
                     float[] v1=new float[]{0,0,linesep*x};
                     pointmap[x][0]=new Vec3f(v1[0],v1[1],v1[2]);
                     for (int i=0; i<3; i++){
@@ -92,10 +96,10 @@ public class Object implements FrameData{
                     float[] v1=new float[]{x*sep,y*sep,0};
                     switch (v){
                         case 0:
-                            v1[2]=size*((size-Math.abs(x))*(size-Math.abs(y))/(float)(size*size));
+                            v1[2]=ht*((wd-Math.abs(x))*(ht-Math.abs(y))/(float)(ht*ht));
                             break;
                         case 1:
-                            v1[2]=(float)(Math.sin(x/4f)*size)/(Math.abs(y)+.5f);
+                            v1[2]=(float)(Math.sin(x/4f)*wd)/(Math.abs(y)+.5f);
                             break;
                         case 2:
                             for (float[] vc:vecs){
@@ -107,7 +111,7 @@ public class Object implements FrameData{
                             land=true;
                             break;
                         case 3:
-                            float c=(size*size)-(x*x)-(y*y);//DOme
+                            float c=(wd*wd)-(x*x)-(y*y);//DOme
                             v1[2]=(c>0)?(float)(Math.sqrt(c)*sep):0;
                             break;
                         case 4:
@@ -125,8 +129,8 @@ public class Object implements FrameData{
                             break;
                         case 7://polar attempt
                             //float r=(float)(200*Math.sin((y)/(size*2f)));
-                            float xor=((3.14159f)*((x+size)/(float)size));
-                            float yor=((3.14159f/2f)*((y)/(float)size));
+                            float xor=((3.14159f)*((x+wd)/(float)wd));
+                            float yor=((3.14159f/2f)*((y)/(float)ht));
                             float r=200*(float)(Math.sin(xor*2));
 
                             if (Float.isNaN(r)||Float.isInfinite(r)){r=200;}
@@ -137,8 +141,8 @@ public class Object implements FrameData{
                             polar=true;
                             break;
                         case 8:
-                            xor=((3.14159f)*((x+size)/(float)size));
-                            yor=((3.14159f/2f)*((y)/(float)size));
+                            xor=((3.14159f)*((x+wd)/(float)wd));
+                            yor=((3.14159f/2f)*((y)/(float)ht));
                             //if (Math.abs(xor)%3.1415>.2){continue;}
                             float s=100;
                             //float
@@ -175,8 +179,8 @@ public class Object implements FrameData{
                             break;
                         case 9://polar attempt
                             //float r=(float)(200*Math.sin((y)/(size*2f)));
-                            xor=((3.14159f)*((x+size)/(float)size));
-                            yor=((3.14159f/2f)*((y)/(float)size));
+                            xor=((3.14159f)*((x+wd)/(float)wd));
+                            yor=((3.14159f/2f)*((y)/(float)ht));
                             //System.out.println(xor+", "+yor);
                             r=200*(float)(Math.sin(xor*2)*Math.cos(yor*2));
 
@@ -211,10 +215,15 @@ public class Object implements FrameData{
                             v1[2]=lp.z+(float)(step*ddt[2]);
                             break;
                         case 11://Parametric
+                            if (y==0){lp=new Vec3f(0,0,0);}else {lp=pointmap[x][y-1];}
 
-                            v1[0]=(y*linesep)+200*(float)(Math.cos(x/6f+13));
+
+                            /*v1[0]=(y*linesep)+200*(float)(Math.cos(x/6f+13));
                             v1[1]=200*(float)(Math.cos(x/6f+2));
-                            v1[2]=200*(float)(Math.sin(x/4f+43));
+                            v1[2]=200*(float)(Math.sin(x/4f+43));*/
+                            v1[0]=(float)((y*linesep*Math.sin(Math.atan2(lp.y,lp.x))))+(float)(((250+(50*Math.cos(x*.12))))*(Math.cos(x/12f)));
+                            v1[1]=(float)((y*linesep*Math.cos(Math.atan2(lp.y,lp.x))))+(float)(((250+(50*Math.sin(x*.32))))*(float)(Math.sin(x/12f)));
+                            v1[2]=100*(float)(Math.sin(x*.64+1.34));
                             break;
                     }
 
@@ -225,7 +234,7 @@ public class Object implements FrameData{
                     sum+=v1[2];
                     numAdded++;
                     if (!parametric) {
-                        pointmap[size + x][size + y] = (new Vec3f(v1[0], (side) ? v1[2] : (v1[1]), (side) ? v1[1] : v1[2]));
+                        pointmap[wd + x][ht + y] = (new Vec3f(v1[0], (side) ? v1[2] : (v1[1]), (side) ? v1[1] : v1[2]));
                     }else {
                         pointmap[x][y] = (new Vec3f(v1[0], (side) ? v1[2] : (v1[1]), (side) ? v1[1] : v1[2]));
 
@@ -371,7 +380,8 @@ public class Object implements FrameData{
 
     public int[] getColorAt(int x, int y, Vec3f p){
         float zmult=(((!side)?((p.z-vrngs[2][0])/vrngs[2][2]):((p.y-vrngs[1][0])/vrngs[1][2])));
-        int msize=pointmap.length;
+        int mw=pointmap.length;
+        int mh=pointmap[0].length;
         if (land){
             boolean abvavg=(((!side)?p.z:p.y)>avg);
             //if (!abvavg){rn++;x++;if (aim!=0){ if(x%aim==0){ y+=(im<0)?-1:1; }}continue;}
@@ -379,13 +389,13 @@ public class Object implements FrameData{
         }else {
             //return new int[]{(int) (255 * x * zmult / (float) msize), (int) (zmult * (255 - (255 * x / (float) msize))), (int) (zmult * 255 * y / (float) msize)};
             if (!parametric) {
-                int r = (int) (zmult * ((x > (msize / 2)) ? 240 : 0));
-                int g = (int) (zmult * ((y > (msize / 2)) ? 240 : 0));
+                int r = (int) (zmult * ((x > (mw / 2)) ? 240 : 0));
+                int g = (int) (zmult * ((y > (mh / 2)) ? 240 : 0));
                 int b = (int) (zmult * 150);
                 return new int[]{r,g,b};
             }else {
-                int r = 50+(int)(150*((float)x/msize));
-                int g = (int) (50+(int)(150*((float)y/msize)));
+                int r = 50+(int)(150*((float)x/mw));
+                int g = (int) (50+(int)(150*((float)y/mh)));
                 int b = (int) (zmult * 150);
                 return new int[]{r,g,b};
             }
@@ -460,15 +470,8 @@ public class Object implements FrameData{
             }
         }else if (shape==2){
             boolean f=true;
-            int msize=pointmap.length;
-            float m=-(Math.abs(pos.x)/Math.abs(pos.y));
-            boolean small=Math.abs(m)<1;
-            //boolean small=true;
-            if (small){m=1f/m;}
-            if (Math.abs(m)>msize){small=!small;m=0;}
-            int im=Math.round(m);
-            int aim=Math.abs(im);
-            int q=(pos.x<0)?((pos.y>0)?2:3):((pos.y>0)?1:4);
+            int mw=pointmap.length;
+            int mh=pointmap[0].length;
             //System.out.println("in quadrant "+q+" | p : "+pos);
             //System.out.println("in quad "+q+", angle small? =  "+small+" |  m = "+aim);
             boolean net=false;
@@ -481,81 +484,21 @@ public class Object implements FrameData{
 
             ArrayList<int[][]> pls=new ArrayList<>();
             int rn=0;
-            int mssq=msize*msize+(msize*4);
             land=false;
             if (polar){land=false;}
-            for (int c=0; c<msize; c++){
-                int x=0;
-                int y=c;
-                while (x>=0&&x<msize&&y>=0&&y<msize){
-                    //Vec3f p=(!small)?pointmap[x][y]:pointmap[y][x];
-                    int x2=(small)?x:y;
-                    int y2=(small)?y:x;
-                    if(q==2){
-                        x2=msize-1-x2;
-                    }else if(q==3){
-                        x2=msize-1-x2;
-                        y2=msize-1-y2;
-                    }else if(q==4){
-                        y2=msize-1-y2;
-                    }
-                    Vec3f p=pointmap[x2][y2];
-                    if (p==null){ rn++;x++;if (aim!=0){ if(x%aim==0){ y+=(im<0)?-1:1; }}continue; }
-                    //Vec3f dv = getDeltaVecBetween(p, pos);
-                    Vec3f dv = getDeltaVecBetween(rotate(p,roty), pos);
-                    int dist=(int)(dv.length()*10);
-                    Vec2f dor = getDeltaOrient(dv);
-                    if (getOrientDif(dor, or) > 3.14159) {rn++;x++;if (aim!=0){ if(x%aim==0){ y+=(im<0)?-1:1; }}continue; }
-
-                    float x1 = (float) (lensd * (Math.tan(dor.x - or.x))) + (WIDTH / 2);
-                    float y1 = (float) (lensd * (Math.tan(dor.y + or.y))) + (HEIGHT / 2);
-
-                    int[] col=getColorAt(x2,y2,p);
-                    if (!panels){g.setColor(new Color(col[0],col[1],col[2]));}
-                    int[] t1x=new int[]{(int)x1,0,0};
-                    int[] t1y=new int[]{(int)y1,0,0};
-                    int[] t2x=new int[]{(int)x1,0,0};
-                    int[] t2y=new int[]{(int)y1,0,0};
-                    boolean[] cancel=new boolean[2];
-                    for (int d=0; d<4; d++){
-                        int x4=x2+((d%2==0)?0:((d==1)?1:-1));
-                        int y4=y2+((d%2==1)?0:((d==0)?1:-1));
-                        if (net&&parametric){if(d%2==1){continue;}}
-
-                        if (x4>=0&&y4>=0&&y4<pointmap[0].length&&x4<pointmap.length){
-                            Vec3f p2=pointmap[x4][y4];
-                            if (p2==null){ cancel[((d<2)?0:1)]=true;continue; }
-                            Vec3f dv1 = getDeltaVecBetween(rotate(p2,roty),pos);
-                            Vec2f dor1 = getDeltaOrient(dv1);
-                            if (getOrientDif(dor1,or)>3.14){cancel[((d<2)?0:1)]=true;continue;}
-                            float x3=(float)(lensd*(Math.tan(dor1.x-or.x)))+(WIDTH/2);
-                            float y3=(float)(lensd*(Math.tan(dor1.y+or.y)))+(HEIGHT/2);
-                            if (d<2){
-                                t1x[((d==0)?1:2)]=(int)x3;
-                                t1y[((d==0)?1:2)]=(int)y3;
-                            }else {
-                                t2x[((d==2)?1:2)]=(int)x3;
-                                t2y[((d==2)?1:2)]=(int)y3;
-                            }
-                            if(net&&!panels){g.drawLine((int)x1,(int)y1,(int)x3,(int)y3);}
-                        }else {
-                            cancel[((d<2)?0:1)]=true;
-                        }
-
-                    }
-                    if (!net){ if (!cancel[0]){ g.fillPolygon(t1x,t1y,3);}if(!cancel[1]) { g.fillPolygon(t2x, t2y, 3); }}
-                    //if (panels&&!cancel[0]&&!cancel[1]){pls.add(new int[][]{{dist},t1x,t1y,t2x,t2y,col});}
-                    if (panels){pls.add(new int[][]{{dist},(!cancel[0])?t1x:null,(!cancel[0])?t1y:null,(!cancel[1])?t2x:null,(!cancel[1])?t2y:null,col});}
-                    //g.fillOval((int) x1 - 5, (int) y1 - 5, 10, 10);
-                    rn++;
-                    x++;
-                    if (aim!=0){ if(x%aim==0){ y+=(im<0)?-1:1; }}
-                }
-            }
-            if (aim!=0) {
-                for (int c = aim; c < msize; c += aim) {
-                    int x = c;
-                    int y = msize - 1;
+            if (!polar&&!parametric) {
+                int msize=mw;
+                float m=-(Math.abs(pos.x)/Math.abs(pos.y));
+                boolean small=Math.abs(m)<1;
+                //boolean small=true;
+                if (small){m=1f/m;}
+                if (Math.abs(m)>msize){small=!small;m=0;}
+                int im=Math.round(m);
+                int aim=Math.abs(im);
+                int q=(pos.x<0)?((pos.y>0)?2:3):((pos.y>0)?1:4);
+                for (int c = 0; c < msize; c++) {
+                    int x = 0;
+                    int y = c;
                     while (x >= 0 && x < msize && y >= 0 && y < msize) {
                         //Vec3f p=(!small)?pointmap[x][y]:pointmap[y][x];
                         int x2 = (small) ? x : y;
@@ -569,58 +512,293 @@ public class Object implements FrameData{
                             y2 = msize - 1 - y2;
                         }
                         Vec3f p = pointmap[x2][y2];
-                        if (p==null){ rn++;x++;if (aim!=0){ if(x%aim==0){ y+=(im<0)?-1:1; }}continue; }
-                        Vec3f dv = getDeltaVecBetween(rotate(p,roty), pos);
-                        int dist=(int)(dv.length()*10);
+                        if (p == null) {
+                            rn++;
+                            x++;
+                            if (aim != 0) {
+                                if (x % aim == 0) {
+                                    y += (im < 0) ? -1 : 1;
+                                }
+                            }
+                            continue;
+                        }
+                        //Vec3f dv = getDeltaVecBetween(p, pos);
+                        Vec3f dv = getDeltaVecBetween(rotate(p, roty), pos);
+                        int dist = (int) (dv.length() * 10);
                         Vec2f dor = getDeltaOrient(dv);
-                        if (getOrientDif(dor, or) > 3.14159) {rn++;x++;if (aim!=0){ if(x%aim==0){ y+=(im<0)?-1:1; }}continue; }
+                        if (getOrientDif(dor, or) > 3.14159) {
+                            rn++;
+                            x++;
+                            if (aim != 0) {
+                                if (x % aim == 0) {
+                                    y += (im < 0) ? -1 : 1;
+                                }
+                            }
+                            continue;
+                        }
+
                         float x1 = (float) (lensd * (Math.tan(dor.x - or.x))) + (WIDTH / 2);
                         float y1 = (float) (lensd * (Math.tan(dor.y + or.y))) + (HEIGHT / 2);
 
-                        int[] col=getColorAt(x2,y2,p);
-                        if (!panels){g.setColor(new Color(col[0],col[1],col[2]));}
-
-                        int[] t1x=new int[]{(int)x1,0,0};int[] t1y=new int[]{(int)y1,0,0};
-                        int[] t2x=new int[]{(int)x1,0,0};int[] t2y=new int[]{(int)y1,0,0};
-
-                        boolean[] cancel=new boolean[2];
-                        for (int d=0; d<4; d++){
-                            int x4=x2+((d%2==0)?0:((d==1)?1:-1));
-                            int y4=y2+((d%2==1)?0:((d==0)?1:-1));
-                            if (net&&parametric){if(d%2==1){continue;}}
-
-                            if (x4>=0&&y4>=0&&y4<pointmap[0].length&&x4<pointmap.length){
-                                Vec3f p2=pointmap[x4][y4];
-                                if (p2==null){ cancel[((d<2)?0:1)]=true;continue; }
-                                Vec3f dv1 = getDeltaVecBetween(rotate(p2,roty),pos);
-                                Vec2f dor1 = getDeltaOrient(dv1);
-                                if (getOrientDif(dor1,or)>3.14){cancel[((d<2)?0:1)]=true;continue;}
-
-                                float x3=(float)(lensd*(Math.tan(dor1.x-or.x)))+(WIDTH/2);
-                                float y3=(float)(lensd*(Math.tan(dor1.y+or.y)))+(HEIGHT/2);
-                                if (d<2){
-                                    t1x[((d==0)?1:2)]=(int)x3;
-                                    t1y[((d==0)?1:2)]=(int)y3;
-                                }else {
-                                    t2x[((d==2)?1:2)]=(int)x3;
-                                    t2y[((d==2)?1:2)]=(int)y3;
+                        int[] col = getColorAt(x2, y2, p);
+                        if (!panels) {
+                            g.setColor(new Color(col[0], col[1], col[2]));
+                        }
+                        int[] t1x = new int[]{(int) x1, 0, 0};
+                        int[] t1y = new int[]{(int) y1, 0, 0};
+                        int[] t2x = new int[]{(int) x1, 0, 0};
+                        int[] t2y = new int[]{(int) y1, 0, 0};
+                        boolean[] cancel = new boolean[2];
+                        for (int d = 0; d < 4; d++) {
+                            int x4 = x2 + ((d % 2 == 0) ? 0 : ((d == 1) ? 1 : -1));
+                            int y4 = y2 + ((d % 2 == 1) ? 0 : ((d == 0) ? 1 : -1));
+                            if (net && parametric) {
+                                if (d % 2 == 1) {
+                                    continue;
                                 }
-                                if(net&!panels){g.drawLine((int)x1,(int)y1,(int)x3,(int)y3);}
-                            }else {
-                                cancel[((d<2)?0:1)]=true;
+                            }
+
+                            if (x4 >= 0 && y4 >= 0 && y4 < pointmap[0].length && x4 < pointmap.length) {
+                                Vec3f p2 = pointmap[x4][y4];
+                                if (p2 == null) {
+                                    cancel[((d < 2) ? 0 : 1)] = true;
+                                    continue;
+                                }
+                                Vec3f dv1 = getDeltaVecBetween(rotate(p2, roty), pos);
+                                Vec2f dor1 = getDeltaOrient(dv1);
+                                if (getOrientDif(dor1, or) > 3.14) {
+                                    cancel[((d < 2) ? 0 : 1)] = true;
+                                    continue;
+                                }
+                                float x3 = (float) (lensd * (Math.tan(dor1.x - or.x))) + (WIDTH / 2);
+                                float y3 = (float) (lensd * (Math.tan(dor1.y + or.y))) + (HEIGHT / 2);
+                                if (d < 2) {
+                                    t1x[((d == 0) ? 1 : 2)] = (int) x3;
+                                    t1y[((d == 0) ? 1 : 2)] = (int) y3;
+                                } else {
+                                    t2x[((d == 2) ? 1 : 2)] = (int) x3;
+                                    t2y[((d == 2) ? 1 : 2)] = (int) y3;
+                                }
+                                if (net && !panels) {
+                                    g.drawLine((int) x1, (int) y1, (int) x3, (int) y3);
+                                }
+                            } else {
+                                cancel[((d < 2) ? 0 : 1)] = true;
+                            }
+
+                        }
+                        if (!net) {
+                            if (!cancel[0]) {
+                                g.fillPolygon(t1x, t1y, 3);
+                            }
+                            if (!cancel[1]) {
+                                g.fillPolygon(t2x, t2y, 3);
                             }
                         }
-                        if (!net){ if (!cancel[0]){ g.fillPolygon(t1x,t1y,3);}if(!cancel[1]) { g.fillPolygon(t2x, t2y, 3); }}
                         //if (panels&&!cancel[0]&&!cancel[1]){pls.add(new int[][]{{dist},t1x,t1y,t2x,t2y,col});}
-                        if (panels){pls.add(new int[][]{{dist},(!cancel[0])?t1x:null,(!cancel[0])?t1y:null,(!cancel[1])?t2x:null,(!cancel[1])?t2y:null,col});}
+                        if (panels) {
+                            pls.add(new int[][]{{dist}, (!cancel[0]) ? t1x : null, (!cancel[0]) ? t1y : null, (!cancel[1]) ? t2x : null, (!cancel[1]) ? t2y : null, col});
+                        }
                         //g.fillOval((int) x1 - 5, (int) y1 - 5, 10, 10);
                         rn++;
                         x++;
                         if (aim != 0) {
                             if (x % aim == 0) {
+                                y += (im < 0) ? -1 : 1;
+                            }
+                        }
+                    }
+                }
+                if (aim != 0) {
+                    for (int c = aim; c < msize; c += aim) {
+                        int x = c;
+                        int y = msize - 1;
+                        while (x >= 0 && x < msize && y >= 0 && y < msize) {
+                            //Vec3f p=(!small)?pointmap[x][y]:pointmap[y][x];
+                            int x2 = (small) ? x : y;
+                            int y2 = (small) ? y : x;
+                            if (q == 2) {
+                                x2 = msize - 1 - x2;
+                            } else if (q == 3) {
+                                x2 = msize - 1 - x2;
+                                y2 = msize - 1 - y2;
+                            } else if (q == 4) {
+                                y2 = msize - 1 - y2;
+                            }
+                            Vec3f p = pointmap[x2][y2];
+                            if (p == null) {
+                                rn++;
+                                x++;
+                                if (aim != 0) {
+                                    if (x % aim == 0) {
+                                        y += (im < 0) ? -1 : 1;
+                                    }
+                                }
+                                continue;
+                            }
+                            Vec3f dv = getDeltaVecBetween(rotate(p, roty), pos);
+                            int dist = (int) (dv.length() * 10);
+                            Vec2f dor = getDeltaOrient(dv);
+                            if (getOrientDif(dor, or) > 3.14159) {
+                                rn++;
+                                x++;
+                                if (aim != 0) {
+                                    if (x % aim == 0) {
+                                        y += (im < 0) ? -1 : 1;
+                                    }
+                                }
+                                continue;
+                            }
+                            float x1 = (float) (lensd * (Math.tan(dor.x - or.x))) + (WIDTH / 2);
+                            float y1 = (float) (lensd * (Math.tan(dor.y + or.y))) + (HEIGHT / 2);
+
+                            int[] col = getColorAt(x2, y2, p);
+                            if (!panels) {
+                                g.setColor(new Color(col[0], col[1], col[2]));
+                            }
+
+                            int[] t1x = new int[]{(int) x1, 0, 0};
+                            int[] t1y = new int[]{(int) y1, 0, 0};
+                            int[] t2x = new int[]{(int) x1, 0, 0};
+                            int[] t2y = new int[]{(int) y1, 0, 0};
+
+                            boolean[] cancel = new boolean[2];
+                            for (int d = 0; d < 4; d++) {
+                                int x4 = x2 + ((d % 2 == 0) ? 0 : ((d == 1) ? 1 : -1));
+                                int y4 = y2 + ((d % 2 == 1) ? 0 : ((d == 0) ? 1 : -1));
+                                if (net && parametric) {
+                                    if (d % 2 == 1) {
+                                        continue;
+                                    }
+                                }
+
+                                if (x4 >= 0 && y4 >= 0 && y4 < pointmap[0].length && x4 < pointmap.length) {
+                                    Vec3f p2 = pointmap[x4][y4];
+                                    if (p2 == null) {
+                                        cancel[((d < 2) ? 0 : 1)] = true;
+                                        continue;
+                                    }
+                                    Vec3f dv1 = getDeltaVecBetween(rotate(p2, roty), pos);
+                                    Vec2f dor1 = getDeltaOrient(dv1);
+                                    if (getOrientDif(dor1, or) > 3.14) {
+                                        cancel[((d < 2) ? 0 : 1)] = true;
+                                        continue;
+                                    }
+
+                                    float x3 = (float) (lensd * (Math.tan(dor1.x - or.x))) + (WIDTH / 2);
+                                    float y3 = (float) (lensd * (Math.tan(dor1.y + or.y))) + (HEIGHT / 2);
+                                    if (d < 2) {
+                                        t1x[((d == 0) ? 1 : 2)] = (int) x3;
+                                        t1y[((d == 0) ? 1 : 2)] = (int) y3;
+                                    } else {
+                                        t2x[((d == 2) ? 1 : 2)] = (int) x3;
+                                        t2y[((d == 2) ? 1 : 2)] = (int) y3;
+                                    }
+                                    if (net & !panels) {
+                                        g.drawLine((int) x1, (int) y1, (int) x3, (int) y3);
+                                    }
+                                } else {
+                                    cancel[((d < 2) ? 0 : 1)] = true;
+                                }
+                            }
+                            if (!net) {
+                                if (!cancel[0]) {
+                                    g.fillPolygon(t1x, t1y, 3);
+                                }
+                                if (!cancel[1]) {
+                                    g.fillPolygon(t2x, t2y, 3);
+                                }
+                            }
+                            //if (panels&&!cancel[0]&&!cancel[1]){pls.add(new int[][]{{dist},t1x,t1y,t2x,t2y,col});}
+                            if (panels) {
+                                pls.add(new int[][]{{dist}, (!cancel[0]) ? t1x : null, (!cancel[0]) ? t1y : null, (!cancel[1]) ? t2x : null, (!cancel[1]) ? t2y : null, col});
+                            }
+                            //g.fillOval((int) x1 - 5, (int) y1 - 5, 10, 10);
+                            rn++;
+                            x++;
+                            if (aim != 0) {
+                                if (x % aim == 0) {
+                                    y += ((im < 0) ? -1 : 1);
+                                }
+                            } else {
                                 y += ((im < 0) ? -1 : 1);
                             }
-                        }else { y += ((im < 0) ? -1 : 1);}
+                        }
+                    }
+                }
+            }else {
+                for (int x=0; x<mw; x++){
+                    for (int y=0; y<mh; y++){
+                        Vec3f p = pointmap[x][y];
+                        if (p == null) { continue; }
+                        //Vec3f dv = getDeltaVecBetween(p, pos);
+                        Vec3f dv = getDeltaVecBetween(rotate(p, roty), pos);
+                        int dist = (int) (dv.length() * 10);
+                        Vec2f dor = getDeltaOrient(dv);
+                        if (getOrientDif(dor, or) > 3.14159) { continue; }
+
+                        float x1 = (float) (lensd * (Math.tan(dor.x - or.x))) + (WIDTH / 2);
+                        float y1 = (float) (lensd * (Math.tan(dor.y + or.y))) + (HEIGHT / 2);
+
+                        int[] col = getColorAt(x, y, p);
+                        if (!panels) {
+                            g.setColor(new Color(col[0], col[1], col[2]));
+                        }
+                        int[] t1x = new int[]{(int) x1, 0, 0};
+                        int[] t1y = new int[]{(int) y1, 0, 0};
+                        int[] t2x = new int[]{(int) x1, 0, 0};
+                        int[] t2y = new int[]{(int) y1, 0, 0};
+                        boolean[] cancel = new boolean[2];
+                        for (int d = 0; d < 4; d++) {
+                            int x4 = x + ((d % 2 == 0) ? 0 : ((d == 1) ? 1 : -1));
+                            int y4 = y + ((d % 2 == 1) ? 0 : ((d == 0) ? 1 : -1));
+                            if (net && parametric) {
+                                if (d % 2 == 1) {
+                                    continue;
+                                }
+                            }
+
+                            if (x4 >= 0 && y4 >= 0 && y4 < pointmap[0].length && x4 < pointmap.length) {
+                                Vec3f p2 = pointmap[x4][y4];
+                                if (p2 == null) {
+                                    cancel[((d < 2) ? 0 : 1)] = true;
+                                    continue;
+                                }
+                                Vec3f dv1 = getDeltaVecBetween(rotate(p2, roty), pos);
+                                Vec2f dor1 = getDeltaOrient(dv1);
+                                if (getOrientDif(dor1, or) > 3.14) {
+                                    cancel[((d < 2) ? 0 : 1)] = true;
+                                    continue;
+                                }
+                                float x3 = (float) (lensd * (Math.tan(dor1.x - or.x))) + (WIDTH / 2);
+                                float y3 = (float) (lensd * (Math.tan(dor1.y + or.y))) + (HEIGHT / 2);
+                                if (d < 2) {
+                                    t1x[((d == 0) ? 1 : 2)] = (int) x3;
+                                    t1y[((d == 0) ? 1 : 2)] = (int) y3;
+                                } else {
+                                    t2x[((d == 2) ? 1 : 2)] = (int) x3;
+                                    t2y[((d == 2) ? 1 : 2)] = (int) y3;
+                                }
+                                if (net && !panels) {
+                                    g.drawLine((int) x1, (int) y1, (int) x3, (int) y3);
+                                }
+                            } else {
+                                cancel[((d < 2) ? 0 : 1)] = true;
+                            }
+
+                        }
+                        if (!net) {
+                            if (!cancel[0]) {
+                                g.fillPolygon(t1x, t1y, 3);
+                            }
+                            if (!cancel[1]) {
+                                g.fillPolygon(t2x, t2y, 3);
+                            }
+                        }
+                        //if (panels&&!cancel[0]&&!cancel[1]){pls.add(new int[][]{{dist},t1x,t1y,t2x,t2y,col});}
+                        if (panels) {
+                            pls.add(new int[][]{{dist}, (!cancel[0]) ? t1x : null, (!cancel[0]) ? t1y : null, (!cancel[1]) ? t2x : null, (!cancel[1]) ? t2y : null, col});
+                        }
                     }
                 }
             }
