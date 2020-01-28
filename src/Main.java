@@ -19,7 +19,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
     Graphics gfx;
     Image img;
     boolean gravon=false;
-    Object frame=new Object(2,null,null,0);
+    Object frame=new Object(1,null,null,0);
     float graconstant=2;
     boolean magon=false;
     //COLORS
@@ -71,9 +71,12 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
             }
         }*/
         gfx.setColor(Color.BLUE);
-        gfx.drawString(fov,50,50);
-        gfx.drawString((int)(orient.x*180/3.14f)+", "+(int)(orient.y*180/3.14f),50,80);
-        gfx.drawString("rad = "+(int)(rad),50,120);
+        int sx=50, sy=50;
+        gfx.drawString(fov,sx,sy);
+        gfx.drawString((int)(orient.x*180/3.14f)+", "+(int)(orient.y*180/3.14f),sx,sy+30);
+        gfx.drawString("rad = "+(int)(rad),sx,sy+60);
+
+        //gfx.drawString(frame.getType(),sx,sy+90);
         sortObjects();
         Vec2f or1=new Vec2f(orient.x,0);//TODO REMOVE THIS LATER
         or1=new Vec2f(orient.x,0);//TODO REMOVE THIS LATER
@@ -154,7 +157,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
             for (int i=0; i<objects.size(); i++){
                 Object o = objects.get(i);
                 o.update(.03f,objects);
-                //o.applyField(field,.01f);
+                if(magon){o.applyField(field,.03f);}
                 for (int z=0; z<objects.size(); z++){
                     if(i==z||!objects.contains(o)){continue;}
                     Object o1 = objects.get(z);
@@ -209,10 +212,11 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
 
     //INPUT
     public void keyPressed(KeyEvent e) {
+        float rad1=3f;
         if (e.getKeyCode()==KeyEvent.VK_RIGHT){
-            rotateAround(orient.x+.05f,orient.y);
+            rotateAround(orient.x+.02f,orient.y);
         }else if (e.getKeyCode()==KeyEvent.VK_LEFT){
-            rotateAround(orient.x-.05f,orient.y);
+            rotateAround(orient.x-.02f,orient.y);
         }if (e.getKeyCode()==KeyEvent.VK_UP){
             //orient.y+=.2;
             rotateAround(orient.x,orient.y+.05f);
@@ -227,11 +231,11 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
             rad*=1.1f;
             rotateAround(orient.x,orient.y);
         }else if(e.getKeyCode()==KeyEvent.VK_SPACE){
-            addRandParticle(-10,10,1.2f);
+            addRandParticle(-10,10,rad1);
         }else if(e.getKeyCode()==KeyEvent.VK_C){
-            addRandCluster(-10,10,30,40,1.2f);
+            addRandCluster(-10,10,80,40,rad1);
         }else if(e.getKeyCode()==KeyEvent.VK_T){
-            for (int i=0; i<50; i++){ addRandParticle(-10,10,2);}
+            for (int i=0; i<50; i++){ addRandParticle(-10,10,rad1);}
         }else if(e.getKeyCode()==KeyEvent.VK_B){
             addRandParticle(-10,10,10);
         }else if(e.getKeyCode()==KeyEvent.VK_N){
@@ -256,6 +260,13 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
                 o.vel.y*=.7f;
                 o.vel.z*=.7f;
             }
+        }if(e.getKeyCode()==KeyEvent.VK_F) {
+            for (int i=0; i<objects.size(); i++){
+                Object o=objects.get(i);
+                o.vel.x*=1.2f;
+                o.vel.y*=1.2f;
+                o.vel.z*=1.2f;
+            }
         }if (e.getKeyCode()==KeyEvent.VK_R){
             if (objects.size()>0){
                 objects.remove(0);
@@ -268,6 +279,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
             System.out.println("grav = "+gravon);
         }if (e.getKeyCode()==KeyEvent.VK_M){
             magon=!magon;
+            System.out.println("mag = "+magon);
             //System.out.println("grav = "+gravon);
         }
     }

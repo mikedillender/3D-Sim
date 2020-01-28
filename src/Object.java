@@ -21,6 +21,7 @@ public class Object implements FrameData{
     float[][] vrngs=new float[3][3];
     int wd=100;
     int ht=6;
+    boolean slopeField=false;
 
     public Object(int shape, Vec3f loc, Vec3f vel,float rad){
         points=new ArrayList<>();
@@ -49,10 +50,14 @@ public class Object implements FrameData{
         }else if (shape==2){
             float sep=30;
             //int size=42;
-
+            //wd=30;
+            //ht=30;
+            wd=10;
+            ht=10;
+            //land=true;
             int maxv=7;
             int v=(int)(Math.floor(Math.random()*(maxv+.99)));
-            v=11;
+            v=8;
 
             float vr=25;
             int vs=(int)(Math.random()*5)+5;
@@ -65,12 +70,11 @@ public class Object implements FrameData{
                 if (Math.abs(vc[1])<1){ vc[1]=(vc[1]<0)?-1:1; }
                 if (Math.abs(vc[3])<1){ vc[3]=(vc[3]<0)?-1:1; }
             }
-            boolean slopeField=v==10;
-
+            slopeField=v==10;
             parametric=(v==10||v==11);
             polar=(v==7||v==8||v==9);
-            float step=5;
-            if (!polar&&!parametric){wd=ht;}
+            float step=2;
+            if (!parametric){ht=wd;}
 
             int xmin=(!parametric)?-wd:0;
             int ymin=(!parametric)?-ht:1;
@@ -199,17 +203,17 @@ public class Object implements FrameData{
                             break;
                         case 10://Parametric
                             Vec3f lp=pointmap[x][y-1];
-                            /*float[] ddt=new float[]{
+                            float[] ddt=new float[]{
                                     (float)(Math.sin(lp.y/19f)+Math.cos(lp.z/13f)),
                                     (float)(Math.cos(lp.x/12f+14)*(Math.sqrt(Math.abs(lp.x*Math.sin(lp.z/19f+5))))),
-                                    (float)(((x/30)*Math.sin(lp.y*(lp.x-lp.y)/(sep*14)+1.3))/(Math.sqrt(Math.abs(lp.x/50)+10)))
-                            };*/
+                                    (float)(((x/30)*Math.sin(lp.y*(lp.x-lp.y)/(sep*14)+1.3))+1)
+                            };
                             float dfromc=lp.length();
-                            float[] ddt=new float[]{
+                            /*float[] ddt=new float[]{
                                     (float)(5*Math.cos(dfromc)),
                                     (float)1,
                                     (float)(Math.sin(dfromc/25f))
-                            };
+                            };*/
                             v1[0]=lp.x+(float)(step*ddt[0]);
                             v1[1]=lp.y+(float)(step*ddt[1]);
                             v1[2]=lp.z+(float)(step*ddt[2]);
@@ -267,7 +271,7 @@ public class Object implements FrameData{
         if(timer<0){
             timer=.1f;
             points.add(new Vec3f(loc.x,loc.y,loc.z));
-            if (points.size()>50){
+            if (points.size()>rad*50){
                 points.remove(0);
             }
         }
@@ -327,7 +331,7 @@ public class Object implements FrameData{
         Vec3f nv=new Vec3f();// v = vin + vnot
         Vec2f dirOfVel=getDeltaOrient(vel);
         float mag=B*(float)Math.sin(o.y-dirOfVel.y)*vel.length();
-        Vec2f forceDir=new Vec2f(dirOfVel.x+(3.14f/2),o.y+3.14f/2);
+        Vec2f forceDir=new Vec2f(dirOfVel.x+(3.1415f/2),o.y+3.1415f/2);
 
         float r1=(float)(mag*Math.cos(forceDir.y));
         accelv.z=(float)(mag*Math.sin(forceDir.y));
@@ -343,6 +347,18 @@ public class Object implements FrameData{
     }
 
 
+    public String getType(){
+        String s="";
+        if (polar){
+            s+="Polar Function";
+        }else if (parametric){
+            s+="Parametric Function";
+            if (slopeField){s+=" (Slope Field Approx.)";}
+        }else {
+            s+="z = f(x,y) Function";
+        }
+        return s;
+    }
 
     public boolean collidesWith(Vec3f tp, Vec3f p1, float r1, float r2){
         float d=getDistOfDelta(getDeltaVecBetween(p1,tp));
@@ -389,9 +405,15 @@ public class Object implements FrameData{
         }else {
             //return new int[]{(int) (255 * x * zmult / (float) msize), (int) (zmult * (255 - (255 * x / (float) msize))), (int) (zmult * 255 * y / (float) msize)};
             if (!parametric) {
-                int r = (int) (zmult * ((x > (mw / 2)) ? 240 : 0));
+                /*int r = (int) (zmult * ((x > (mw / 2)) ? 240 : 0));
                 int g = (int) (zmult * ((y > (mh / 2)) ? 240 : 0));
+                int b = (int) (zmult * 150);*/
+                int r = 50+(int)(150*((float)x/mw));
+                //r=(int)(r*zmult);
+                int g = (int) (50+(int)(150*((float)y/mh)));
+                //g=(int)(g*zmult);
                 int b = (int) (zmult * 150);
+
                 return new int[]{r,g,b};
             }else {
                 int r = 50+(int)(150*((float)x/mw));
@@ -413,7 +435,7 @@ public class Object implements FrameData{
                 Vec3f dv = getDeltaVecBetween(pos, points.get(i));
                 Vec2f dor = getDeltaOrient(dv);
                 if (getOrientDif(dor, or) > 3.14159) {
-                    continue;
+                    //continue;
                 }
                 float x = (float) (lensd * (Math.tan(dor.x - or.x))) + (WIDTH / 2);
                 float y = (float) (lensd * (Math.tan(dor.y - or.y))) + (HEIGHT / 2);
@@ -427,7 +449,8 @@ public class Object implements FrameData{
             Vec3f dv = getDeltaVecBetween(pos, loc);
             Vec2f dor = getDeltaOrient(dv);
             if (getOrientDif(dor, or) > 3.14159) {
-                return;
+                //System.out.println("");
+                //return;
             }
             float dist=getDistOfDelta(dv);
             float x = (float) (lensd * (Math.tan(dor.x - or.x))) + (WIDTH / 2);
@@ -449,7 +472,7 @@ public class Object implements FrameData{
                 float x=(float)(lensd*(Math.tan(dor.x-or.x)))+(WIDTH/2);
                 float y=(float)(lensd*(Math.tan(dor.y+or.y)))+(HEIGHT/2);
                 if (f){
-                    System.out.println(dv+" | from p : "+dor+" | p : "+or);//TODO dor seems to be whats messed up
+                    //System.out.println(dv+" | from p : "+dor+" | p : "+or);//TODO dor seems to be whats messed up
                     f=false;
                 }
                 g.setColor(Color.BLACK);
@@ -479,12 +502,15 @@ public class Object implements FrameData{
             boolean panels=false;if (polar||parametric){panels=true;};
             if (parametric){panels=false;net=true;}
             //boolean lines
-            panels=true;
-            net=false;
-
+            //panels=true;
+            //panels=true;
+            panels=false;
+            net=f;
+            net=true;
             ArrayList<int[][]> pls=new ArrayList<>();
             int rn=0;
-            land=false;
+            //land=false;
+
             if (polar){land=false;}
             if (!polar&&!parametric) {
                 int msize=mw;
@@ -752,11 +778,11 @@ public class Object implements FrameData{
                         for (int d = 0; d < 4; d++) {
                             int x4 = x + ((d % 2 == 0) ? 0 : ((d == 1) ? 1 : -1));
                             int y4 = y + ((d % 2 == 1) ? 0 : ((d == 0) ? 1 : -1));
-                            if (net && parametric) {
+                            /*if (net && parametric) {
                                 if (d % 2 == 1) {
                                     continue;
                                 }
-                            }
+                            }*/
 
                             if (x4 >= 0 && y4 >= 0 && y4 < pointmap[0].length && x4 < pointmap.length) {
                                 Vec3f p2 = pointmap[x4][y4];
@@ -835,9 +861,10 @@ public class Object implements FrameData{
                 for (int[][] p : pls) {
                     g.setColor(new Color(p[5][0],p[5][1],p[5][2]));
                     //System.out.println(p[5][0]+", "+p[5][1]+", "+p[5][2]);
+                    //System.out.println("poly "+" ("+p[1][0]+", "+p[2][0]+" ) , "+" ("+p[1][1]+", "+p[2][1]+" ) , "+" ("+p[1][2]+", "+p[2][2]+" ) ");
+
                     if (p[1]!=null) {
                         d++;
-                        //System.out.println("poly "+" ("+p[1][0]+", "+p[2][0]+" ) , "+" ("+p[1][1]+", "+p[2][1]+" ) , "+" ("+p[1][2]+", "+p[2][2]+" ) ");
                         g.fillPolygon(p[1], p[2], 3);
                     }
                     if (p[3]!=null) {
