@@ -28,6 +28,10 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
     String fov="";
     float universalgrav=0;
     int pathlength=10;
+    float[][][] dmap;
+    int cs=50;
+    CellRenderer cr=new CellRenderer();
+    float maxE=0;
 
     public void init(){//STARTS THE PROGRAM
         this.resize(WIDTH, HEIGHT);
@@ -39,6 +43,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
         float hd=(float)(2*(180f/3.1415f)*Math.atan((HEIGHT/2f)/rld));
         float wd=(float)(2*(180f/3.1415f)*Math.atan((WIDTH/2f)/rld));
         fov="fov : "+hd+", "+wd;
+        dmap=new float[BOUNDS[0]*2/cs][BOUNDS[1]*2/cs][BOUNDS[2]*2/cs];
         thread=new Thread(this);
         thread.start();
     }
@@ -86,6 +91,14 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
         or1=new Vec2f(orient.x,0);//TODO REMOVE THIS LATER
         for (Object o : objects){
             o.render(gfx,WIDTH,HEIGHT,rld, pos,or1,orient.y);
+        }
+
+        for (int x=0; x<dmap.length; x++){
+            for (int y=0; y<dmap[0].length; y++) {
+                for (int z = 0; z < dmap[0][0].length; z++) {
+                    cr.render(gfx,WIDTH,HEIGHT,rld, pos,or1,cs,x-(BOUNDS[0]/cs),y-(BOUNDS[1]/cs),z-(BOUNDS[2]/cs),dmap[x][y][z],maxE);
+                }
+            }
         }
         gfx.setColor(Color.BLACK);
         frame.render(gfx,WIDTH,HEIGHT,rld, pos,or1,orient.y);
@@ -154,7 +167,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
         paint(g);
     }
     int paint=0;
-    int paintevery=5;//frames
+    int paintevery=0;//frames
     public void run() { for (;;){//CALLS UPDATES AND REFRESHES THE GAME
             Vec2f field=new Vec2f(0,3.1415f/2);
             //Vec3f f=new Vec3f();
@@ -162,9 +175,11 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
             int refspeed=20;
             float speedfactor=2;
             float dt=speedfactor*refspeed/1000f;
-            for (int i=0; i<objects.size(); i++){
+        dmap=new float[BOUNDS[0]*2/cs][BOUNDS[1]*2/cs][BOUNDS[2]*2/cs];
+        maxE=0;
+        for (int i=0; i<objects.size(); i++){
                 Object o = objects.get(i);
-                o.update(dt,objects,pathlength);
+                o.update(dt,objects,pathlength,this);
                 if(magon){o.applyField(field,dt);}
                 if (Math.abs(graconstant)>1){o.vel.z+=graconstant*dt;}
                 for (int z=0; z<objects.size(); z++){
@@ -301,7 +316,16 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
         }
     }
     public void keyTyped(KeyEvent e) { }
-
+    public void addE(float v,float s, Vec3f pos){
+        float e=v*v*s;
+        int x=BOUNDS[0]+(int)pos.x;
+        int y=(BOUNDS[1]+(int)pos.y);
+        int z=(BOUNDS[2]*2)-(BOUNDS[2]+(int)pos.z);
+        dmap[x/cs][y/cs][z/cs]+=e;
+        if (dmap[x/cs][y/cs][z/cs]>maxE){
+            maxE=dmap[x/cs][y/cs][z/cs];
+        }
+    }
     //QUICK METHOD I MADE TO DISPLAY A COORDINATE GRID
 
 }

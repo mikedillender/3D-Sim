@@ -265,7 +265,7 @@ public class Object implements FrameData{
         rad=(float)(Math.pow(r3,.33));
     }
 
-    public void update(float dt, ArrayList<Object> objects,int pathlength){
+    public void update(float dt, ArrayList<Object> objects,int pathlength, Main m){
         Vec3f newv=new Vec3f(loc.x+(vel.x*dt),loc.y+(vel.y*dt),loc.z+(vel.z*dt));
         timer-=dt;
         if(timer<0){
@@ -275,6 +275,10 @@ public class Object implements FrameData{
                 points.remove(0);
             }
         }
+
+        float v=vel.length();
+        float vl=getVolume();
+        m.addE(v,vl,loc);
         int cind=objects.indexOf(this);
         for (int i=0; i<objects.size(); i++){
             Object o=objects.get(i);
