@@ -29,9 +29,11 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
     float universalgrav=0;
     int pathlength=10;
     float[][][] dmap;
-    int cs=50;
+    int cs=20;
     CellRenderer cr=new CellRenderer();
     float maxE=0;
+    boolean renderparticles=false;
+    boolean running=true;
 
     public void init(){//STARTS THE PROGRAM
         this.resize(WIDTH, HEIGHT);
@@ -85,12 +87,15 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
         gfx.drawString("ugrav = "+(int)(universalgrav),sx,sy+90);
         gfx.drawString("pathlgth = "+(int)(pathlength),sx,sy+120);
 
-        //gfx.drawString(frame.getType(),sx,sy+90);
-        sortObjects();
         Vec2f or1=new Vec2f(orient.x,0);//TODO REMOVE THIS LATER
         or1=new Vec2f(orient.x,0);//TODO REMOVE THIS LATER
-        for (Object o : objects){
-            o.render(gfx,WIDTH,HEIGHT,rld, pos,or1,orient.y);
+        //gfx.drawString(frame.getType(),sx,sy+90);
+        if (renderparticles) {
+
+            sortObjects();
+            for (Object o : objects) {
+                o.render(gfx, WIDTH, HEIGHT, rld, pos, or1, orient.y);
+            }
         }
 
         for (int x=0; x<dmap.length; x++){
@@ -167,7 +172,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
         paint(g);
     }
     int paint=0;
-    int paintevery=0;//frames
+    int paintevery=3;//frames
     public void run() { for (;;){//CALLS UPDATES AND REFRESHES THE GAME
             Vec2f field=new Vec2f(0,3.1415f/2);
             //Vec3f f=new Vec3f();
@@ -175,29 +180,49 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
             int refspeed=20;
             float speedfactor=2;
             float dt=speedfactor*refspeed/1000f;
-        dmap=new float[BOUNDS[0]*2/cs][BOUNDS[1]*2/cs][BOUNDS[2]*2/cs];
-        maxE=0;
-        for (int i=0; i<objects.size(); i++){
-                Object o = objects.get(i);
-                o.update(dt,objects,pathlength,this);
-                if(magon){o.applyField(field,dt);}
-                if (Math.abs(graconstant)>1){o.vel.z+=graconstant*dt;}
-                for (int z=0; z<objects.size(); z++){
-                    if(i==z||!objects.contains(o)){continue;}
-                    Object o1 = objects.get(z);
-                    //if(objects.indexOf(o)==objects.indexOf(o1)){continue;}
-                    try {
-                        if (gravon) {
-                            o.attractTo(o1.loc, graconstant * o1.getVolume());
-                        }
-                    }catch (NullPointerException e){
-                        System.out.println("ERROR");
+            long s=System.nanoTime();
+            if (running) {
+                dmap = new float[BOUNDS[0] * 2 / cs][BOUNDS[1] * 2 / cs][BOUNDS[2] * 2 / cs];
+                maxE = 0;
+                for (int i = 0; i < objects.size(); i++) {
+                    Object o = objects.get(i);
+                    o.update(dt, objects, pathlength, this);
+                    if (magon) {
+                        o.applyField(field, dt);
                     }
-                    //if(magon){o.magnetize(magc,o1);}
+                    if (Math.abs(graconstant) > 1) {
+                        o.vel.z += graconstant * dt;
+                    }
+                    for (int z = 0; z < objects.size(); z++) {
+                        if (i == z || !objects.contains(o)) {
+                            continue;
+                        }
+                        Object o1 = objects.get(z);
+                        //if(objects.indexOf(o)==objects.indexOf(o1)){continue;}
+                        try {
+                            if (gravon) {
+                                o.attractTo(o1.loc, graconstant * o1.getVolume());
+                            }
+                        } catch (NullPointerException e) {
+                            System.out.println("ERROR");
+                        }
+                        //if(magon){o.magnetize(magc,o1);}
+                    }
                 }
             }
+            float rdt1=(float)((System.nanoTime()-s)/1000000000f);
+            //System.out.println(rdt);
+            String times=""+rdt1;
             paint-=1;
-            if (paint<0){paint=paintevery;repaint();}//UPDATES FRAME
+            if (paint<0){
+                s=System.nanoTime();
+                paint=paintevery;repaint();
+                float rdt=(float)((System.nanoTime()-s)/1000000000f);
+                times+=" "+rdt;
+                refspeed=(int)(1000*rdt1);
+            }//UPDATES FRAME
+        System.out.println(times);
+
             try{ Thread.sleep(refspeed); } //ADDS TIME BETWEEN FRAMES (FPS)
             catch (InterruptedException e) { e.printStackTrace();System.out.println("GAME FAILED TO RUN"); }//TELLS USER IF GAME CRASHES AND WHY
     } }
@@ -236,7 +261,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
 
     //INPUT
     public void keyPressed(KeyEvent e) {
-        float rad1=15f;
+        float rad1=3f;
         if (e.getKeyCode()==KeyEvent.VK_RIGHT){
             rotateAround(orient.x+.02f,orient.y);
         }else if (e.getKeyCode()==KeyEvent.VK_LEFT){
@@ -284,6 +309,10 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
             pathlength--;
         }else if (e.getKeyCode()==KeyEvent.VK_PERIOD){
             pathlength++;
+        }else if (e.getKeyCode()==KeyEvent.VK_P){
+           renderparticles=!renderparticles;
+        }else if (e.getKeyCode()==KeyEvent.VK_S){
+           running=!running;
         }
         if(e.getKeyCode()==KeyEvent.VK_L) {
             for (int i=0; i<objects.size(); i++){

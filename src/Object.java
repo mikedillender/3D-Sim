@@ -289,7 +289,7 @@ public class Object implements FrameData{
                     vel.y=0;
                     vel.z=0;
                     return;*/
-                    System.out.println("collides "+newv+" "+o.loc);
+                    //System.out.println("collides "+newv+" "+o.loc);
                     vel.x=-vel.x;
                     vel.y=-vel.y;
                     vel.z=-vel.z;

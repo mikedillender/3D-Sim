@@ -10,6 +10,7 @@ public class CellRenderer {
 
     }
     public void render(Graphics g, int WIDTH, int HEIGHT, float lensd, Vec3f pos, Vec2f or, float cs, int x1, int y1, int z1,float e,float maxE){
+        if (e==0){return;}
         ArrayList<Vec3f> points=new ArrayList<>();
         for (int x=-1; x<=1;x+=2){
             for (int y=-1; y<=1; y+=2) {
