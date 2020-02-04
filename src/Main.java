@@ -26,6 +26,8 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
     Color background=new Color(255, 255, 255);
     float rld=((WIDTH/2f)/2f);
     String fov="";
+    float universalgrav=0;
+    int pathlength=10;
 
     public void init(){//STARTS THE PROGRAM
         this.resize(WIDTH, HEIGHT);
@@ -75,6 +77,8 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
         gfx.drawString(fov,sx,sy);
         gfx.drawString((int)(orient.x*180/3.14f)+", "+(int)(orient.y*180/3.14f),sx,sy+30);
         gfx.drawString("rad = "+(int)(rad),sx,sy+60);
+        gfx.drawString("ugrav = "+(int)(universalgrav),sx,sy+90);
+        gfx.drawString("pathlgth = "+(int)(pathlength),sx,sy+120);
 
         //gfx.drawString(frame.getType(),sx,sy+90);
         sortObjects();
@@ -149,15 +153,20 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
     public void update(Graphics g){ //REDRAWS FRAME
         paint(g);
     }
-
+    int paint=0;
+    int paintevery=5;//frames
     public void run() { for (;;){//CALLS UPDATES AND REFRESHES THE GAME
             Vec2f field=new Vec2f(0,3.1415f/2);
             //Vec3f f=new Vec3f();
             //UPDATES
+            int refspeed=20;
+            float speedfactor=2;
+            float dt=speedfactor*refspeed/1000f;
             for (int i=0; i<objects.size(); i++){
                 Object o = objects.get(i);
-                o.update(.03f,objects);
-                if(magon){o.applyField(field,.03f);}
+                o.update(dt,objects,pathlength);
+                if(magon){o.applyField(field,dt);}
+                if (Math.abs(graconstant)>1){o.vel.z+=graconstant*dt;}
                 for (int z=0; z<objects.size(); z++){
                     if(i==z||!objects.contains(o)){continue;}
                     Object o1 = objects.get(z);
@@ -172,9 +181,9 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
                     //if(magon){o.magnetize(magc,o1);}
                 }
             }
-
-            repaint();//UPDATES FRAME
-            try{ Thread.sleep(30); } //ADDS TIME BETWEEN FRAMES (FPS)
+            paint-=1;
+            if (paint<0){paint=paintevery;repaint();}//UPDATES FRAME
+            try{ Thread.sleep(refspeed); } //ADDS TIME BETWEEN FRAMES (FPS)
             catch (InterruptedException e) { e.printStackTrace();System.out.println("GAME FAILED TO RUN"); }//TELLS USER IF GAME CRASHES AND WHY
     } }
 
@@ -212,7 +221,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
 
     //INPUT
     public void keyPressed(KeyEvent e) {
-        float rad1=3f;
+        float rad1=15f;
         if (e.getKeyCode()==KeyEvent.VK_RIGHT){
             rotateAround(orient.x+.02f,orient.y);
         }else if (e.getKeyCode()==KeyEvent.VK_LEFT){
@@ -252,6 +261,14 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
 
             pos=new Vec3f(-rad,0,0);
             orient=new Vec2f(0,0);
+        }else if (e.getKeyCode()==KeyEvent.VK_OPEN_BRACKET){
+            universalgrav+=1;
+        }else if (e.getKeyCode()==KeyEvent.VK_CLOSE_BRACKET){
+            universalgrav-=1;
+        }else if (e.getKeyCode()==KeyEvent.VK_COMMA){
+            pathlength--;
+        }else if (e.getKeyCode()==KeyEvent.VK_PERIOD){
+            pathlength++;
         }
         if(e.getKeyCode()==KeyEvent.VK_L) {
             for (int i=0; i<objects.size(); i++){

@@ -265,13 +265,13 @@ public class Object implements FrameData{
         rad=(float)(Math.pow(r3,.33));
     }
 
-    public void update(float dt, ArrayList<Object> objects){
+    public void update(float dt, ArrayList<Object> objects,int pathlength){
         Vec3f newv=new Vec3f(loc.x+(vel.x*dt),loc.y+(vel.y*dt),loc.z+(vel.z*dt));
         timer-=dt;
         if(timer<0){
-            timer=.1f;
+            timer=.2f;
             points.add(new Vec3f(loc.x,loc.y,loc.z));
-            if (points.size()>rad*50){
+            if (points.size()>pathlength){
                 points.remove(0);
             }
         }
