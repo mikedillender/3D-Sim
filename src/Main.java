@@ -1,9 +1,14 @@
 import com.sun.javafx.geom.Vec2f;
 import com.sun.javafx.geom.Vec3f;
+
+import javax.imageio.ImageIO;
 import java.applet.Applet;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Main extends Applet implements Runnable, KeyListener, FrameData {
@@ -34,6 +39,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
     float maxE=0;
     boolean renderparticles=false;
     boolean running=true;
+    boolean saving=false;
 
     public void init(){//STARTS THE PROGRAM
         this.resize(WIDTH, HEIGHT);
@@ -113,6 +119,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
         gfx.drawString(msg,20,20);
         //FINAL
         g.drawImage(img,0,0,this);
+        storeImg();
     }
 
 
@@ -219,7 +226,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
                 paint=paintevery;repaint();
                 float rdt=(float)((System.nanoTime()-s)/1000000000f);
                 times+=" "+rdt;
-                refspeed=(int)(1000*rdt1);
+                //refspeed=(int)(1000*rdt1);
             }//UPDATES FRAME
         System.out.println(times);
 
@@ -313,6 +320,8 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
            renderparticles=!renderparticles;
         }else if (e.getKeyCode()==KeyEvent.VK_S){
            running=!running;
+        }else if (e.getKeyCode()==KeyEvent.VK_O){
+           saving=!saving;
         }
         if(e.getKeyCode()==KeyEvent.VK_L) {
             for (int i=0; i<objects.size(); i++){
@@ -355,6 +364,44 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
             maxE=dmap[x/cs][y/cs][z/cs];
         }
     }
+
+    int num=0;
+    public void storeImg(){
+        // Initialize Color[][] however you were already doing so.
+        /*Color[][] image=new Color[map.length][map[0].length];
+
+        for (int x=0; x<map.length; x++){
+            for (int y=0; y<map[0].length; y++){
+                if (map[x][y] == 0) {
+                    image[x][y]=new Color(100, 00, 00);
+                } else {
+                    image[x][y]=new Color((int) (map[x][y] * 255) / 2, (int) (map[x][y] * 255), (int) (map[x][y] * 255) / 2);
+                }
+            }
+        }*/
+
+        // Initialize BufferedImage, assuming Color[][] is already properly populated.
+        BufferedImage bufferedImage = (BufferedImage)(img);
+                //new BufferedImage(image.length, image[0].length, BufferedImage.TYPE_INT_RGB);
+        //img.getGraphics().getP
+        //bufferedImage=new BufferedImage(img);
+        // Set each pixel of the BufferedImage to the color from the Color[][].
+        /*for (int x = 0; x < image.length; x++) {
+            for (int y = 0; y < image[x].length; y++) {
+                bufferedImage.setRGB(x, y, image[x][y].getRGB());
+            }
+        }*/
+        String filename = "C:\\Users\\Mike\\Documents\\GitHub\\3D-Sim\\imgs\\"+num+".jpg";
+        File outputfile = new File(filename);
+        try {
+            ImageIO.write(bufferedImage, "jpg", outputfile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        num++;
+    }
+
+
     //QUICK METHOD I MADE TO DISPLAY A COORDINATE GRID
 
 }
