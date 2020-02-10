@@ -34,12 +34,13 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
     float universalgrav=0;
     int pathlength=10;
     float[][][] dmap;
-    int cs=20;
+    int cs=5;
     CellRenderer cr=new CellRenderer();
     float maxE=0;
     boolean renderparticles=false;
     boolean running=true;
     boolean saving=false;
+    float totalE=0;
 
     public void init(){//STARTS THE PROGRAM
         this.resize(WIDTH, HEIGHT);
@@ -59,6 +60,12 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
     public void addRandParticle(float velmin, float velmax,float rad){
         Vec3f loc=new Vec3f((float)(Math.random()*.95*BOUNDS[0]-(.475*(BOUNDS[0]))),(float)(Math.random()*.95*BOUNDS[1]-(.475*(BOUNDS[1]))),(float)(Math.random()*.95*BOUNDS[2]-(.475*(BOUNDS[2]))));
         Vec3f vel=new Vec3f((float)((velmax-velmin)*Math.random()+velmin),(float)((velmax-velmin)*Math.random()+velmin),(float)((velmax-velmin)*Math.random()+velmin));
+        for (Object o: objects){
+            if (o.collidesWith(o.loc,loc,o.rad,rad)){
+                addRandParticle(velmin,velmax,rad);
+                return;
+            }
+        }
         objects.add(new Object(0,loc,vel,rad));
     }
 
@@ -92,6 +99,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
         gfx.drawString("rad = "+(int)(rad),sx,sy+60);
         gfx.drawString("ugrav = "+(int)(universalgrav),sx,sy+90);
         gfx.drawString("pathlgth = "+(int)(pathlength),sx,sy+120);
+        gfx.drawString("Kinetic Energy = "+(int)(totalE),sx,sy+150);
 
         Vec2f or1=new Vec2f(orient.x,0);//TODO REMOVE THIS LATER
         or1=new Vec2f(orient.x,0);//TODO REMOVE THIS LATER
@@ -179,18 +187,19 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
         paint(g);
     }
     int paint=0;
-    int paintevery=3;//frames
+    int paintevery=1;//frames
     public void run() { for (;;){//CALLS UPDATES AND REFRESHES THE GAME
             Vec2f field=new Vec2f(0,3.1415f/2);
             //Vec3f f=new Vec3f();
             //UPDATES
             int refspeed=20;
             float speedfactor=2;
-            float dt=speedfactor*refspeed/1000f;
+            float dt=.05f;
             long s=System.nanoTime();
             if (running) {
                 dmap = new float[BOUNDS[0] * 2 / cs][BOUNDS[1] * 2 / cs][BOUNDS[2] * 2 / cs];
                 maxE = 0;
+                totalE=0;
                 for (int i = 0; i < objects.size(); i++) {
                     Object o = objects.get(i);
                     o.update(dt, objects, pathlength, this);
@@ -198,7 +207,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
                         o.applyField(field, dt);
                     }
                     if (Math.abs(graconstant) > 1) {
-                        o.vel.z += graconstant * dt;
+                        o.vel.z += universalgrav * dt;
                     }
                     for (int z = 0; z < objects.size(); z++) {
                         if (i == z || !objects.contains(o)) {
@@ -220,17 +229,22 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
             float rdt1=(float)((System.nanoTime()-s)/1000000000f);
             //System.out.println(rdt);
             String times=""+rdt1;
-            paint-=1;
-            if (paint<0){
-                s=System.nanoTime();
-                paint=paintevery;repaint();
-                float rdt=(float)((System.nanoTime()-s)/1000000000f);
-                times+=" "+rdt;
-                //refspeed=(int)(1000*rdt1);
-            }//UPDATES FRAME
-        System.out.println(times);
+            //paint-=1;
+            //if (paint<0){
 
-            try{ Thread.sleep(refspeed); } //ADDS TIME BETWEEN FRAMES (FPS)
+            //}//UPDATES FRAME
+        s=System.nanoTime();
+        //paint=paintevery;
+        repaint();
+        float rdt=(float)((System.nanoTime()-s)/1000000000f);
+        times+=" "+rdt;
+        refspeed=(int)(1000*rdt1);
+        System.out.println(times);
+        if (saving) {
+            rotateAround(orient.x + .02f, orient.y);
+        }
+
+        try{ Thread.sleep(refspeed); } //ADDS TIME BETWEEN FRAMES (FPS)
             catch (InterruptedException e) { e.printStackTrace();System.out.println("GAME FAILED TO RUN"); }//TELLS USER IF GAME CRASHES AND WHY
     } }
 
@@ -363,6 +377,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
         if (dmap[x/cs][y/cs][z/cs]>maxE){
             maxE=dmap[x/cs][y/cs][z/cs];
         }
+        totalE+=(e/100000f);
     }
 
     int num=0;
@@ -391,7 +406,9 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
                 bufferedImage.setRGB(x, y, image[x][y].getRGB());
             }
         }*/
-        String filename = "C:\\Users\\Mike\\Documents\\GitHub\\3D-Sim\\imgs\\"+num+".jpg";
+        //String filename = "C:\\Users\\Mike\\Documents\\GitHub\\3D-Sim\\imgs\\"+num+".jpg";
+        String filename = "B:\\Libraries\\Programming\\3D-Sim\\imgs\\"+num+".jpg";
+
         File outputfile = new File(filename);
         try {
             ImageIO.write(bufferedImage, "jpg", outputfile);
