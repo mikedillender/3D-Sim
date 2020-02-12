@@ -37,7 +37,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
     int cs=5;
     CellRenderer cr=new CellRenderer();
     float maxE=0;
-    boolean renderparticles=false;
+    boolean renderparticles=true;
     boolean running=true;
     boolean saving=false;
     float totalE=0;
@@ -110,12 +110,13 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
             for (Object o : objects) {
                 o.render(gfx, WIDTH, HEIGHT, rld, pos, or1, orient.y);
             }
-        }
+        }else {
 
-        for (int x=0; x<dmap.length; x++){
-            for (int y=0; y<dmap[0].length; y++) {
-                for (int z = 0; z < dmap[0][0].length; z++) {
-                    cr.render(gfx,WIDTH,HEIGHT,rld, pos,or1,cs,x-(BOUNDS[0]/cs),y-(BOUNDS[1]/cs),z-(BOUNDS[2]/cs),dmap[x][y][z],maxE);
+            for (int x = 0; x < dmap.length; x++) {
+                for (int y = 0; y < dmap[0].length; y++) {
+                    for (int z = 0; z < dmap[0][0].length; z++) {
+                        cr.render(gfx, WIDTH, HEIGHT, rld, pos, or1, cs, x - (BOUNDS[0] / cs), y - (BOUNDS[1] / cs), z - (BOUNDS[2] / cs), dmap[x][y][z], maxE);
+                    }
                 }
             }
         }
@@ -127,7 +128,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
         gfx.drawString(msg,20,20);
         //FINAL
         g.drawImage(img,0,0,this);
-        storeImg();
+        if(saving)storeImg();
     }
 
 
@@ -236,11 +237,12 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
         s=System.nanoTime();
         //paint=paintevery;
         repaint();
-        float rdt=(float)((System.nanoTime()-s)/1000000000f);
-        times+=" "+rdt;
-        refspeed=(int)(1000*rdt1);
-        System.out.println(times);
+
         if (saving) {
+            float rdt=(float)((System.nanoTime()-s)/1000000000f);
+            times+=" "+rdt;
+            refspeed=(int)(1000*rdt1);
+            System.out.println(times);
             rotateAround(orient.x + .02f, orient.y);
         }
 
@@ -282,7 +284,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
 
     //INPUT
     public void keyPressed(KeyEvent e) {
-        float rad1=3f;
+        float rad1=20f;
         if (e.getKeyCode()==KeyEvent.VK_RIGHT){
             rotateAround(orient.x+.02f,orient.y);
         }else if (e.getKeyCode()==KeyEvent.VK_LEFT){
@@ -406,8 +408,8 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
                 bufferedImage.setRGB(x, y, image[x][y].getRGB());
             }
         }*/
-        //String filename = "C:\\Users\\Mike\\Documents\\GitHub\\3D-Sim\\imgs\\"+num+".jpg";
-        String filename = "B:\\Libraries\\Programming\\3D-Sim\\imgs\\"+num+".jpg";
+        String filename = "C:\\Users\\Mike\\Documents\\GitHub\\3D-Sim\\imgs\\"+num+".jpg";
+        //String filename = "B:\\Libraries\\Programming\\3D-Sim\\imgs\\"+num+".jpg";
 
         File outputfile = new File(filename);
         try {

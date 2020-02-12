@@ -22,6 +22,7 @@ public class Object implements FrameData{
     int wd=100;
     int ht=6;
     boolean slopeField=false;
+    float vol;
 
     public Object(int shape, Vec3f loc, Vec3f vel,float rad){
         points=new ArrayList<>();
@@ -30,6 +31,7 @@ public class Object implements FrameData{
         this.shape=shape;
         this.loc=loc;
         this.rad=rad;
+        vol=getVolume();
         if (shape==1||shape==2){createPoints();}
     }
 
@@ -285,14 +287,48 @@ public class Object implements FrameData{
             if(i!=cind){
             //if(o!=this&&o!=null){
                 if (collidesWith(newv,o.loc,rad,o.rad)){
+
                     /*vel.x=0;
                     vel.y=0;
                     vel.z=0;
                     return;*/
                     //System.out.println("collides "+newv+" "+o.loc);
-                    vel.x=-vel.x;
-                    vel.y=-vel.y;
-                    vel.z=-vel.z;
+                    //vel.x=-vel.x;
+                    //vel.y=-vel.y;
+                    //vel.z=-vel.z;
+
+                    Vec3f p=new Vec3f(vol*vel.x+o.vol*o.vel.x,vol*vel.y+o.vol*o.vel.y,vol*vel.z+o.vol*o.vel.z);
+                    float e1=getE();
+                    float e2=o.getE();
+                    float e=(e1+e2)/2f;
+                    /*o.vel.x=0;
+                    vel.x=0;
+                    o.vel.y=0;
+                    vel.y=0;
+                    o.vel.z=0;
+                    vel.z=0;*/
+                    Vec3f t2o = getDeltaVecBetween(loc,o.loc);
+                    Vec3f o2t = getDeltaVecBetween(o.loc,loc);
+                    //float vt=(float)Math.sqrt(e/o.vol);
+                    //float vo=(float)Math.sqrt(e/vol);
+
+                    t2o.normalize();
+                    o2t.normalize();
+                    float accel=(vel.length()+o.vel.length())*(o.vol+vol)/10f;
+                    vel.x+=o2t.x*accel/vol;
+                    vel.y+=o2t.y*accel/vol;
+                    vel.z+=o2t.z*accel/vol;
+                    o.vel.x+=t2o.x*accel/o.vol;
+                    o.vel.y+=t2o.y*accel/o.vol;
+                    o.vel.z+=t2o.z*accel/o.vol;
+                    /*t2o.x*=vt;
+                    t2o.y*=vt;
+                    t2o.z*=vt;
+                    o2t.x*=vo;
+                    o2t.y*=vo;
+                    o2t.z*=vo;
+                    vel=o2t;
+                    o.vel=t2o;*/
                     return;
                 }
                 /*if(collidesWith(newv,o.loc,rad,o.rad)){
@@ -362,6 +398,10 @@ public class Object implements FrameData{
             s+="z = f(x,y) Function";
         }
         return s;
+    }
+
+    public float getE(){
+        return (float)(vol*Math.pow(vel.length(),2));
     }
 
     public boolean collidesWith(Vec3f tp, Vec3f p1, float r1, float r2){
