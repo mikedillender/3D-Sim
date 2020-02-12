@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a50123d0-a48a-4304-a1fd-c6a509348a7a" name="Default" comment="accurate collisions!">
+    <list default="true" id="a50123d0-a48a-4304-a1fd-c6a509348a7a" name="Default" comment="energy conservation not working very well">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/3D-Sim/FrameData.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/3D-Sim/FrameData.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/3D-Sim/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/3D-Sim/Main.class" afterDir="false" />
@@ -20,14 +20,14 @@
     <session id="-1452248798">
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="java" value="17479" />
-          <entry key="txt" value="962" />
+          <entry key="java" value="18005" />
+          <entry key="txt" value="1020" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JAVA" value="17479" />
-          <entry key="PLAIN_TEXT" value="962" />
+          <entry key="JAVA" value="18005" />
+          <entry key="PLAIN_TEXT" value="1020" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -70,8 +70,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="383">
-              <caret line="282" column="5" lean-forward="true" selection-start-line="282" selection-start-column="5" selection-end-line="282" selection-end-column="5" />
+            <state relative-caret-position="451">
+              <caret line="286" column="21" selection-start-line="286" selection-start-column="21" selection-end-line="286" selection-end-column="21" />
               <folding>
                 <element signature="e#6943#6944#0" expanded="true" />
                 <element signature="e#6983#6984#0" expanded="true" />
@@ -84,7 +84,7 @@
         <entry file="file://$PROJECT_DIR$/src/FrameData.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="34">
-              <caret line="2" column="35" lean-forward="true" selection-start-line="2" selection-start-column="35" selection-end-line="2" selection-end-column="35" />
+              <caret line="2" column="39" selection-start-line="2" selection-start-column="39" selection-end-line="2" selection-end-column="39" />
             </state>
           </provider>
         </entry>
@@ -92,8 +92,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Object.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="162">
-              <caret line="316" column="72" selection-start-line="316" selection-start-column="72" selection-end-line="316" selection-end-column="72" />
+            <state relative-caret-position="65">
+              <caret line="326" column="67" selection-start-line="326" selection-start-column="67" selection-end-line="326" selection-end-column="67" />
               <folding>
                 <element signature="e#16639#16640#0" expanded="true" />
                 <element signature="e#16699#16700#0" expanded="true" />
@@ -117,8 +117,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>cs</find>
-      <find>E</find>
       <find>drawev</find>
       <find>dmap=ne</find>
       <find>rebde</find>
@@ -147,6 +145,8 @@
       <find>sa</find>
       <find>rad</find>
       <find>addpar</find>
+      <find>oy</find>
+      <find>orient</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -157,9 +157,9 @@
       <list>
         <option value="$PROJECT_DIR$/src/CellRenderer.java" />
         <option value="$APPLICATION_CONFIG_DIR$/idea64.exe.vmoptions" />
-        <option value="$PROJECT_DIR$/src/Object.java" />
         <option value="$PROJECT_DIR$/src/FrameData.java" />
         <option value="$PROJECT_DIR$/src/Main.java" />
+        <option value="$PROJECT_DIR$/src/Object.java" />
       </list>
     </option>
   </component>
@@ -234,7 +234,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1581529898314" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1581538235439" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../Rubix-Sim" />
     <property name="settings.editor.selected.configurable" value="preferences.keymap" />
   </component>
@@ -550,7 +550,14 @@
       <option name="project" value="LOCAL" />
       <updated>1581525383125</updated>
     </task>
-    <option name="localTasksCounter" value="35" />
+    <task id="LOCAL-00035" summary="energy conservation not working very well">
+      <created>1581530602234</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1581530602234</updated>
+    </task>
+    <option name="localTasksCounter" value="36" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -566,7 +573,7 @@
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.32819906" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32819906" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -608,7 +615,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fixed white bar visual glitch" />
     <MESSAGE value="can graph x/y/z functions now" />
     <MESSAGE value="more cool functions" />
     <MESSAGE value="working on render order" />
@@ -633,7 +639,8 @@
     <MESSAGE value="rendering spacial energy density grid" />
     <MESSAGE value="energy density display is pretty functional, also added a pause button" />
     <MESSAGE value="accurate collisions!" />
-    <option name="LAST_COMMIT_MESSAGE" value="accurate collisions!" />
+    <MESSAGE value="energy conservation not working very well" />
+    <option name="LAST_COMMIT_MESSAGE" value="energy conservation not working very well" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -658,14 +665,14 @@
     <entry file="file://$PROJECT_DIR$/src/FrameData.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
-          <caret line="2" column="35" lean-forward="true" selection-start-line="2" selection-start-column="35" selection-end-line="2" selection-end-column="35" />
+          <caret line="2" column="39" selection-start-line="2" selection-start-column="39" selection-end-line="2" selection-end-column="39" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="383">
-          <caret line="282" column="5" lean-forward="true" selection-start-line="282" selection-start-column="5" selection-end-line="282" selection-end-column="5" />
+        <state relative-caret-position="451">
+          <caret line="286" column="21" selection-start-line="286" selection-start-column="21" selection-end-line="286" selection-end-column="21" />
           <folding>
             <element signature="e#6943#6944#0" expanded="true" />
             <element signature="e#6983#6984#0" expanded="true" />
@@ -675,8 +682,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Object.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="162">
-          <caret line="316" column="72" selection-start-line="316" selection-start-column="72" selection-end-line="316" selection-end-column="72" />
+        <state relative-caret-position="65">
+          <caret line="326" column="67" selection-start-line="326" selection-start-column="67" selection-end-line="326" selection-end-column="67" />
           <folding>
             <element signature="e#16639#16640#0" expanded="true" />
             <element signature="e#16699#16700#0" expanded="true" />

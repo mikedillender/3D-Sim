@@ -288,47 +288,24 @@ public class Object implements FrameData{
             //if(o!=this&&o!=null){
                 if (collidesWith(newv,o.loc,rad,o.rad)){
 
-                    /*vel.x=0;
-                    vel.y=0;
-                    vel.z=0;
-                    return;*/
-                    //System.out.println("collides "+newv+" "+o.loc);
-                    //vel.x=-vel.x;
-                    //vel.y=-vel.y;
-                    //vel.z=-vel.z;
-
+                    //Momentum is always conserved. energy is always conserved
+                    //Energy is always conserved
                     Vec3f p=new Vec3f(vol*vel.x+o.vol*o.vel.x,vol*vel.y+o.vol*o.vel.y,vol*vel.z+o.vol*o.vel.z);
                     float e1=getE();
                     float e2=o.getE();
                     float e=(e1+e2)/2f;
-                    /*o.vel.x=0;
-                    vel.x=0;
-                    o.vel.y=0;
-                    vel.y=0;
-                    o.vel.z=0;
-                    vel.z=0;*/
-                    Vec3f t2o = getDeltaVecBetween(loc,o.loc);
+                    float te=(e1+e2);
                     Vec3f o2t = getDeltaVecBetween(o.loc,loc);
-                    //float vt=(float)Math.sqrt(e/o.vol);
-                    //float vo=(float)Math.sqrt(e/vol);
-
-                    t2o.normalize();
                     o2t.normalize();
-                    float accel=(vel.length()*vol+o.vel.length()*vol)*(1)/4;//TODO MAKE THIS CONSERVE ENERGY
-                    vel.x+=o2t.x*accel/vol;
-                    vel.y+=o2t.y*accel/vol;
-                    vel.z+=o2t.z*accel/vol;
-                    o.vel.x+=t2o.x*accel/o.vol;
-                    o.vel.y+=t2o.y*accel/o.vol;
-                    o.vel.z+=t2o.z*accel/o.vol;
-                    /*t2o.x*=vt;
-                    t2o.y*=vt;
-                    t2o.z*=vt;
-                    o2t.x*=vo;
-                    o2t.y*=vo;
-                    o2t.z*=vo;
-                    vel=o2t;
-                    o.vel=t2o;*/
+                    Vec2f pd=getDeltaOrient(p);
+                    float ft=(vel.length()*vol+o.vel.length()*o.vol)*(1)/4;
+
+                    vel=applyF(vel,ft/vol,o2t);
+                    o.vel=applyF(o.vel,-ft/vol,o2t);
+
+                    float nte=(o.getE()+getE());
+                    Vec3f p2=new Vec3f(vol*vel.x+o.vol*o.vel.x,vol*vel.y+o.vol*o.vel.y,vol*vel.z+o.vol*o.vel.z);
+                    System.out.println("p : "+p.toString()+" > "+p2.toString()+" , "+te+" > "+nte);
                     return;
                 }
                 /*if(collidesWith(newv,o.loc,rad,o.rad)){
@@ -364,6 +341,14 @@ public class Object implements FrameData{
         }else {
             vel.z=-vel.z;
         }
+    }
+
+    public Vec3f applyF(Vec3f v1, float str, Vec3f d){
+        //d.normalize();
+        v1.x+=(str*d.x);
+        v1.y+=(str*d.y);
+        v1.z+=(str*d.z);
+        return v1;
     }
 
     public void applyField(Vec2f o, float B){
