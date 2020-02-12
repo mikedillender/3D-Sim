@@ -314,7 +314,7 @@ public class Object implements FrameData{
 
                     t2o.normalize();
                     o2t.normalize();
-                    float accel=(vel.length()+o.vel.length())*(o.vol+vol)/10f;
+                    float accel=(vel.length()*vol+o.vel.length()*vol)*(1)/4;//TODO MAKE THIS CONSERVE ENERGY
                     vel.x+=o2t.x*accel/vol;
                     vel.y+=o2t.y*accel/vol;
                     vel.z+=o2t.z*accel/vol;

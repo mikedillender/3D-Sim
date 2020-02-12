@@ -284,7 +284,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
 
     //INPUT
     public void keyPressed(KeyEvent e) {
-        float rad1=20f;
+        float rad1=4f;
         if (e.getKeyCode()==KeyEvent.VK_RIGHT){
             rotateAround(orient.x+.02f,orient.y);
         }else if (e.getKeyCode()==KeyEvent.VK_LEFT){
