@@ -1,30 +1,31 @@
-import com.sun.javafx.geom.Vec2f;
-import com.sun.javafx.geom.Vec3f;
+import com.sun.javafx.geom.Vec2d;
+import com.sun.javafx.geom.Vec3d;
+import com.sun.javafx.geom.Vec3d;
 
 import java.awt.*;
 import java.util.ArrayList;
 
 public class Object implements FrameData{
     int shape=0;//sphere
-    Vec3f loc;
-    Vec3f vel;
-    float rad=2;
+    Vec3d loc;
+    Vec3d vel;
+    double rad=2;
     Color color;
-    ArrayList<Vec3f> points;
-    Vec3f[][] pointmap;
-    float timer=0;
+    ArrayList<Vec3d> points;
+    Vec3d[][] pointmap;
+    double timer=0;
     boolean side=false;
-    float avg=0;
+    double avg=0;
     boolean polar=false;
     boolean land=false;
     boolean parametric=false;
-    float[][] vrngs=new float[3][3];
+    double[][] vrngs=new double[3][3];
     int wd=100;
     int ht=6;
     boolean slopeField=false;
-    float vol;
+    double vol;
 
-    public Object(int shape, Vec3f loc, Vec3f vel,float rad){
+    public Object(int shape, Vec3d loc, Vec3d vel,double rad){
         points=new ArrayList<>();
         this.color=new Color((int)(Math.random()*255),(int)(Math.random()*255),(int)(Math.random()*255));
         this.vel=vel;
@@ -37,20 +38,20 @@ public class Object implements FrameData{
 
     public void createPoints(){
         int numAdded=0;
-        float sum=0;
-        float minr=0;
-        float maxr=0;
+        double sum=0;
+        double minr=0;
+        double maxr=0;
         if (shape==1){
             points=new ArrayList<>();
             for (int x=-1; x<=1;x+=2){
                 for (int y=-1; y<=1; y+=2) {
                     for (int z = -1; z <= 1; z += 2) {
-                        points.add(new Vec3f(x * BOUNDS[0], y * BOUNDS[1], z * BOUNDS[2]));
+                        points.add(new Vec3d(x * BOUNDS[0], y * BOUNDS[1], z * BOUNDS[2]));
                     }
                 }
             }
         }else if (shape==2){
-            float sep=30;
+            double sep=30;
             //int size=42;
             //wd=30;
             //ht=30;
@@ -61,21 +62,21 @@ public class Object implements FrameData{
             int v=(int)(Math.floor(Math.random()*(maxv+.99)));
             v=8;
 
-            float vr=25;
+            double vr=25;
             int vs=(int)(Math.random()*5)+5;
-            float[][] vecs=new float[vs][];
+            double[][] vecs=new double[vs][];
 
             for (int i=0; i<vs; i++) {
-                vecs[i]=new float[]{(float)(Math.random()*vr-(vr/2)),(float)(Math.random()*vr-(vr/2)),(float)(Math.random()*vr-(vr/2)),(float)(Math.random()*vr-(vr/2))};
+                vecs[i]=new double[]{(double)(Math.random()*vr-(vr/2)),(double)(Math.random()*vr-(vr/2)),(double)(Math.random()*vr-(vr/2)),(double)(Math.random()*vr-(vr/2))};
             }
-            for (float[] vc:vecs) {
+            for (double[] vc:vecs) {
                 if (Math.abs(vc[1])<1){ vc[1]=(vc[1]<0)?-1:1; }
                 if (Math.abs(vc[3])<1){ vc[3]=(vc[3]<0)?-1:1; }
             }
             slopeField=v==10;
             parametric=(v==10||v==11);
             polar=(v==7||v==8||v==9);
-            float step=2;
+            double step=2;
             if (!parametric){ht=wd;}
 
             int xmin=(!parametric)?-wd:0;
@@ -84,165 +85,165 @@ public class Object implements FrameData{
             int ymax=(!parametric)?ht:ht*2-1;
             if (parametric&&!slopeField){ymin=0;}
 
-            pointmap=new Vec3f[wd*2+1][ht*2+1];
-            float linesep=.8f;
+            pointmap=new Vec3d[wd*2+1][ht*2+1];
+            double linesep=.8f;
             if (parametric&&slopeField){
                 for (int x=0; x<wd*2+1; x++){
-                    float[] v1=new float[]{0,0,linesep*x};
-                    pointmap[x][0]=new Vec3f(v1[0],v1[1],v1[2]);
+                    double[] v1=new double[]{0,0,linesep*x};
+                    pointmap[x][0]=new Vec3d(v1[0],v1[1],v1[2]);
                     for (int i=0; i<3; i++){
-                        if (v1[i]>vrngs[i][1]){ vrngs[i][1]=(float)Math.ceil(v1[i]); }
-                        if (v1[i]<vrngs[i][0]){ vrngs[i][0]=(float)Math.floor(v1[i]); }
+                        if (v1[i]>vrngs[i][1]){ vrngs[i][1]=(double)Math.ceil(v1[i]); }
+                        if (v1[i]<vrngs[i][0]){ vrngs[i][0]=(double)Math.floor(v1[i]); }
                     }
                 }
             }
 
             for (int x=xmin; x<=xmax;x+=1){
                 for (int y=ymin; y<=ymax; y+=1) {
-                    float[] v1=new float[]{x*sep,y*sep,0};
+                    double[] v1=new double[]{x*sep,y*sep,0};
                     switch (v){
                         case 0:
-                            v1[2]=ht*((wd-Math.abs(x))*(ht-Math.abs(y))/(float)(ht*ht));
+                            v1[2]=ht*((wd-Math.abs(x))*(ht-Math.abs(y))/(double)(ht*ht));
                             break;
                         case 1:
-                            v1[2]=(float)(Math.sin(x/4f)*wd)/(Math.abs(y)+.5f);
+                            v1[2]=(double)(Math.sin(x/4f)*wd)/(Math.abs(y)+.5f);
                             break;
                         case 2:
-                            for (float[] vc:vecs){
-                                v1[2]=v1[2]+(float)(Math.sin(((x+vc[0])/vc[1])+((y+vc[2])/vc[3])));
+                            for (double[] vc:vecs){
+                                v1[2]=v1[2]+(double)(Math.sin(((x+vc[0])/vc[1])+((y+vc[2])/vc[3])));
                             }
                             v1[2]=v1[2]/vecs.length;
-                            //z=sep*sep/8f*(float)(Math.sin(x/3f)+Math.sin(2.1+x/12f+y/4f)-Math.cos(1.21+(x+y)/8f));
+                            //z=sep*sep/8f*(double)(Math.sin(x/3f)+Math.sin(2.1+x/12f+y/4f)-Math.cos(1.21+(x+y)/8f));
                             v1[2]*=sep*sep/4f;
                             land=true;
                             break;
                         case 3:
-                            float c=(wd*wd)-(x*x)-(y*y);//DOme
-                            v1[2]=(c>0)?(float)(Math.sqrt(c)*sep):0;
+                            double c=(wd*wd)-(x*x)-(y*y);//DOme
+                            v1[2]=(c>0)?(double)(Math.sqrt(c)*sep):0;
                             break;
                         case 4:
-                            float c1=(float)Math.sqrt((x*x)+(y*y));
-                            float c2=25-(float)Math.pow(Math.abs((14-c1)),2);
+                            double c1=(double)Math.sqrt((x*x)+(y*y));
+                            double c2=25-(double)Math.pow(Math.abs((14-c1)),2);
                             if (c2<-20){continue;}
-                            v1[2]=(c2>0)?(sep*(float)Math.sqrt(c2)):0;
+                            v1[2]=(c2>0)?(sep*(double)Math.sqrt(c2)):0;
                             break;
                         case 5:
-                            v1[2]=(float)(sep*sep*Math.sin(x+y));
+                            v1[2]=(double)(sep*sep*Math.sin(x+y));
                             break;
                         case 6:
-                            float c3=(float)Math.sqrt((x*x)+(y*y));
-                            v1[2]=(float)(sep*sep/4f*Math.cos(c3/2f));
+                            double c3=(double)Math.sqrt((x*x)+(y*y));
+                            v1[2]=(double)(sep*sep/4f*Math.cos(c3/2f));
                             break;
                         case 7://polar attempt
-                            //float r=(float)(200*Math.sin((y)/(size*2f)));
-                            float xor=((3.14159f)*((x+wd)/(float)wd));
-                            float yor=((3.14159f/2f)*((y)/(float)ht));
-                            float r=200*(float)(Math.sin(xor*2));
+                            //double r=(double)(200*Math.sin((y)/(size*2f)));
+                            double xor=((3.14159f)*((x+wd)/(double)wd));
+                            double yor=((3.14159f/2f)*((y)/(double)ht));
+                            double r=200*(double)(Math.sin(xor*2));
 
-                            if (Float.isNaN(r)||Float.isInfinite(r)){r=200;}
-                            float r1 = r * (float) (Math.cos(-yor));
-                            v1[2] = r * (float) (Math.sin(yor));
-                            v1[0] = -r1 * (float) (Math.cos(-xor));
-                            v1[1] = r1 * (float) (Math.sin(-xor));
+                            //if (double.isNaN(r)||double.isInfinite(r)){r=200;}}//TODO CHANGE
+                            double r1 = r * (double) (Math.cos(-yor));
+                            v1[2] = r * (double) (Math.sin(yor));
+                            v1[0] = -r1 * (double) (Math.cos(-xor));
+                            v1[1] = r1 * (double) (Math.sin(-xor));
                             polar=true;
                             break;
                         case 8:
-                            xor=((3.14159f)*((x+wd)/(float)wd));
-                            yor=((3.14159f/2f)*((y)/(float)ht));
+                            xor=((3.14159f)*((x+wd)/(double)wd));
+                            yor=((3.14159f/2f)*((y)/(double)ht));
                             //if (Math.abs(xor)%3.1415>.2){continue;}
-                            float s=100;
-                            //float
-                            //r=(float)Math.sqrt((Math.pow((100/Math.cos(Math.abs((xor%(3.14159f/2))-(3.14159f/4)))),2)+Math.pow(100/Math.cos(Math.abs(((yor+(3.14159f/4))%(3.14159f/2))-(3.14159f/4))),2)));
-                            //r=(float)(((100/((Math.cos(Math.abs((xor%(3.14159f/2))-(3.14159f/4))))*Math.cos(Math.abs(((yor+(3.14159f/4))%(3.14159f/2))-(3.14159f/4)))))));
+                            double s=100;
+                            //double
+                            //r=(double)Math.sqrt((Math.pow((100/Math.cos(Math.abs((xor%(3.14159f/2))-(3.14159f/4)))),2)+Math.pow(100/Math.cos(Math.abs(((yor+(3.14159f/4))%(3.14159f/2))-(3.14159f/4))),2)));
+                            //r=(double)(((100/((Math.cos(Math.abs((xor%(3.14159f/2))-(3.14159f/4))))*Math.cos(Math.abs(((yor+(3.14159f/4))%(3.14159f/2))-(3.14159f/4)))))));
                             r=100;
-                            float cornerx=(float)Math.abs(((yor+(Math.PI/4))%(Math.PI/2))-(Math.PI/4));
-                            float cornery=(float)Math.abs(((xor+(Math.PI/4))%(Math.PI/2))-(Math.PI/4));
-                            float r3=(float)(s/Math.cos(xor));
+                            double cornerx=(double)Math.abs(((yor+(Math.PI/4))%(Math.PI/2))-(Math.PI/4));
+                            double cornery=(double)Math.abs(((xor+(Math.PI/4))%(Math.PI/2))-(Math.PI/4));
+                            double r3=(double)(s/Math.cos(xor));
 
-                            r=(float)((100/(Math.cos(cornery)))/Math.cos(cornerx));
+                            r=(double)((100/(Math.cos(cornery)))/Math.cos(cornerx));
                             if (r>190){
                                 System.out.println(r+" at "+(int)(cornerx*180/3.14)+", "+(int)(cornery*180/3.14));
                             }
-                            //r=(float)(100/Math.cos(Math.abs((yor%(3.14159f/2)))));
+                            //r=(double)(100/Math.cos(Math.abs((yor%(3.14159f/2)))));
                             //if (yor>Math.PI/4){
-                                //r=(float)(100/Math.cos(Math.abs((xor%(3.14159f/2)))));
+                                //r=(double)(100/Math.cos(Math.abs((xor%(3.14159f/2)))));
                             r=100;
                             //}
-                            //if (r>Math.sqrt(30000)){r=(float)(Math.sqrt(30000));}
+                            //if (r>Math.sqrt(30000)){r=(double)(Math.sqrt(30000));}
                             //if (Math.abs((yor%(3.14159f)))>(Math.PI/4f)){r=0;}
-                            //r=(float)(((100/(Math.cos(xor)*Math.sin(yor)))));
-                            //r=(float)((100f/Math.cos(Math.abs(((xor%(Math.PI/2))-(Math.PI/4))))));
+                            //r=(double)(((100/(Math.cos(xor)*Math.sin(yor)))));
+                            //r=(double)((100f/Math.cos(Math.abs(((xor%(Math.PI/2))-(Math.PI/4))))));
                             //r=200*xor;
                             //if (xor>Math.PI/4||yor>Math.PI/4){ r=10;}
-                            if (Float.isNaN(r)||Float.isInfinite(r)){continue;}
+                            //if (double.isNaN(r)||double.isInfinite(r)){continue;}//TODO CHANGE
                             if (r<minr){minr=r;}
                             if (r>maxr){maxr=r;}
-                            r1 = r * (float) (Math.cos(yor));
-                            v1[2] = r * (float) (Math.sin(yor));
-                            v1[0] = r1 * (float) (Math.cos(xor));
-                            v1[1] = r1 * (float) (Math.sin(xor));
+                            r1 = r * (double) (Math.cos(yor));
+                            v1[2] = r * (double) (Math.sin(yor));
+                            v1[0] = r1 * (double) (Math.cos(xor));
+                            v1[1] = r1 * (double) (Math.sin(xor));
                             polar=true;
                             break;
                         case 9://polar attempt
-                            //float r=(float)(200*Math.sin((y)/(size*2f)));
-                            xor=((3.14159f)*((x+wd)/(float)wd));
-                            yor=((3.14159f/2f)*((y)/(float)ht));
+                            //double r=(double)(200*Math.sin((y)/(size*2f)));
+                            xor=((3.14159f)*((x+wd)/(double)wd));
+                            yor=((3.14159f/2f)*((y)/(double)ht));
                             //System.out.println(xor+", "+yor);
-                            r=200*(float)(Math.sin(xor*2)*Math.cos(yor*2));
+                            r=200*(double)(Math.sin(xor*2)*Math.cos(yor*2));
 
                             //if (r<30){r=30;}
                             //r=200;
-                            //r=200*(float)(xor*yor/36);
-                            //r=200*(float)Math.sqrt(xor/(yor+1));
-                            //r=200*(float)((Math.abs(yor-Math.PI)));
-                            //r=(float)(200*(xor));
-                            if (Float.isNaN(r)||Float.isInfinite(r)){r=200;}
-                            r1 = r * (float) (Math.cos(yor));
-                            v1[2] = r * (float) (Math.sin(yor));
-                            v1[0] = r1 * (float) (Math.cos(xor));
-                            v1[1] = r1 * (float) (Math.sin(xor));
+                            //r=200*(double)(xor*yor/36);
+                            //r=200*(double)Math.sqrt(xor/(yor+1));
+                            //r=200*(double)((Math.abs(yor-Math.PI)));
+                            //r=(double)(200*(xor));
+                            //if (double.isNaN(r)||Float.isInfinite((float)r)){r=200;}}//TODO CHANGE
+                            r1 = r * (double) (Math.cos(yor));
+                            v1[2] = r * (double) (Math.sin(yor));
+                            v1[0] = r1 * (double) (Math.cos(xor));
+                            v1[1] = r1 * (double) (Math.sin(xor));
                             polar=true;
                             break;
                         case 10://Parametric
-                            Vec3f lp=pointmap[x][y-1];
-                            float[] ddt=new float[]{
-                                    (float)(Math.sin(lp.y/19f)+Math.cos(lp.z/13f)),
-                                    (float)(Math.cos(lp.x/12f+14)*(Math.sqrt(Math.abs(lp.x*Math.sin(lp.z/19f+5))))),
-                                    (float)(((x/30)*Math.sin(lp.y*(lp.x-lp.y)/(sep*14)+1.3))+1)
+                            Vec3d lp=pointmap[x][y-1];
+                            double[] ddt=new double[]{
+                                    (double)(Math.sin(lp.y/19f)+Math.cos(lp.z/13f)),
+                                    (double)(Math.cos(lp.x/12f+14)*(Math.sqrt(Math.abs(lp.x*Math.sin(lp.z/19f+5))))),
+                                    (double)(((x/30)*Math.sin(lp.y*(lp.x-lp.y)/(sep*14)+1.3))+1)
                             };
-                            float dfromc=lp.length();
-                            /*float[] ddt=new float[]{
-                                    (float)(5*Math.cos(dfromc)),
-                                    (float)1,
-                                    (float)(Math.sin(dfromc/25f))
+                            double dfromc=lp.length();
+                            /*double[] ddt=new double[]{
+                                    (double)(5*Math.cos(dfromc)),
+                                    (double)1,
+                                    (double)(Math.sin(dfromc/25f))
                             };*/
-                            v1[0]=lp.x+(float)(step*ddt[0]);
-                            v1[1]=lp.y+(float)(step*ddt[1]);
-                            v1[2]=lp.z+(float)(step*ddt[2]);
+                            v1[0]=lp.x+(double)(step*ddt[0]);
+                            v1[1]=lp.y+(double)(step*ddt[1]);
+                            v1[2]=lp.z+(double)(step*ddt[2]);
                             break;
                         case 11://Parametric
-                            if (y==0){lp=new Vec3f(0,0,0);}else {lp=pointmap[x][y-1];}
+                            if (y==0){lp=new Vec3d(0,0,0);}else {lp=pointmap[x][y-1];}
 
 
-                            /*v1[0]=(y*linesep)+200*(float)(Math.cos(x/6f+13));
-                            v1[1]=200*(float)(Math.cos(x/6f+2));
-                            v1[2]=200*(float)(Math.sin(x/4f+43));*/
-                            v1[0]=(float)((y*linesep*Math.sin(Math.atan2(lp.y,lp.x))))+(float)(((250+(50*Math.cos(x*.12))))*(Math.cos(x/12f)));
-                            v1[1]=(float)((y*linesep*Math.cos(Math.atan2(lp.y,lp.x))))+(float)(((250+(50*Math.sin(x*.32))))*(float)(Math.sin(x/12f)));
-                            v1[2]=100*(float)(Math.sin(x*.64+1.34));
+                            /*v1[0]=(y*linesep)+200*(double)(Math.cos(x/6f+13));
+                            v1[1]=200*(double)(Math.cos(x/6f+2));
+                            v1[2]=200*(double)(Math.sin(x/4f+43));*/
+                            v1[0]=(double)((y*linesep*Math.sin(Math.atan2(lp.y,lp.x))))+(double)(((250+(50*Math.cos(x*.12))))*(Math.cos(x/12f)));
+                            v1[1]=(double)((y*linesep*Math.cos(Math.atan2(lp.y,lp.x))))+(double)(((250+(50*Math.sin(x*.32))))*(double)(Math.sin(x/12f)));
+                            v1[2]=100*(double)(Math.sin(x*.64+1.34));
                             break;
                     }
 
                     for (int i=0; i<3; i++){
-                        if (v1[i]>vrngs[i][1]){ vrngs[i][1]=(float)Math.ceil(v1[i]); }
-                        if (v1[i]<vrngs[i][0]){ vrngs[i][0]=(float)Math.floor(v1[i]); }
+                        if (v1[i]>vrngs[i][1]){ vrngs[i][1]=(double)Math.ceil(v1[i]); }
+                        if (v1[i]<vrngs[i][0]){ vrngs[i][0]=(double)Math.floor(v1[i]); }
                     }
                     sum+=v1[2];
                     numAdded++;
                     if (!parametric) {
-                        pointmap[wd + x][ht + y] = (new Vec3f(v1[0], (side) ? v1[2] : (v1[1]), (side) ? v1[1] : v1[2]));
+                        pointmap[wd + x][ht + y] = (new Vec3d(v1[0], (side) ? v1[2] : (v1[1]), (side) ? v1[1] : v1[2]));
                     }else {
-                        pointmap[x][y] = (new Vec3f(v1[0], (side) ? v1[2] : (v1[1]), (side) ? v1[1] : v1[2]));
+                        pointmap[x][y] = (new Vec3d(v1[0], (side) ? v1[2] : (v1[1]), (side) ? v1[1] : v1[2]));
 
                     }
 
@@ -259,27 +260,27 @@ public class Object implements FrameData{
         }
     }
 
-    public float getVolume(){ return (rad*rad*rad*3.14f*4/3); }
+    public double getVolume(){ return (rad*rad*rad*3.14f*4/3); }
 
-    public void addVolume(float v){
-        float nv=getVolume()+v;
-        float r3=(nv/(3.14f*4f/3f));
-        rad=(float)(Math.pow(r3,.33));
+    public void addVolume(double v){
+        double nv=getVolume()+v;
+        double r3=(nv/(3.14f*4f/3f));
+        rad=(double)(Math.pow(r3,.33));
     }
 
-    public void update(float dt, ArrayList<Object> objects,int pathlength, Main m){
-        Vec3f newv=new Vec3f(loc.x+(vel.x*dt),loc.y+(vel.y*dt),loc.z+(vel.z*dt));
+    public void update(double dt, ArrayList<Object> objects,int pathlength, Main m){
+        Vec3d newv=new Vec3d(loc.x+(vel.x*dt),loc.y+(vel.y*dt),loc.z+(vel.z*dt));
         timer-=dt;
         if(timer<0){
             timer=.2f;
-            points.add(new Vec3f(loc.x,loc.y,loc.z));
+            points.add(new Vec3d(loc.x,loc.y,loc.z));
             if (points.size()>pathlength){
                 points.remove(0);
             }
         }
 
-        float v=vel.length();
-        float vl=getVolume();
+        double v=vel.length();
+        double vl=getVolume();
         m.addE(v,vl,loc);
         int cind=objects.indexOf(this);
         for (int i=0; i<objects.size(); i++){
@@ -290,31 +291,41 @@ public class Object implements FrameData{
 
                     //Momentum is always conserved. energy is always conserved
                     //Energy is always conserved
-                    Vec3f p=new Vec3f(vol*vel.x+o.vol*o.vel.x,vol*vel.y+o.vol*o.vel.y,vol*vel.z+o.vol*o.vel.z);
-                    float e1=getE();
-                    float e2=o.getE();
-                    float e=(e1+e2)/2f;
-                    float te=(e1+e2);
-                    Vec3f o2t = getDeltaVecBetween(o.loc,loc);
+                    Vec3d p=new Vec3d(vol*vel.x+o.vol*o.vel.x,vol*vel.y+o.vol*o.vel.y,vol*vel.z+o.vol*o.vel.z);
+                    double e1=getE();
+                    double e2=o.getE();
+                    double e=(e1+e2)/2f;
+                    double te=(e1+e2);
+                    Vec3d o2t = getDeltaVecBetween(o.loc,loc);
                     o2t.normalize();
-                    Vec2f pd=getDeltaOrient(p);
-                    float ft=(vel.length()*vol+o.vel.length()*o.vol)*(1)/4;
+                    Vec2d pd=getDeltaOrient(p);
+                    double theta=(o2t.x*(o.vel.x-vel.x))+(o2t.y*(o.vel.y-vel.y))+(o2t.z*(o.vel.z-vel.z));
+                    vel=applyF(vel,theta,o2t);
+                    o.vel=applyF(o.vel,-theta,o2t);
+                    //double ft=(vel.length()*vol+o.vel.length()*o.vol)*(1)/4;
+                    //vel=applyF(vel,ft/vol,o2t);
+                    //                    o.vel=applyF(o.vel,-ft/vol,o2t);
+                    /*o2t.mul(ft/vol);
+                    vel.add(o2t);
+                    o2t.mul(-1f*vol/o.vol);
+                    o.vel.add(o2t);*/
 
-                    vel=applyF(vel,ft/vol,o2t);
-                    o.vel=applyF(o.vel,-ft/vol,o2t);
 
-                    float nte=(o.getE()+getE());
-                    Vec3f p2=new Vec3f(vol*vel.x+o.vol*o.vel.x,vol*vel.y+o.vol*o.vel.y,vol*vel.z+o.vol*o.vel.z);
-                    System.out.println("p : "+p.toString()+" > "+p2.toString()+" , "+te+" > "+nte);
+                    //System.out.println(vel.toString());
+
+                    double nte=(o.getE()+getE());
+                    double dte=nte-te;
+                    Vec3d p2=new Vec3d(vol*vel.x+o.vol*o.vel.x,vol*vel.y+o.vol*o.vel.y,vol*vel.z+o.vol*o.vel.z);
+                    System.out.println("p : "+p.toString()+" > "+p2.toString()+" , energy change : "+dte+" ("+(Math.round((dte/te)*100000)/1000)+"%)");
                     return;
                 }
                 /*if(collidesWith(newv,o.loc,rad,o.rad)){
-                    float ov=getVolume();
-                    float othvol=o.getVolume();
+                    double ov=getVolume();
+                    double othvol=o.getVolume();
                     addVolume(othvol);
-                    float newvo=getVolume();
-                    float mult=(othvol/newvo);
-                    float mult1=(ov/newvo);
+                    double newvo=getVolume();
+                    double mult=(othvol/newvo);
+                    double mult1=(ov/newvo);
                     vel.x*=mult1;
                     vel.y*=mult1;
                     vel.z*=mult1;
@@ -343,7 +354,7 @@ public class Object implements FrameData{
         }
     }
 
-    public Vec3f applyF(Vec3f v1, float str, Vec3f d){
+    public Vec3d applyF(Vec3d v1, double str, Vec3d d){
         //d.normalize();
         v1.x+=(str*d.x);
         v1.y+=(str*d.y);
@@ -351,17 +362,17 @@ public class Object implements FrameData{
         return v1;
     }
 
-    public void applyField(Vec2f o, float B){
-        Vec3f accelv=new Vec3f();
-        Vec3f nv=new Vec3f();// v = vin + vnot
-        Vec2f dirOfVel=getDeltaOrient(vel);
-        float mag=B*(float)Math.sin(o.y-dirOfVel.y)*vel.length();
-        Vec2f forceDir=new Vec2f(dirOfVel.x+(3.1415f/2),o.y+3.1415f/2);
+    public void applyField(Vec2d o, double B){
+        Vec3d accelv=new Vec3d();
+        Vec3d nv=new Vec3d();// v = vin + vnot
+        Vec2d dirOfVel=getDeltaOrient(vel);
+        double mag=B*(double)Math.sin(o.y-dirOfVel.y)*vel.length();
+        Vec2d forceDir=new Vec2d(dirOfVel.x+(3.1415f/2),o.y+3.1415f/2);
 
-        float r1=(float)(mag*Math.cos(forceDir.y));
-        accelv.z=(float)(mag*Math.sin(forceDir.y));
-        accelv.x=(float)(r1*Math.cos(forceDir.x));
-        accelv.y=(float)(r1*Math.sin(forceDir.x));
+        double r1=(double)(mag*Math.cos(forceDir.y));
+        accelv.z=(double)(mag*Math.sin(forceDir.y));
+        accelv.x=(double)(r1*Math.cos(forceDir.x));
+        accelv.y=(double)(r1*Math.sin(forceDir.x));
         System.out.println("applying "+accelv);
         //accelv.normalize();
         //System.out.println("applying "+accelv+" now");
@@ -385,46 +396,46 @@ public class Object implements FrameData{
         return s;
     }
 
-    public float getE(){
-        return (float)(vol*Math.pow(vel.length(),2));
+    public double getE(){
+        return (double)(vol*Math.pow(vel.length(),2));
     }
 
-    public boolean collidesWith(Vec3f tp, Vec3f p1, float r1, float r2){
-        float d=getDistOfDelta(getDeltaVecBetween(p1,tp));
+    public boolean collidesWith(Vec3d tp, Vec3d p1, double r1, double r2){
+        double d=getDistOfDelta(getDeltaVecBetween(p1,tp));
         return d<r1+r2;
     }
 
-    public void magnetize(float c, Object o){
-        Vec3f dvec=getDeltaVecBetween(this.loc,o.loc);
-        float r=getDistOfDelta(dvec);
-        float velmag=getDistOfDelta(vel);
-        Vec2f velor=getDeltaOrient(dvec);
+    public void magnetize(double c, Object o){
+        Vec3d dvec=getDeltaVecBetween(this.loc,o.loc);
+        double r=getDistOfDelta(dvec);
+        double velmag=getDistOfDelta(vel);
+        Vec2d velor=getDeltaOrient(dvec);
         velor.x+=3.14f/2;
         velor.y+=3.14f/2;
-        Vec3f BVec=getVecFromMag(velor,velmag);
+        Vec3d BVec=getVecFromMag(velor,velmag);
 
-        //Vec3f a=new Vec3f();
-        Vec3f a=BVec;
-        float invsq=c/(r*r);
+        //Vec3d a=new Vec3d();
+        Vec3d a=BVec;
+        double invsq=c/(r*r);
         //System.out.println(a);
         o.vel.x+=a.x*invsq;
         o.vel.y+=a.y*invsq;
         o.vel.z+=a.z*invsq;
 
-        //Vec3f Bor=new Vec3f(vel.x)
+        //Vec3d Bor=new Vec3d(vel.x)
     }
 
-    public Vec3f getVecFromMag(Vec2f or, float mag){
-        Vec3f newv=new Vec3f();
-        float r1=(float)(mag*Math.cos(or.y));
-        newv.z=(float)(mag*Math.sin(or.y));
-        newv.x=(float)(r1*Math.cos(or.x));
-        newv.y=(float)(r1*Math.sin(or.x));
+    public Vec3d getVecFromMag(Vec2d or, double mag){
+        Vec3d newv=new Vec3d();
+        double r1=(double)(mag*Math.cos(or.y));
+        newv.z=(double)(mag*Math.sin(or.y));
+        newv.x=(double)(r1*Math.cos(or.x));
+        newv.y=(double)(r1*Math.sin(or.x));
         return newv;
     }
 
-    public int[] getColorAt(int x, int y, Vec3f p){
-        float zmult=(((!side)?((p.z-vrngs[2][0])/vrngs[2][2]):((p.y-vrngs[1][0])/vrngs[1][2])));
+    public int[] getColorAt(int x, int y, Vec3d p){
+        double zmult=(((!side)?((p.z-vrngs[2][0])/vrngs[2][2]):((p.y-vrngs[1][0])/vrngs[1][2])));
         int mw=pointmap.length;
         int mh=pointmap[0].length;
         if (land){
@@ -432,89 +443,89 @@ public class Object implements FrameData{
             //if (!abvavg){rn++;x++;if (aim!=0){ if(x%aim==0){ y+=(im<0)?-1:1; }}continue;}
             return new int[]{(int)(100*zmult),(int)(zmult*255),(int)((abvavg)?80:(int)((zmult*500>255)?255:(zmult*500)))};
         }else {
-            //return new int[]{(int) (255 * x * zmult / (float) msize), (int) (zmult * (255 - (255 * x / (float) msize))), (int) (zmult * 255 * y / (float) msize)};
+            //return new int[]{(int) (255 * x * zmult / (double) msize), (int) (zmult * (255 - (255 * x / (double) msize))), (int) (zmult * 255 * y / (double) msize)};
             if (!parametric) {
                 /*int r = (int) (zmult * ((x > (mw / 2)) ? 240 : 0));
                 int g = (int) (zmult * ((y > (mh / 2)) ? 240 : 0));
                 int b = (int) (zmult * 150);*/
-                int r = 50+(int)(150*((float)x/mw));
+                int r = 50+(int)(150*((double)x/mw));
                 //r=(int)(r*zmult);
-                int g = (int) (50+(int)(150*((float)y/mh)));
+                int g = (int) (50+(int)(150*((double)y/mh)));
                 //g=(int)(g*zmult);
                 int b = (int) (zmult * 150);
 
                 return new int[]{r,g,b};
             }else {
-                int r = 50+(int)(150*((float)x/mw));
-                int g = (int) (50+(int)(150*((float)y/mh)));
+                int r = 50+(int)(150*((double)x/mw));
+                int g = (int) (50+(int)(150*((double)y/mh)));
                 int b = (int) (zmult * 150);
                 return new int[]{r,g,b};
             }
 
-            //return new int[]{(int)(255*x/(float)msize),(int)(255*y/(float)msize),100};
+            //return new int[]{(int)(255*x/(double)msize),(int)(255*y/(double)msize),100};
         }
     }
 
-    public void render(Graphics g, int WIDTH, int HEIGHT, float lensd, Vec3f pos, Vec2f or,float roty){
+    public void render(Graphics g, int WIDTH, int HEIGHT, double lensd, Vec3d pos, Vec2d or,double roty){
         if (shape==0) {
             if (points.size()<2){return;}
             g.setColor(color);
-            Vec2f last=null;
+            Vec2d last=null;
             for (int i=0; i<points.size(); i++) {
-                Vec3f dv = getDeltaVecBetween(pos, points.get(i));
-                Vec2f dor = getDeltaOrient(dv);
+                Vec3d dv = getDeltaVecBetween(pos, points.get(i));
+                Vec2d dor = getDeltaOrient(dv);
                 if (getOrientDif(dor, or) > 3.14159) {
                     //continue;
                 }
-                float x = (float) (lensd * (Math.tan(dor.x - or.x))) + (WIDTH / 2);
-                float y = (float) (lensd * (Math.tan(dor.y - or.y))) + (HEIGHT / 2);
+                double x = (double) (lensd * (Math.tan(dor.x - or.x))) + (WIDTH / 2);
+                double y = (double) (lensd * (Math.tan(dor.y - or.y))) + (HEIGHT / 2);
                 if (last!=null){
                     g.drawLine((int)(last.x),(int)(last.y),(int)(x),(int)(y));
                 }
-                last=new Vec2f(x,y);
+                last=new Vec2d(x,y);
                 //System.out.println(x+", "+y+" | "+dor);
                 //g.fillOval((int) x-5, (int) y-5, 10, 10);
             }
-            Vec3f dv = getDeltaVecBetween(pos, loc);
-            Vec2f dor = getDeltaOrient(dv);
+            Vec3d dv = getDeltaVecBetween(pos, loc);
+            Vec2d dor = getDeltaOrient(dv);
             if (getOrientDif(dor, or) > 3.14159) {
                 //System.out.println("");
                 //return;
             }
-            float dist=getDistOfDelta(dv);
-            float x = (float) (lensd * (Math.tan(dor.x - or.x))) + (WIDTH / 2);
-            float y = (float) (lensd * (Math.tan(dor.y - or.y))) + (HEIGHT / 2);
+            double dist=getDistOfDelta(dv);
+            double x = (double) (lensd * (Math.tan(dor.x - or.x))) + (WIDTH / 2);
+            double y = (double) (lensd * (Math.tan(dor.y - or.y))) + (HEIGHT / 2);
             //System.out.println(x+", "+y+" | "+dor);
-            float arad=(float)(lensd*Math.tan((rad)/(dist)));
+            double arad=(double)(lensd*Math.tan((rad)/(dist)));
             g.fillOval((int) x-(int)Math.ceil(arad), (int) y-(int)Math.ceil(arad), (int)Math.ceil(2*arad), (int)Math.ceil(2*arad));
 
         }else if (shape==1){
             boolean f=true;
-            for (Vec3f p: points){
-                Vec3f dv = getDeltaVecBetween( p,pos);
-                Vec2f dor = getDeltaOrient(dv);
+            for (Vec3d p: points){
+                Vec3d dv = getDeltaVecBetween( p,pos);
+                Vec2d dor = getDeltaOrient(dv);
 
                 /*if (getOrientDif(dor,or)>3.14159){
                     System.out.println(getOrientDif(dor,or)+">3.14");
                     return;}*/
 
-                float x=(float)(lensd*(Math.tan(dor.x-or.x)))+(WIDTH/2);
-                float y=(float)(lensd*(Math.tan(dor.y+or.y)))+(HEIGHT/2);
+                double x=(double)(lensd*(Math.tan(dor.x-or.x)))+(WIDTH/2);
+                double y=(double)(lensd*(Math.tan(dor.y+or.y)))+(HEIGHT/2);
                 if (f){
                     //System.out.println(dv+" | from p : "+dor+" | p : "+or);//TODO dor seems to be whats messed up
                     f=false;
                 }
                 g.setColor(Color.BLACK);
                 g.fillOval((int)x-5,(int)y-5,10,10);
-                for (Vec3f p2: points){
+                for (Vec3d p2: points){
                     int sim=0;if(p2.x==p.x){sim++;}if(p2.y==p.y){sim++;}if(p2.z==p.z){sim++;}
                     if (sim!=2){continue;}
                     //if (!(p2.x==p.x || p.y==p2.y || p.z==p2.z)){continue;}
-                    Vec3f dv1 = getDeltaVecBetween(p2,pos);
-                    Vec2f dor1 = getDeltaOrient(dv1);
+                    Vec3d dv1 = getDeltaVecBetween(p2,pos);
+                    Vec2d dor1 = getDeltaOrient(dv1);
                     if (getOrientDif(dor,or)>3.14){continue;}
-                    float x1=(float)(lensd*(Math.tan(dor1.x-or.x)))+(WIDTH/2);
-                    float y1=(float)(lensd*(Math.tan(dor1.y+or.y)))+(HEIGHT/2);
+                    double x1=(double)(lensd*(Math.tan(dor1.x-or.x)))+(WIDTH/2);
+                    double y1=(double)(lensd*(Math.tan(dor1.y+or.y)))+(HEIGHT/2);
                     g.drawLine((int)x,(int)y,(int)x1,(int)y1);
 
                 }
@@ -543,19 +554,19 @@ public class Object implements FrameData{
             if (polar){land=false;}
             if (!polar&&!parametric) {
                 int msize=mw;
-                float m=-(Math.abs(pos.x)/Math.abs(pos.y));
+                double m=-(Math.abs(pos.x)/Math.abs(pos.y));
                 boolean small=Math.abs(m)<1;
                 //boolean small=true;
                 if (small){m=1f/m;}
                 if (Math.abs(m)>msize){small=!small;m=0;}
-                int im=Math.round(m);
+                int im=Math.round((float)m);
                 int aim=Math.abs(im);
                 int q=(pos.x<0)?((pos.y>0)?2:3):((pos.y>0)?1:4);
                 for (int c = 0; c < msize; c++) {
                     int x = 0;
                     int y = c;
                     while (x >= 0 && x < msize && y >= 0 && y < msize) {
-                        //Vec3f p=(!small)?pointmap[x][y]:pointmap[y][x];
+                        //Vec3d p=(!small)?pointmap[x][y]:pointmap[y][x];
                         int x2 = (small) ? x : y;
                         int y2 = (small) ? y : x;
                         if (q == 2) {
@@ -566,7 +577,7 @@ public class Object implements FrameData{
                         } else if (q == 4) {
                             y2 = msize - 1 - y2;
                         }
-                        Vec3f p = pointmap[x2][y2];
+                        Vec3d p = pointmap[x2][y2];
                         if (p == null) {
                             rn++;
                             x++;
@@ -577,10 +588,10 @@ public class Object implements FrameData{
                             }
                             continue;
                         }
-                        //Vec3f dv = getDeltaVecBetween(p, pos);
-                        Vec3f dv = getDeltaVecBetween(rotate(p, roty), pos);
+                        //Vec3d dv = getDeltaVecBetween(p, pos);
+                        Vec3d dv = getDeltaVecBetween(rotate(p, roty), pos);
                         int dist = (int) (dv.length() * 10);
-                        Vec2f dor = getDeltaOrient(dv);
+                        Vec2d dor = getDeltaOrient(dv);
                         if (getOrientDif(dor, or) > 3.14159) {
                             rn++;
                             x++;
@@ -592,8 +603,8 @@ public class Object implements FrameData{
                             continue;
                         }
 
-                        float x1 = (float) (lensd * (Math.tan(dor.x - or.x))) + (WIDTH / 2);
-                        float y1 = (float) (lensd * (Math.tan(dor.y + or.y))) + (HEIGHT / 2);
+                        double x1 = (double) (lensd * (Math.tan(dor.x - or.x))) + (WIDTH / 2);
+                        double y1 = (double) (lensd * (Math.tan(dor.y + or.y))) + (HEIGHT / 2);
 
                         int[] col = getColorAt(x2, y2, p);
                         if (!panels) {
@@ -614,19 +625,19 @@ public class Object implements FrameData{
                             }
 
                             if (x4 >= 0 && y4 >= 0 && y4 < pointmap[0].length && x4 < pointmap.length) {
-                                Vec3f p2 = pointmap[x4][y4];
+                                Vec3d p2 = pointmap[x4][y4];
                                 if (p2 == null) {
                                     cancel[((d < 2) ? 0 : 1)] = true;
                                     continue;
                                 }
-                                Vec3f dv1 = getDeltaVecBetween(rotate(p2, roty), pos);
-                                Vec2f dor1 = getDeltaOrient(dv1);
+                                Vec3d dv1 = getDeltaVecBetween(rotate(p2, roty), pos);
+                                Vec2d dor1 = getDeltaOrient(dv1);
                                 if (getOrientDif(dor1, or) > 3.14) {
                                     cancel[((d < 2) ? 0 : 1)] = true;
                                     continue;
                                 }
-                                float x3 = (float) (lensd * (Math.tan(dor1.x - or.x))) + (WIDTH / 2);
-                                float y3 = (float) (lensd * (Math.tan(dor1.y + or.y))) + (HEIGHT / 2);
+                                double x3 = (double) (lensd * (Math.tan(dor1.x - or.x))) + (WIDTH / 2);
+                                double y3 = (double) (lensd * (Math.tan(dor1.y + or.y))) + (HEIGHT / 2);
                                 if (d < 2) {
                                     t1x[((d == 0) ? 1 : 2)] = (int) x3;
                                     t1y[((d == 0) ? 1 : 2)] = (int) y3;
@@ -669,7 +680,7 @@ public class Object implements FrameData{
                         int x = c;
                         int y = msize - 1;
                         while (x >= 0 && x < msize && y >= 0 && y < msize) {
-                            //Vec3f p=(!small)?pointmap[x][y]:pointmap[y][x];
+                            //Vec3d p=(!small)?pointmap[x][y]:pointmap[y][x];
                             int x2 = (small) ? x : y;
                             int y2 = (small) ? y : x;
                             if (q == 2) {
@@ -680,7 +691,7 @@ public class Object implements FrameData{
                             } else if (q == 4) {
                                 y2 = msize - 1 - y2;
                             }
-                            Vec3f p = pointmap[x2][y2];
+                            Vec3d p = pointmap[x2][y2];
                             if (p == null) {
                                 rn++;
                                 x++;
@@ -691,9 +702,9 @@ public class Object implements FrameData{
                                 }
                                 continue;
                             }
-                            Vec3f dv = getDeltaVecBetween(rotate(p, roty), pos);
+                            Vec3d dv = getDeltaVecBetween(rotate(p, roty), pos);
                             int dist = (int) (dv.length() * 10);
-                            Vec2f dor = getDeltaOrient(dv);
+                            Vec2d dor = getDeltaOrient(dv);
                             if (getOrientDif(dor, or) > 3.14159) {
                                 rn++;
                                 x++;
@@ -704,8 +715,8 @@ public class Object implements FrameData{
                                 }
                                 continue;
                             }
-                            float x1 = (float) (lensd * (Math.tan(dor.x - or.x))) + (WIDTH / 2);
-                            float y1 = (float) (lensd * (Math.tan(dor.y + or.y))) + (HEIGHT / 2);
+                            double x1 = (double) (lensd * (Math.tan(dor.x - or.x))) + (WIDTH / 2);
+                            double y1 = (double) (lensd * (Math.tan(dor.y + or.y))) + (HEIGHT / 2);
 
                             int[] col = getColorAt(x2, y2, p);
                             if (!panels) {
@@ -728,20 +739,20 @@ public class Object implements FrameData{
                                 }
 
                                 if (x4 >= 0 && y4 >= 0 && y4 < pointmap[0].length && x4 < pointmap.length) {
-                                    Vec3f p2 = pointmap[x4][y4];
+                                    Vec3d p2 = pointmap[x4][y4];
                                     if (p2 == null) {
                                         cancel[((d < 2) ? 0 : 1)] = true;
                                         continue;
                                     }
-                                    Vec3f dv1 = getDeltaVecBetween(rotate(p2, roty), pos);
-                                    Vec2f dor1 = getDeltaOrient(dv1);
+                                    Vec3d dv1 = getDeltaVecBetween(rotate(p2, roty), pos);
+                                    Vec2d dor1 = getDeltaOrient(dv1);
                                     if (getOrientDif(dor1, or) > 3.14) {
                                         cancel[((d < 2) ? 0 : 1)] = true;
                                         continue;
                                     }
 
-                                    float x3 = (float) (lensd * (Math.tan(dor1.x - or.x))) + (WIDTH / 2);
-                                    float y3 = (float) (lensd * (Math.tan(dor1.y + or.y))) + (HEIGHT / 2);
+                                    double x3 = (double) (lensd * (Math.tan(dor1.x - or.x))) + (WIDTH / 2);
+                                    double y3 = (double) (lensd * (Math.tan(dor1.y + or.y))) + (HEIGHT / 2);
                                     if (d < 2) {
                                         t1x[((d == 0) ? 1 : 2)] = (int) x3;
                                         t1y[((d == 0) ? 1 : 2)] = (int) y3;
@@ -784,16 +795,16 @@ public class Object implements FrameData{
             }else {
                 for (int x=0; x<mw; x++){
                     for (int y=0; y<mh; y++){
-                        Vec3f p = pointmap[x][y];
+                        Vec3d p = pointmap[x][y];
                         if (p == null) { continue; }
-                        //Vec3f dv = getDeltaVecBetween(p, pos);
-                        Vec3f dv = getDeltaVecBetween(rotate(p, roty), pos);
+                        //Vec3d dv = getDeltaVecBetween(p, pos);
+                        Vec3d dv = getDeltaVecBetween(rotate(p, roty), pos);
                         int dist = (int) (dv.length() * 10);
-                        Vec2f dor = getDeltaOrient(dv);
+                        Vec2d dor = getDeltaOrient(dv);
                         if (getOrientDif(dor, or) > 3.14159) { continue; }
 
-                        float x1 = (float) (lensd * (Math.tan(dor.x - or.x))) + (WIDTH / 2);
-                        float y1 = (float) (lensd * (Math.tan(dor.y + or.y))) + (HEIGHT / 2);
+                        double x1 = (double) (lensd * (Math.tan(dor.x - or.x))) + (WIDTH / 2);
+                        double y1 = (double) (lensd * (Math.tan(dor.y + or.y))) + (HEIGHT / 2);
 
                         int[] col = getColorAt(x, y, p);
                         if (!panels) {
@@ -814,19 +825,19 @@ public class Object implements FrameData{
                             }*/
 
                             if (x4 >= 0 && y4 >= 0 && y4 < pointmap[0].length && x4 < pointmap.length) {
-                                Vec3f p2 = pointmap[x4][y4];
+                                Vec3d p2 = pointmap[x4][y4];
                                 if (p2 == null) {
                                     cancel[((d < 2) ? 0 : 1)] = true;
                                     continue;
                                 }
-                                Vec3f dv1 = getDeltaVecBetween(rotate(p2, roty), pos);
-                                Vec2f dor1 = getDeltaOrient(dv1);
+                                Vec3d dv1 = getDeltaVecBetween(rotate(p2, roty), pos);
+                                Vec2d dor1 = getDeltaOrient(dv1);
                                 if (getOrientDif(dor1, or) > 3.14) {
                                     cancel[((d < 2) ? 0 : 1)] = true;
                                     continue;
                                 }
-                                float x3 = (float) (lensd * (Math.tan(dor1.x - or.x))) + (WIDTH / 2);
-                                float y3 = (float) (lensd * (Math.tan(dor1.y + or.y))) + (HEIGHT / 2);
+                                double x3 = (double) (lensd * (Math.tan(dor1.x - or.x))) + (WIDTH / 2);
+                                double y3 = (double) (lensd * (Math.tan(dor1.y + or.y))) + (HEIGHT / 2);
                                 if (d < 2) {
                                     t1x[((d == 0) ? 1 : 2)] = (int) x3;
                                     t1y[((d == 0) ? 1 : 2)] = (int) y3;
@@ -860,10 +871,10 @@ public class Object implements FrameData{
             //ORDER PANELS
             if (panels) {
                 ArrayList<int[][]> o1 = new ArrayList<>();
-                float[] dists = new float[pls.size()];
+                double[] dists = new double[pls.size()];
                 int i1 = 0;
                 for (int[][] o : pls) {
-                    //Vec3f vd=new Vec3f(pos.x-o.loc.x,pos.y-o.loc.y,pos.z-o.loc.z);
+                    //Vec3d vd=new Vec3d(pos.x-o.loc.x,pos.y-o.loc.y,pos.z-o.loc.z);
                     dists[i1] = o[0][0];
                     i1++;
                 }
@@ -908,64 +919,64 @@ public class Object implements FrameData{
 
     }
 
-    public Vec3f rotate(Vec3f p,float orient){
-        float r=(float)(Math.sqrt((p.x*p.x)+(p.z*p.z)));
-        float o=(float)(Math.atan2(p.z,p.x));
-        float o1=o+orient;
-        float x1=r*(float)Math.cos(o1);
-        float z1=r*(float)Math.sin(o1);
-        return new Vec3f(x1,p.y,z1);
+    public Vec3d rotate(Vec3d p,double orient){
+        double r=(double)(Math.sqrt((p.x*p.x)+(p.z*p.z)));
+        double o=(double)(Math.atan2(p.z,p.x));
+        double o1=o+orient;
+        double x1=r*(double)Math.cos(o1);
+        double z1=r*(double)Math.sin(o1);
+        return new Vec3d(x1,p.y,z1);
     }
 
-    public Color doesLineCross(Vec2f orient, Vec3f pos){
+    public Color doesLineCross(Vec2d orient, Vec3d pos){
         //d=dist from source
         //x^2+y*2+z^2=r
         if (shape==0){
-            Vec3f dv=getDeltaVecBetween(pos,loc);
-            Vec2f dor=getDeltaOrient(dv);
+            Vec3d dv=getDeltaVecBetween(pos,loc);
+            Vec2d dor=getDeltaOrient(dv);
             //System.out.println("looking in "+orient+", at "+dor);
-            float odif=getOrientDif(orient,dor);
-            float arclength=(odif*getDistOfDelta(dv));
+            double odif=getOrientDif(orient,dor);
+            double arclength=(odif*getDistOfDelta(dv));
             if(arclength<rad){
-                float cm=1-(arclength/rad);
-                float cr=(rad<=4)?rad/4:1;
-                Color c=new Color(cr*cm,0,cm);
+                double cm=1-(arclength/rad);
+                double cr=(rad<=4)?rad/4:1;
+                Color c=new Color((float)cr*(float)cm,0,(float)cm);
                 return c;
             }
-            //float cr=getDistOfDelta(dv);
+            //double cr=getDistOfDelta(dv);
         }
         return null;
     }
-    public float getDistOfDelta(Vec3f dp){
-        return (float)(Math.sqrt((dp.x*dp.x)+(dp.y*dp.y)+(dp.z*dp.z)));
+    public double getDistOfDelta(Vec3d dp){
+        return (double)(Math.sqrt((dp.x*dp.x)+(dp.y*dp.y)+(dp.z*dp.z)));
     }
 
-    public void attractTo(Vec3f p1,float amt){
-        Vec3f dv=getDeltaVecBetween(loc,p1);
-        float r= getDistOfDelta(dv);
-        float acc=amt/(r*r);
-        //Vec3f newv=new Vec3f();
+    public void attractTo(Vec3d p1,double amt){
+        Vec3d dv=getDeltaVecBetween(loc,p1);
+        double r= getDistOfDelta(dv);
+        double acc=amt/(r*r);
+        //Vec3d newv=new Vec3d();
         if(Math.abs(dv.x)>rad){ vel.x=(dv.x>0) ?vel.x+acc : vel.x-acc;}
         if(Math.abs(dv.y)>rad){vel.y=(dv.y>0) ?vel.y+acc : vel.y-acc;}
         if(Math.abs(dv.z)>rad){vel.z=(dv.z>0) ?vel.z+acc : vel.z-acc;}
     }
 
-    public Vec2f getDeltaOrient(Vec3f dp){
-        float r1=(float)(Math.sqrt((dp.x*dp.x)+(dp.y*dp.y)));
-        float th1=(float)Math.atan2(dp.z,r1);
-        float th0=(float)Math.atan2(dp.y,dp.x);
-        return new Vec2f(th0,th1);
+    public Vec2d getDeltaOrient(Vec3d dp){
+        double r1=(double)(Math.sqrt((dp.x*dp.x)+(dp.y*dp.y)));
+        double th1=(double)Math.atan2(dp.z,r1);
+        double th0=(double)Math.atan2(dp.y,dp.x);
+        return new Vec2d(th0,th1);
     }
-    public Vec3f getDeltaVecBetween(Vec3f p1, Vec3f p2){
-        return new Vec3f(p2.x-p1.x,p2.y-p1.y,p2.z-p1.z);
+    public Vec3d getDeltaVecBetween(Vec3d p1, Vec3d p2){
+        return new Vec3d(p2.x-p1.x,p2.y-p1.y,p2.z-p1.z);
     }
-    public float getOrientDif(Vec2f o1, Vec2f o2){
-        float d0=getAngDif(o1.x,o2.x);
-        float d1=getAngDif(o1.y,o2.y);
-        return (float)Math.sqrt((d0*d0)+(d1*d1));
+    public double getOrientDif(Vec2d o1, Vec2d o2){
+        double d0=getAngDif(o1.x,o2.x);
+        double d1=getAngDif(o1.y,o2.y);
+        return (double)Math.sqrt((d0*d0)+(d1*d1));
     }
-    public float getAngDif(float a1, float a2){
-        float ad=a1-a2;
+    public double getAngDif(double a1, double a2){
+        double ad=a1-a2;
         if(ad<-3.14159){
             ad+=6.28318;
         }else if(ad>3.14159){
@@ -973,11 +984,11 @@ public class Object implements FrameData{
         }
         return ad;
     }
-    public Vec3f getLocOnLine(Vec2f orient, Vec3f pos, float r) {
-        float r1=(float)(r*Math.cos(orient.y));
-        float x=(float)(r1*Math.cos(orient.x));
-        float y=(float)(r1*Math.sin(orient.x));
-        float z=(float)(r1*Math.tan(orient.y));
-        return new Vec3f(x+pos.x,y+pos.y,z+pos.z);
+    public Vec3d getLocOnLine(Vec2d orient, Vec3d pos, double r) {
+        double r1=(double)(r*Math.cos(orient.y));
+        double x=(double)(r1*Math.cos(orient.x));
+        double y=(double)(r1*Math.sin(orient.x));
+        double z=(double)(r1*Math.tan(orient.y));
+        return new Vec3d(x+pos.x,y+pos.y,z+pos.z);
     }
 }

@@ -1,4 +1,6 @@
+import com.sun.javafx.geom.Vec2d;
 import com.sun.javafx.geom.Vec2f;
+import com.sun.javafx.geom.Vec3d;
 import com.sun.javafx.geom.Vec3f;
 
 import javax.imageio.ImageIO;
@@ -16,50 +18,50 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
     //BASIC VARIABLES
     private final int WIDTH=1180, HEIGHT=(int)(WIDTH*1f);
     ArrayList<Object> objects=new ArrayList<>();
-    float rad=-500f;
-    Vec3f pos=new Vec3f(-rad,0,0);
-    Vec2f orient=new Vec2f(0,0);
+    double rad=-500f;
+    Vec3d pos=new Vec3d(-rad,0,0);
+    Vec2d orient=new Vec2d(0,0);
     //GRAPHICS OBJECTS
     private Thread thread;
     Graphics gfx;
     Image img;
     boolean gravon=false;
     Object frame=new Object(1,null,null,0);
-    float graconstant=2;
+    double graconstant=2;
     boolean magon=false;
     //COLORS
     Color background=new Color(255, 255, 255);
-    float rld=((WIDTH/2f)/2f);
+    double rld=((WIDTH/2f)/2f);
     String fov="";
-    float universalgrav=0;
+    double universalgrav=0;
     int pathlength=10;
-    float[][][] dmap;
+    double[][][] dmap;
     int cs=5;
     CellRenderer cr=new CellRenderer();
-    float maxE=0;
+    double maxE=0;
     boolean renderparticles=true;
     boolean running=true;
     boolean saving=false;
-    float totalE=0;
+    double totalE=0;
 
     public void init(){//STARTS THE PROGRAM
         this.resize(WIDTH, HEIGHT);
         this.addKeyListener(this);
         img=createImage(WIDTH,HEIGHT);
         gfx=img.getGraphics();
-        //objects.add(new Object(0,new Vec3f(50,0,20),new Vec3f(0,0,0)));
-        //objects.add(new Object(0,new Vec3f(50,20,0),new Vec3f(0,0,0)));
-        float hd=(float)(2*(180f/3.1415f)*Math.atan((HEIGHT/2f)/rld));
-        float wd=(float)(2*(180f/3.1415f)*Math.atan((WIDTH/2f)/rld));
+        //objects.add(new Object(0,new Vec3d(50,0,20),new Vec3d(0,0,0)));
+        //objects.add(new Object(0,new Vec3d(50,20,0),new Vec3d(0,0,0)));
+        double hd=(double)(2*(180f/3.1415f)*Math.atan((HEIGHT/2f)/rld));
+        double wd=(double)(2*(180f/3.1415f)*Math.atan((WIDTH/2f)/rld));
         fov="fov : "+hd+", "+wd;
-        dmap=new float[BOUNDS[0]*2/cs][BOUNDS[1]*2/cs][BOUNDS[2]*2/cs];
+        dmap=new double[BOUNDS[0]*2/cs][BOUNDS[1]*2/cs][BOUNDS[2]*2/cs];
         thread=new Thread(this);
         thread.start();
     }
 
-    public void addRandParticle(float velmin, float velmax,float rad){
-        Vec3f loc=new Vec3f((float)(Math.random()*.95*BOUNDS[0]-(.475*(BOUNDS[0]))),(float)(Math.random()*.95*BOUNDS[1]-(.475*(BOUNDS[1]))),(float)(Math.random()*.95*BOUNDS[2]-(.475*(BOUNDS[2]))));
-        Vec3f vel=new Vec3f((float)((velmax-velmin)*Math.random()+velmin),(float)((velmax-velmin)*Math.random()+velmin),(float)((velmax-velmin)*Math.random()+velmin));
+    public void addRandParticle(double velmin, double velmax,double rad){
+        Vec3d loc=new Vec3d((double)(Math.random()*.95*BOUNDS[0]-(.475*(BOUNDS[0]))),(double)(Math.random()*.95*BOUNDS[1]-(.475*(BOUNDS[1]))),(double)(Math.random()*.95*BOUNDS[2]-(.475*(BOUNDS[2]))));
+        Vec3d vel=new Vec3d((double)((velmax-velmin)*Math.random()+velmin),(double)((velmax-velmin)*Math.random()+velmin),(double)((velmax-velmin)*Math.random()+velmin));
         for (Object o: objects){
             if (o.collidesWith(o.loc,loc,o.rad,rad)){
                 addRandParticle(velmin,velmax,rad);
@@ -76,8 +78,8 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
         int pSize=3;
         int pw=WIDTH/pSize;
         int ph=HEIGHT/pSize;
-        //float fovx=3.14f*2/3;
-        //float fovy=3.14f/2;
+        //double fovx=3.14f*2/3;
+        //double fovy=3.14f/2;
         int cx=pw/2;
         int cy=ph/2;
         //int lensdist=cy;
@@ -85,9 +87,9 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
 
 
         /*for (int x=0; x<pw; x++){
-            float xor=(float)(Math.atan2(x-cx,lensdist));
+            double xor=(double)(Math.atan2(x-cx,lensdist));
             for(int y=0; y<ph; y++){
-                float yor=(float)(Math.atan2(y-cy,lensdist));
+                double yor=(double)(Math.atan2(y-cy,lensdist));
                 gfx.setColor(getColorInDir(xor,yor));
                 gfx.fillRect(pSize*x,pSize*y,pSize,pSize);
             }
@@ -101,8 +103,8 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
         gfx.drawString("pathlgth = "+(int)(pathlength),sx,sy+120);
         gfx.drawString("Kinetic Energy = "+(int)(totalE),sx,sy+150);
 
-        Vec2f or1=new Vec2f(orient.x,0);//TODO REMOVE THIS LATER
-        or1=new Vec2f(orient.x,0);//TODO REMOVE THIS LATER
+        Vec2d or1=new Vec2d(orient.x,0);//TODO REMOVE THIS LATER
+        or1=new Vec2d(orient.x,0);//TODO REMOVE THIS LATER
         //gfx.drawString(frame.getType(),sx,sy+90);
         if (renderparticles) {
 
@@ -132,12 +134,12 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
     }
 
 
-    public void addRandCluster(float velmin, float velmax,float rad, int num, float sr){
-        Vec3f loc=new Vec3f((float)(Math.random()*.95*BOUNDS[0]-(.475*(BOUNDS[0]))),(float)(Math.random()*.95*BOUNDS[1]-(.475*(BOUNDS[1]))),(float)(Math.random()*.95*BOUNDS[2]-(.475*(BOUNDS[2]))));
-        Vec3f vel=new Vec3f((float)((velmax-velmin)*Math.random()+velmin),(float)((velmax-velmin)*Math.random()+velmin),(float)((velmax-velmin)*Math.random()+velmin));
+    public void addRandCluster(double velmin, double velmax,double rad, int num, double sr){
+        Vec3d loc=new Vec3d((double)(Math.random()*.95*BOUNDS[0]-(.475*(BOUNDS[0]))),(double)(Math.random()*.95*BOUNDS[1]-(.475*(BOUNDS[1]))),(double)(Math.random()*.95*BOUNDS[2]-(.475*(BOUNDS[2]))));
+        Vec3d vel=new Vec3d((double)((velmax-velmin)*Math.random()+velmin),(double)((velmax-velmin)*Math.random()+velmin),(double)((velmax-velmin)*Math.random()+velmin));
         for (int i=0; i<num; i++){
-            Vec3f p=new Vec3f(loc.x-(rad)+(float)(rad*2*Math.random()),loc.y-(rad)+(float)(rad*2*Math.random()),loc.z-(rad)+(float)(rad*2*Math.random()));
-            Vec3f v=new Vec3f(vel.x*(float)(.5+Math.random()),vel.y*(float)(.5+Math.random()),vel.z*(float)(.5+Math.random()));
+            Vec3d p=new Vec3d(loc.x-(rad)+(double)(rad*2*Math.random()),loc.y-(rad)+(double)(rad*2*Math.random()),loc.z-(rad)+(double)(rad*2*Math.random()));
+            Vec3d v=new Vec3d(vel.x*(double)(.5+Math.random()),vel.y*(double)(.5+Math.random()),vel.z*(double)(.5+Math.random()));
             Object o=new Object(0,p,v,sr);
             objects.add(o);
 
@@ -146,10 +148,10 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
 
     public void sortObjects(){
         ArrayList<Object> o1=new ArrayList<>();
-        float[] dists=new float[objects.size()];
+        double[] dists=new double[objects.size()];
         int i1=0;
         for (Object o: objects){
-            Vec3f vd=new Vec3f(pos.x-o.loc.x,pos.y-o.loc.y,pos.z-o.loc.z);
+            Vec3d vd=new Vec3d(pos.x-o.loc.x,pos.y-o.loc.y,pos.z-o.loc.z);
             dists[i1]=vd.length();
             i1++;
         }
@@ -172,8 +174,8 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
         objects=o1;
     }
 
-    public Color getColorInDir(float xor,float yor){
-        Vec2f o1=new Vec2f(orient.x+xor,orient.y+yor);
+    public Color getColorInDir(double xor,double yor){
+        Vec2d o1=new Vec2d(orient.x+xor,orient.y+yor);
         for (int i=0; i<objects.size(); i++){
             Object o = objects.get(i);
             Color c=o.doesLineCross(o1,pos);
@@ -190,15 +192,15 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
     int paint=0;
     int paintevery=1;//frames
     public void run() { for (;;){//CALLS UPDATES AND REFRESHES THE GAME
-            Vec2f field=new Vec2f(0,3.1415f/2);
-            //Vec3f f=new Vec3f();
+            Vec2d field=new Vec2d(0,3.1415f/2);
+            //Vec3d f=new Vec3d();
             //UPDATES
             int refspeed=20;
-            float speedfactor=2;
-            float dt=.05f;
+            double speedfactor=2;
+            double dt=.05f;
             long s=System.nanoTime();
             if (running) {
-                dmap = new float[BOUNDS[0] * 2 / cs][BOUNDS[1] * 2 / cs][BOUNDS[2] * 2 / cs];
+                dmap = new double[BOUNDS[0] * 2 / cs][BOUNDS[1] * 2 / cs][BOUNDS[2] * 2 / cs];
                 maxE = 0;
                 totalE=0;
                 for (int i = 0; i < objects.size(); i++) {
@@ -227,7 +229,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
                     }
                 }
             }
-            float rdt1=(float)((System.nanoTime()-s)/1000000000f);
+            double rdt1=(double)((System.nanoTime()-s)/1000000000f);
             //System.out.println(rdt);
             String times=""+rdt1;
             //paint-=1;
@@ -239,7 +241,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
         repaint();
 
         if (saving) {
-            float rdt=(float)((System.nanoTime()-s)/1000000000f);
+            double rdt=(double)((System.nanoTime()-s)/1000000000f);
             times+=" "+rdt;
             refspeed=(int)(1000*rdt1);
             System.out.println(times);
@@ -251,9 +253,9 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
     } }
 
 
-    public void rotateAround(float xor, float yor){
+    public void rotateAround(double xor, double yor){
         boolean up=(orient.y==yor);
-        float r=rad;
+        double r=rad;
         //System.out.println(pos+", "+orient);
         orient.x=xor;
         orient.y=yor;
@@ -263,10 +265,10 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
         if (up) {
             //System.out.println("not u[");
             //orient.y=0;
-            float r1 = r * (float) (Math.cos(-yor));
-            pos.z = 0;//r * (float) (Math.sin(yor));
-            pos.x = -r1 * (float) (Math.cos(-xor));
-            pos.y = r1 * (float) (Math.sin(-xor));
+            double r1 = r * (double) (Math.cos(-yor));
+            pos.z = 0;//r * (double) (Math.sin(yor));
+            pos.x = -r1 * (double) (Math.cos(-xor));
+            pos.y = r1 * (double) (Math.sin(-xor));
         }
         //System.out.println(pos+", "+orient);
         //System.out.println("->");
@@ -284,7 +286,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
 
     //INPUT
     public void keyPressed(KeyEvent e) {
-        float rad1=20f;
+        double rad1=20f;
         if (e.getKeyCode()==KeyEvent.VK_RIGHT){
             rotateAround(orient.x+.02f,orient.y);
         }else if (e.getKeyCode()==KeyEvent.VK_LEFT){
@@ -314,16 +316,16 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
             addRandParticle(0,0,10);
         }else if (e.getKeyCode()==KeyEvent.VK_Y){
 
-            pos=new Vec3f(0,0,rad);
-            orient=new Vec2f(0,3.14159f/2f);
+            pos=new Vec3d(0,0,rad);
+            orient=new Vec2d(0,3.14159f/2f);
         }else if (e.getKeyCode()==KeyEvent.VK_A){
 
-            pos=new Vec3f(0,0,rad);
-            orient=new Vec2f(0,3.14159f/2f);
+            pos=new Vec3d(0,0,rad);
+            orient=new Vec2d(0,3.14159f/2f);
         }else if (e.getKeyCode()==KeyEvent.VK_V){
 
-            pos=new Vec3f(-rad,0,0);
-            orient=new Vec2f(0,0);
+            pos=new Vec3d(-rad,0,0);
+            orient=new Vec2d(0,0);
         }else if (e.getKeyCode()==KeyEvent.VK_OPEN_BRACKET){
             universalgrav+=1;
         }else if (e.getKeyCode()==KeyEvent.VK_CLOSE_BRACKET){
@@ -370,8 +372,8 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
         }
     }
     public void keyTyped(KeyEvent e) { }
-    public void addE(float v,float s, Vec3f pos){
-        float e=v*v*s;
+    public void addE(double v,double s, Vec3d pos){
+        double e=v*v*s;
         int x=BOUNDS[0]+(int)pos.x;
         int y=(BOUNDS[1]+(int)pos.y);
         int z=(BOUNDS[2]*2)-(BOUNDS[2]+(int)pos.z);
