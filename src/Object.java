@@ -268,7 +268,7 @@ public class Object implements FrameData{
         rad=(double)(Math.pow(r3,.33));
     }
 
-    public void update(double dt, ArrayList<Object> objects,int pathlength, Main m){
+    public void update(double dt, ArrayList<Object> objects,int pathlength, Main m, boolean bounded){
         Vec3d newv=new Vec3d(loc.x+(vel.x*dt),loc.y+(vel.y*dt),loc.z+(vel.z*dt));
         timer-=dt;
         if(timer<0){
@@ -339,18 +339,24 @@ public class Object implements FrameData{
             }
         }
         //if(newv.)
-        if (Math.abs(newv.x)+rad<BOUNDS[0]){
-            loc.x=newv.x;
+        if (bounded) {
+            if (Math.abs(newv.x) + rad < BOUNDS[0]) {
+                loc.x = newv.x;
+            } else {
+                vel.x = -vel.x;
+            }
+            if (Math.abs(newv.y) + rad < BOUNDS[1]) {
+                loc.y = newv.y;
+            } else {
+                vel.y = -vel.y;
+            }
+            if (Math.abs(newv.z) + rad < BOUNDS[2]) {
+                loc.z = newv.z;
+            } else {
+                vel.z = -vel.z;
+            }
         }else {
-            vel.x=-vel.x;
-        }if (Math.abs(newv.y)+rad<BOUNDS[1]){
-            loc.y=newv.y;
-        }else {
-            vel.y=-vel.y;
-        }if (Math.abs(newv.z)+rad<BOUNDS[2]){
-            loc.z=newv.z;
-        }else {
-            vel.z=-vel.z;
+            loc=newv;
         }
     }
 
@@ -520,10 +526,11 @@ public class Object implements FrameData{
                 for (Vec3d p2: points){
                     int sim=0;if(p2.x==p.x){sim++;}if(p2.y==p.y){sim++;}if(p2.z==p.z){sim++;}
                     if (sim!=2){continue;}
+                    //if (p2.x==p.x&&p.y==p2.y){continue;}
                     //if (!(p2.x==p.x || p.y==p2.y || p.z==p2.z)){continue;}
                     Vec3d dv1 = getDeltaVecBetween(p2,pos);
                     Vec2d dor1 = getDeltaOrient(dv1);
-                    if (getOrientDif(dor,or)>3.14){continue;}
+                    //if (Math.abs(getOrientDif(dor,or))>3.14f/2){continue;}
                     double x1=(double)(lensd*(Math.tan(dor1.x-or.x)))+(WIDTH/2);
                     double y1=(double)(lensd*(Math.tan(dor1.y+or.y)))+(HEIGHT/2);
                     g.drawLine((int)x,(int)y,(int)x1,(int)y1);
@@ -954,7 +961,7 @@ public class Object implements FrameData{
     public void attractTo(Vec3d p1,double amt){
         Vec3d dv=getDeltaVecBetween(loc,p1);
         double r= getDistOfDelta(dv);
-        double acc=amt/(r*r);
+        double acc=(amt/(r*r));
         //Vec3d newv=new Vec3d();
         if(Math.abs(dv.x)>rad){ vel.x=(dv.x>0) ?vel.x+acc : vel.x-acc;}
         if(Math.abs(dv.y)>rad){vel.y=(dv.y>0) ?vel.y+acc : vel.y-acc;}

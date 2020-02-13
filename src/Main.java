@@ -27,22 +27,26 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
     Image img;
     boolean gravon=false;
     Object frame=new Object(1,null,null,0);
-    double graconstant=2;
     boolean magon=false;
     //COLORS
     Color background=new Color(255, 255, 255);
     double rld=((WIDTH/2f)/2f);
     String fov="";
     double universalgrav=0;
-    int pathlength=10;
     double[][][] dmap;
-    int cs=5;
     CellRenderer cr=new CellRenderer();
     double maxE=0;
     boolean renderparticles=true;
     boolean running=true;
     boolean saving=false;
     double totalE=0;
+    boolean renderbounds=true;
+
+    boolean bounded=true;
+    int pathlength=10;
+    double graconstant=.2;
+    int cs=5;
+    double rad1=10f;
 
     public void init(){//STARTS THE PROGRAM
         this.resize(WIDTH, HEIGHT);
@@ -123,7 +127,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
             }
         }
         gfx.setColor(Color.BLACK);
-        frame.render(gfx,WIDTH,HEIGHT,rld, pos,or1,orient.y);
+        if (renderbounds) { frame.render(gfx, WIDTH, HEIGHT, rld, pos, or1, orient.y); }
         String msg="particles : "+objects.size();
         gfx.setColor(Color.BLACK);
         gfx.setFont(gfx.getFont().deriveFont(30f));
@@ -205,11 +209,11 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
                 totalE=0;
                 for (int i = 0; i < objects.size(); i++) {
                     Object o = objects.get(i);
-                    o.update(dt, objects, pathlength, this);
+                    o.update(dt, objects, pathlength, this,bounded);
                     if (magon) {
                         o.applyField(field, dt);
                     }
-                    if (Math.abs(graconstant) > 1) {
+                    if (Math.abs(universalgrav) > 1) {
                         o.vel.z += universalgrav * dt;
                     }
                     for (int z = 0; z < objects.size(); z++) {
@@ -286,7 +290,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
 
     //INPUT
     public void keyPressed(KeyEvent e) {
-        double rad1=20f;
+
         if (e.getKeyCode()==KeyEvent.VK_RIGHT){
             rotateAround(orient.x+.02f,orient.y);
         }else if (e.getKeyCode()==KeyEvent.VK_LEFT){
@@ -340,6 +344,8 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
            running=!running;
         }else if (e.getKeyCode()==KeyEvent.VK_O){
            saving=!saving;
+        }else if (e.getKeyCode()==KeyEvent.VK_E){
+            renderbounds=!renderbounds;
         }
         if(e.getKeyCode()==KeyEvent.VK_L) {
             for (int i=0; i<objects.size(); i++){
@@ -347,6 +353,13 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
                 o.vel.x*=.7f;
                 o.vel.y*=.7f;
                 o.vel.z*=.7f;
+            }
+        }if(e.getKeyCode()==KeyEvent.VK_0) {
+            for (int i=0; i<objects.size(); i++){
+                Object o=objects.get(i);
+                o.vel.x=0;
+                o.vel.y=0;
+                o.vel.z=0;
             }
         }if(e.getKeyCode()==KeyEvent.VK_F) {
             for (int i=0; i<objects.size(); i++){
@@ -373,6 +386,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
     }
     public void keyTyped(KeyEvent e) { }
     public void addE(double v,double s, Vec3d pos){
+        if (Math.abs(pos.x)>BOUNDS[0]/2||Math.abs(pos.y)>BOUNDS[1]/2||Math.abs(pos.z)>BOUNDS[2]/2){return;}
         double e=v*v*s;
         int x=BOUNDS[0]+(int)pos.x;
         int y=(BOUNDS[1]+(int)pos.y);

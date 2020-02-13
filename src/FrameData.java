@@ -1,6 +1,6 @@
 public interface FrameData {
 
-    public int[] BOUNDS=new int[]{30,200,400};
+    public int[] BOUNDS=new int[]{300,300,600};
 }
 /*
 TODO
