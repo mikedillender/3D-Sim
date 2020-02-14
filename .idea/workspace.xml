@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a50123d0-a48a-4304-a1fd-c6a509348a7a" name="Default" comment="99.99% energy conserved, but slightly slower">
+    <list default="true" id="a50123d0-a48a-4304-a1fd-c6a509348a7a" name="Default" comment="slight rendering changes, can disable bounds">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/3D-Sim/CellRenderer.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/3D-Sim/CellRenderer.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/3D-Sim/FrameData.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/3D-Sim/FrameData.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/3D-Sim/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/3D-Sim/Main.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/3D-Sim/Object.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/3D-Sim/Object.class" afterDir="false" />
@@ -21,14 +20,14 @@
     <session id="-1452248798">
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="java" value="18846" />
-          <entry key="txt" value="1111" />
+          <entry key="java" value="20297" />
+          <entry key="txt" value="1157" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JAVA" value="18846" />
-          <entry key="PLAIN_TEXT" value="1111" />
+          <entry key="JAVA" value="20297" />
+          <entry key="PLAIN_TEXT" value="1157" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -73,15 +72,17 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="105">
-              <caret line="388" column="107" selection-start-line="388" selection-start-column="107" selection-end-line="388" selection-end-column="107" />
+            <state relative-caret-position="162">
+              <caret line="362" column="18" selection-start-line="362" selection-start-column="11" selection-end-line="362" selection-end-column="18" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#7159#7160#0" expanded="true" />
                 <element signature="e#7199#7200#0" expanded="true" />
+                <element signature="e#17474#17475#0" expanded="true" />
+                <element signature="e#17532#17533#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -90,7 +91,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/CellRenderer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="187">
+            <state relative-caret-position="-170">
               <caret line="11" column="99" selection-start-line="11" selection-start-column="99" selection-end-line="11" selection-end-column="99" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -103,24 +104,24 @@
         <entry file="file://$PROJECT_DIR$/src/FrameData.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="34">
-              <caret line="2" column="35" selection-start-line="2" selection-start-column="35" selection-end-line="2" selection-end-column="35" />
+              <caret line="2" column="36" selection-start-line="2" selection-start-column="36" selection-end-line="2" selection-end-column="36" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Object.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="216">
-              <caret line="358" column="21" selection-start-line="358" selection-start-column="21" selection-end-line="358" selection-end-column="21" />
+            <state relative-caret-position="60">
+              <caret line="328" column="57" lean-forward="true" selection-start-line="328" selection-start-column="57" selection-end-line="328" selection-end-column="57" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#17833#17834#0" expanded="true" />
-                <element signature="e#17894#17895#0" expanded="true" />
-                <element signature="e#43950#43951#0" expanded="true" />
-                <element signature="e#44029#44030#0" expanded="true" />
-                <element signature="e#44751#44752#0" expanded="true" />
-                <element signature="e#44814#44815#0" expanded="true" />
+                <element signature="e#19304#19305#0" expanded="true" />
+                <element signature="e#19365#19366#0" expanded="true" />
+                <element signature="e#45421#45422#0" expanded="true" />
+                <element signature="e#45500#45501#0" expanded="true" />
+                <element signature="e#46226#46227#0" expanded="true" />
+                <element signature="e#46289#46290#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -137,36 +138,36 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>vol</find>
-      <find>addv</find>
-      <find>universal</find>
-      <find>dmap</find>
-      <find>addE</find>
-      <find>saving=</find>
-      <find>store</find>
-      <find>paint</find>
-      <find>particles=</find>
-      <find>sa</find>
-      <find>rad</find>
-      <find>addpar</find>
-      <find>oy</find>
-      <find>orient</find>
-      <find>vec3f</find>
-      <find>ArrayList&lt;Vec3d&gt;</find>
-      <find>Vec3f</find>
-      <find>float</find>
-      <find>Vec2f</find>
-      <find>gracon</find>
-      <find>cluster</find>
-      <find>%)</find>
-      <find>attract</find>
-      <find>universalgr</find>
-      <find>fov</find>
+      <find>applying</find>
+      <find>VK_M</find>
       <find>VK_E</find>
-      <find>saving</find>
-      <find>frame</find>
-      <find>render</find>
-      <find>BOUNDS</find>
+      <find>VK_J</find>
+      <find>attrac</find>
+      <find>amt</find>
+      <find>eC</find>
+      <find>add</find>
+      <find>vol</find>
+      <find>cluster</find>
+      <find>remove</find>
+      <find>combin</find>
+      <find>combine</find>
+      <find>bound</find>
+      <find>bounded</find>
+      <find>VK_</find>
+      <find>VK_H</find>
+      <find>update</find>
+      <find>addE</find>
+      <find>totale</find>
+      <find>universalgr</find>
+      <find>.01</find>
+      <find>dt</find>
+      <find>run</find>
+      <find>colli</find>
+      <find>rad1=</find>
+      <find>update(</find>
+      <find>updat</find>
+      <find>running</find>
+      <find>iter</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -182,9 +183,9 @@
       <list>
         <option value="$APPLICATION_CONFIG_DIR$/idea64.exe.vmoptions" />
         <option value="$PROJECT_DIR$/src/CellRenderer.java" />
+        <option value="$PROJECT_DIR$/src/Main.java" />
         <option value="$PROJECT_DIR$/src/FrameData.java" />
         <option value="$PROJECT_DIR$/src/Object.java" />
-        <option value="$PROJECT_DIR$/src/Main.java" />
       </list>
     </option>
   </component>
@@ -259,7 +260,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1581625761098" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1581711444502" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../Rubix-Sim" />
     <property name="settings.editor.selected.configurable" value="preferences.keymap" />
   </component>
@@ -596,7 +597,14 @@
       <option name="project" value="LOCAL" />
       <updated>1581623543471</updated>
     </task>
-    <option name="localTasksCounter" value="38" />
+    <task id="LOCAL-00038" summary="slight rendering changes, can disable bounds">
+      <created>1581625829944</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1581625829944</updated>
+    </task>
+    <option name="localTasksCounter" value="39" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -620,7 +628,7 @@
       <window_info anchor="bottom" id="Terminal" order="7" />
       <window_info anchor="bottom" id="Event Log" order="8" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="9" />
-      <window_info anchor="bottom" id="Messages" order="10" />
+      <window_info anchor="bottom" id="Messages" order="10" weight="0.32938388" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -654,7 +662,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="working on render order" />
     <MESSAGE value="full rendering of 3d shapes" />
     <MESSAGE value="can make a torus!" />
     <MESSAGE value="fix for m=0" />
@@ -679,7 +686,8 @@
     <MESSAGE value="energy conservation not working very well" />
     <MESSAGE value="slightly neater collisions" />
     <MESSAGE value="99.99% energy conserved, but slightly slower" />
-    <option name="LAST_COMMIT_MESSAGE" value="99.99% energy conserved, but slightly slower" />
+    <MESSAGE value="slight rendering changes, can disable bounds" />
+    <option name="LAST_COMMIT_MESSAGE" value="slight rendering changes, can disable bounds" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -702,7 +710,7 @@
     <entry file="file://$APPLICATION_CONFIG_DIR$/idea64.exe.vmoptions" />
     <entry file="file://$PROJECT_DIR$/src/CellRenderer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
+        <state relative-caret-position="-170">
           <caret line="11" column="99" selection-start-line="11" selection-start-column="99" selection-end-line="11" selection-end-column="99" />
           <folding>
             <element signature="imports" expanded="true" />
@@ -710,37 +718,39 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="162">
+          <caret line="362" column="18" selection-start-line="362" selection-start-column="11" selection-end-line="362" selection-end-column="18" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#7159#7160#0" expanded="true" />
+            <element signature="e#7199#7200#0" expanded="true" />
+            <element signature="e#17474#17475#0" expanded="true" />
+            <element signature="e#17532#17533#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/FrameData.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
-          <caret line="2" column="35" selection-start-line="2" selection-start-column="35" selection-end-line="2" selection-end-column="35" />
+          <caret line="2" column="36" selection-start-line="2" selection-start-column="36" selection-end-line="2" selection-end-column="36" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Object.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="358" column="21" selection-start-line="358" selection-start-column="21" selection-end-line="358" selection-end-column="21" />
+        <state relative-caret-position="60">
+          <caret line="328" column="57" lean-forward="true" selection-start-line="328" selection-start-column="57" selection-end-line="328" selection-end-column="57" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#17833#17834#0" expanded="true" />
-            <element signature="e#17894#17895#0" expanded="true" />
-            <element signature="e#43950#43951#0" expanded="true" />
-            <element signature="e#44029#44030#0" expanded="true" />
-            <element signature="e#44751#44752#0" expanded="true" />
-            <element signature="e#44814#44815#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Main.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="388" column="107" selection-start-line="388" selection-start-column="107" selection-end-line="388" selection-end-column="107" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#7159#7160#0" expanded="true" />
-            <element signature="e#7199#7200#0" expanded="true" />
+            <element signature="e#19304#19305#0" expanded="true" />
+            <element signature="e#19365#19366#0" expanded="true" />
+            <element signature="e#45421#45422#0" expanded="true" />
+            <element signature="e#45500#45501#0" expanded="true" />
+            <element signature="e#46226#46227#0" expanded="true" />
+            <element signature="e#46289#46290#0" expanded="true" />
           </folding>
         </state>
       </provider>

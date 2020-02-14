@@ -24,15 +24,24 @@ public class Object implements FrameData{
     int ht=6;
     boolean slopeField=false;
     double vol;
+    int charge=0;
 
-    public Object(int shape, Vec3d loc, Vec3d vel,double rad){
+    public Object(int shape, Vec3d loc, Vec3d vel,double rad,int charge, Main m){
         points=new ArrayList<>();
-        this.color=new Color((int)(Math.random()*255),(int)(Math.random()*255),(int)(Math.random()*255));
+        if (charge==0){charge=(Math.random()<.5)?-1:1;}
+        if (!m.esim) {
+            charge = 0;
+            this.color=new Color((int)(Math.random()*255),(int)(Math.random()*255),(int)(Math.random()*255));
+        }else {
+            this.color=new Color((charge==-1?(int)(Math.random()*155+100):(int)(Math.random()*55)),(charge==0?(int)(Math.random()*155+100):(int)(Math.random()*55)),(charge==1?(int)(Math.random()*155+100):(int)(Math.random()*55)));
+        }
         this.vel=vel;
         this.shape=shape;
         this.loc=loc;
         this.rad=rad;
-        vol=getVolume();
+        this.charge=charge;
+        vol=rad*rad*rad;
+        if (charge==-1){vol*=(.0005455);this.rad*=.5f;}
         if (shape==1||shape==2){createPoints();}
     }
 
@@ -260,15 +269,26 @@ public class Object implements FrameData{
         }
     }
 
-    public double getVolume(){ return (rad*rad*rad*3.14f*4/3); }
+    public void combine(Object p, Object e, Main m){
+        e.vel.mul(e.vol/(e.vol+p.vol));
+        p.vel.add(e.vel);
+        p.charge=0;
+        p.color=new Color((p.charge==-1?(int)(Math.random()*155+100):(int)(Math.random()*55)),(p.charge==0?(int)(Math.random()*155+100):(int)(Math.random()*55)),(p.charge==1?(int)(Math.random()*155+100):(int)(Math.random()*55)));
+        p.vol+=e.vol;
+        m.remove(e);
 
-    public void addVolume(double v){
+    }
+    //public double getVolume(){ return (rad*rad*rad*3.14f*4/3); }
+
+    /*public void addVolume(double v){
         double nv=getVolume()+v;
         double r3=(nv/(3.14f*4f/3f));
         rad=(double)(Math.pow(r3,.33));
-    }
+    }*/
 
-    public void update(double dt, ArrayList<Object> objects,int pathlength, Main m, boolean bounded){
+    public void update(double dt, ArrayList<Object> objects,int pathlength, Main m, boolean bounded,int iter){
+        if (iter>0){ /*System.out.println("iter"+iter);*/}
+        if (iter>5){return;}
         Vec3d newv=new Vec3d(loc.x+(vel.x*dt),loc.y+(vel.y*dt),loc.z+(vel.z*dt));
         timer-=dt;
         if(timer<0){
@@ -280,44 +300,44 @@ public class Object implements FrameData{
         }
 
         double v=vel.length();
-        double vl=getVolume();
+        double vl=vol;
         m.addE(v,vl,loc);
         int cind=objects.indexOf(this);
         for (int i=0; i<objects.size(); i++){
             Object o=objects.get(i);
             if(i!=cind){
             //if(o!=this&&o!=null){
-                if (collidesWith(newv,o.loc,rad,o.rad)){
+                if (collidesWith(newv,o.loc,rad,o.rad)&&!collidesWith(loc,o.loc,rad,o.rad)){
 
-                    //Momentum is always conserved. energy is always conserved
-                    //Energy is always conserved
-                    Vec3d p=new Vec3d(vol*vel.x+o.vol*o.vel.x,vol*vel.y+o.vol*o.vel.y,vol*vel.z+o.vol*o.vel.z);
-                    double e1=getE();
-                    double e2=o.getE();
-                    double e=(e1+e2)/2f;
-                    double te=(e1+e2);
-                    Vec3d o2t = getDeltaVecBetween(o.loc,loc);
-                    o2t.normalize();
-                    Vec2d pd=getDeltaOrient(p);
-                    double theta=(o2t.x*(o.vel.x-vel.x))+(o2t.y*(o.vel.y-vel.y))+(o2t.z*(o.vel.z-vel.z));
-                    vel=applyF(vel,theta,o2t);
-                    o.vel=applyF(o.vel,-theta,o2t);
-                    //double ft=(vel.length()*vol+o.vel.length()*o.vol)*(1)/4;
-                    //vel=applyF(vel,ft/vol,o2t);
-                    //                    o.vel=applyF(o.vel,-ft/vol,o2t);
-                    /*o2t.mul(ft/vol);
-                    vel.add(o2t);
-                    o2t.mul(-1f*vol/o.vol);
-                    o.vel.add(o2t);*/
-
-
-                    //System.out.println(vel.toString());
-
-                    double nte=(o.getE()+getE());
-                    double dte=nte-te;
-                    Vec3d p2=new Vec3d(vol*vel.x+o.vol*o.vel.x,vol*vel.y+o.vol*o.vel.y,vol*vel.z+o.vol*o.vel.z);
-                    System.out.println("p : "+p.toString()+" > "+p2.toString()+" , energy change : "+dte+" ("+(Math.round((dte/te)*100000)/1000)+"%)");
-                    return;
+                    if (o.charge==-charge&&o.charge!=0&&charge!=0&&m.nucleusforming){
+                        combine((o.charge==-1)?this:o,(o.charge==-1)?o:this,m);
+                    }else {
+                        //Momentum is always conserved. energy is always conserved
+                        //Energy is always conserved
+                        Vec3d p = new Vec3d(vol * vel.x + o.vol * o.vel.x, vol * vel.y + o.vol * o.vel.y, vol * vel.z + o.vol * o.vel.z);
+                        double e1 = getE();
+                        double e2 = o.getE();
+                        double e = (e1 + e2) / 2f;
+                        double te = (e1 + e2);
+                        Vec3d o2t = getDeltaVecBetween(o.loc, loc);
+                        o2t.normalize();
+                        double theta = 2*((o2t.x * ((o.vel.x / o.vol) - (vel.x / vol))) + (o2t.y * ((o.vel.y / o.vol) - vel.y / vol)) + (o2t.z * (o.vel.z / o.vol - vel.z / vol))) * (o.vol * vol * vol * o.vol) / (o.vol * o.vol + vol * vol);//TODO FIND HOW TO CONSIDER MASS
+                        double theta1=(o2t.x*(o.vel.x-vel.x))+(o2t.y*(o.vel.y-vel.y))+(o2t.z*(o.vel.z-vel.z));
+                        //System.out.println(theta+" vs "+theta1);
+                        vel = applyF(vel, theta / vol, o2t);
+                        o.vel = applyF(o.vel, -theta / o.vol, o2t);
+                        double nte = (o.getE() + getE());
+                        double dte = nte - te;
+                        Vec3d p2 = new Vec3d(vol * vel.x + o.vol * o.vel.x, vol * vel.y + o.vol * o.vel.y, vol * vel.z + o.vol * o.vel.z);
+                        double dtp=Math.abs(p2.x-p.x)+Math.abs(p2.y-p.y)+Math.abs(p2.z-p.z);
+                        m.loste+=(Math.abs(dte));
+                        m.lostp+=(Math.abs(dtp));
+                        //System.out.println("p : "+p.toString()+" > "+p2.toString()+" , energy change : "+dte+" ("+(Math.round((dte/te)*100000)/1000)+"%)");
+                        if (iter<10) {
+                        //    o.update(dt, objects, pathlength, m, bounded, iter + 1);
+                        }
+                        return;
+                    }
                 }
                 /*if(collidesWith(newv,o.loc,rad,o.rad)){
                     double ov=getVolume();
@@ -344,16 +364,19 @@ public class Object implements FrameData{
                 loc.x = newv.x;
             } else {
                 vel.x = -vel.x;
+                update(dt, objects, pathlength, m, bounded, iter+1);
             }
             if (Math.abs(newv.y) + rad < BOUNDS[1]) {
                 loc.y = newv.y;
             } else {
                 vel.y = -vel.y;
+                update(dt, objects, pathlength, m, bounded, iter+1);
             }
             if (Math.abs(newv.z) + rad < BOUNDS[2]) {
                 loc.z = newv.z;
             } else {
                 vel.z = -vel.z;
+                update(dt, objects, pathlength, m, bounded, iter+1);
             }
         }else {
             loc=newv;
@@ -379,7 +402,7 @@ public class Object implements FrameData{
         accelv.z=(double)(mag*Math.sin(forceDir.y));
         accelv.x=(double)(r1*Math.cos(forceDir.x));
         accelv.y=(double)(r1*Math.sin(forceDir.x));
-        System.out.println("applying "+accelv);
+        //System.out.println("applying "+accelv);
         //accelv.normalize();
         //System.out.println("applying "+accelv+" now");
         vel.x+=accelv.x;
@@ -961,7 +984,7 @@ public class Object implements FrameData{
     public void attractTo(Vec3d p1,double amt){
         Vec3d dv=getDeltaVecBetween(loc,p1);
         double r= getDistOfDelta(dv);
-        double acc=(amt/(r*r));
+        double acc=(amt/(r*r))/vol;
         //Vec3d newv=new Vec3d();
         if(Math.abs(dv.x)>rad){ vel.x=(dv.x>0) ?vel.x+acc : vel.x-acc;}
         if(Math.abs(dv.y)>rad){vel.y=(dv.y>0) ?vel.y+acc : vel.y-acc;}

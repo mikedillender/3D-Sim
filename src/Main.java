@@ -26,7 +26,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
     Graphics gfx;
     Image img;
     boolean gravon=false;
-    Object frame=new Object(1,null,null,0);
+    Object frame=new Object(1,null,null,0,0,this);
     boolean magon=false;
     //COLORS
     Color background=new Color(255, 255, 255);
@@ -41,12 +41,21 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
     boolean saving=false;
     double totalE=0;
     boolean renderbounds=true;
+    double gravpot=0;
+    double loste=0;
+    double lostp=0;
 
     boolean bounded=true;
     int pathlength=10;
     double graconstant=.2;
+    double electricconstant=20000;
     int cs=5;
     double rad1=10f;
+    boolean efield=false;
+    boolean nucleusforming=false;
+    boolean esim=false;
+
+
 
     public void init(){//STARTS THE PROGRAM
         this.resize(WIDTH, HEIGHT);
@@ -72,7 +81,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
                 return;
             }
         }
-        objects.add(new Object(0,loc,vel,rad));
+        objects.add(new Object(0,loc,vel,rad,(int)(Math.random()*3)-1,this));
     }
 
     public void paint(Graphics g){
@@ -105,7 +114,8 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
         gfx.drawString("rad = "+(int)(rad),sx,sy+60);
         gfx.drawString("ugrav = "+(int)(universalgrav),sx,sy+90);
         gfx.drawString("pathlgth = "+(int)(pathlength),sx,sy+120);
-        gfx.drawString("Kinetic Energy = "+(int)(totalE),sx,sy+150);
+        gfx.drawString("KE = "+(int)(totalE)+" E = "+(int)(gravpot),sx,sy+150);
+        gfx.drawString("LE = "+(int)(loste)+" LP = "+(int)(lostp),sx,sy+180);
 
         Vec2d or1=new Vec2d(orient.x,0);//TODO REMOVE THIS LATER
         or1=new Vec2d(orient.x,0);//TODO REMOVE THIS LATER
@@ -144,7 +154,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
         for (int i=0; i<num; i++){
             Vec3d p=new Vec3d(loc.x-(rad)+(double)(rad*2*Math.random()),loc.y-(rad)+(double)(rad*2*Math.random()),loc.z-(rad)+(double)(rad*2*Math.random()));
             Vec3d v=new Vec3d(vel.x*(double)(.5+Math.random()),vel.y*(double)(.5+Math.random()),vel.z*(double)(.5+Math.random()));
-            Object o=new Object(0,p,v,sr);
+            Object o=new Object(0,p,v,sr,(int)(Math.random()*3)-1,this);
             objects.add(o);
 
         }
@@ -207,9 +217,10 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
                 dmap = new double[BOUNDS[0] * 2 / cs][BOUNDS[1] * 2 / cs][BOUNDS[2] * 2 / cs];
                 maxE = 0;
                 totalE=0;
+                gravpot=0;
                 for (int i = 0; i < objects.size(); i++) {
                     Object o = objects.get(i);
-                    o.update(dt, objects, pathlength, this,bounded);
+                    o.update(dt, objects, pathlength, this,bounded,0);
                     if (magon) {
                         o.applyField(field, dt);
                     }
@@ -224,7 +235,14 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
                         //if(objects.indexOf(o)==objects.indexOf(o1)){continue;}
                         try {
                             if (gravon) {
-                                o.attractTo(o1.loc, graconstant * o1.getVolume());
+                                o.attractTo(o1.loc, graconstant * o1.vol*o.vol*dt);
+                            }
+                        } catch (NullPointerException e) {
+                            System.out.println("ERROR");
+                        }
+                        try {
+                            if (esim&&efield&&o.charge!=0&&o1.charge!=0) {
+                                o.attractTo(o1.loc, electricconstant*dt*((o.charge==-o1.charge)?1:-1));
                             }
                         } catch (NullPointerException e) {
                             System.out.println("ERROR");
@@ -311,7 +329,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
         }else if(e.getKeyCode()==KeyEvent.VK_SPACE){
             addRandParticle(-10,10,rad1);
         }else if(e.getKeyCode()==KeyEvent.VK_C){
-            addRandCluster(-10,10,80,40,rad1);
+            addRandCluster(-10,10,rad1*4,40,rad1);
         }else if(e.getKeyCode()==KeyEvent.VK_T){
             for (int i=0; i<50; i++){ addRandParticle(-10,10,rad1);}
         }else if(e.getKeyCode()==KeyEvent.VK_B){
@@ -334,6 +352,7 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
             universalgrav+=1;
         }else if (e.getKeyCode()==KeyEvent.VK_CLOSE_BRACKET){
             universalgrav-=1;
+            if (universalgrav<0)universalgrav=0;
         }else if (e.getKeyCode()==KeyEvent.VK_COMMA){
             pathlength--;
         }else if (e.getKeyCode()==KeyEvent.VK_PERIOD){
@@ -346,6 +365,13 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
            saving=!saving;
         }else if (e.getKeyCode()==KeyEvent.VK_E){
             renderbounds=!renderbounds;
+        }else if (e.getKeyCode()==KeyEvent.VK_J){
+            efield=!efield;
+        }else if (e.getKeyCode()==KeyEvent.VK_K){
+            nucleusforming=!nucleusforming;
+        }else if (e.getKeyCode()==KeyEvent.VK_H){
+            bounded=false;
+            renderbounds=false;
         }
         if(e.getKeyCode()==KeyEvent.VK_L) {
             for (int i=0; i<objects.size(); i++){
@@ -386,16 +412,20 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
     }
     public void keyTyped(KeyEvent e) { }
     public void addE(double v,double s, Vec3d pos){
-        if (Math.abs(pos.x)>BOUNDS[0]/2||Math.abs(pos.y)>BOUNDS[1]/2||Math.abs(pos.z)>BOUNDS[2]/2){return;}
-        double e=v*v*s;
+        if (!bounded&&(Math.abs(pos.x-BOUNDS[0])>BOUNDS[0]||Math.abs(pos.y-BOUNDS[1])>BOUNDS[1]||Math.abs(pos.z-BOUNDS[2])>BOUNDS[2])){return;}
         int x=BOUNDS[0]+(int)pos.x;
         int y=(BOUNDS[1]+(int)pos.y);
         int z=(BOUNDS[2]*2)-(BOUNDS[2]+(int)pos.z);
+        double e=(v*v*s/2.0);
+        double gp=(universalgrav*s*z);
+
         dmap[x/cs][y/cs][z/cs]+=e;
         if (dmap[x/cs][y/cs][z/cs]>maxE){
             maxE=dmap[x/cs][y/cs][z/cs];
         }
-        totalE+=(e/100000f);
+        gravpot+=(gp+e)/100.0;
+        totalE+=(e/100.0);
+
     }
 
     int num=0;
@@ -436,6 +466,9 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
         num++;
     }
 
+    public void remove(Object o){
+        if (objects.contains(o)) objects.remove(o);
+    }
 
     //QUICK METHOD I MADE TO DISPLAY A COORDINATE GRID
 
