@@ -1,6 +1,7 @@
 import com.sun.javafx.geom.Vec2d;
 import com.sun.javafx.geom.Vec3d;
 import com.sun.javafx.geom.Vec3d;
+import com.sun.javafx.geom.Vec3f;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -301,7 +302,8 @@ public class Object implements FrameData{
 
         double v=vel.length();
         double vl=vol;
-        m.addE(v,vl,loc);
+
+        m.addE(v,vl,loc,rad);
         int cind=objects.indexOf(this);
         for (int i=0; i<objects.size(); i++){
             Object o=objects.get(i);
@@ -395,13 +397,18 @@ public class Object implements FrameData{
         Vec3d accelv=new Vec3d();
         Vec3d nv=new Vec3d();// v = vin + vnot
         Vec2d dirOfVel=getDeltaOrient(vel);
-        double mag=B*(double)Math.sin(o.y-dirOfVel.y)*vel.length();
-        Vec2d forceDir=new Vec2d(dirOfVel.x+(3.1415f/2),o.y+3.1415f/2);
+        Vec3d field=getVecFromMag(o,B*10);
+        //Vec3d force=new Vec3d();
+        accelv.cross(vel,field);
+        //double mag=B*(double)Math.sin(o.y-dirOfVel.y)*vel.length();
+        //double mag=B*10;
+        //Vec2d forceDir=new Vec2d(o.x+(3.1415f/2),o.y+3.1415f/2);//MIKE IT IS A CROSS PRODUCT
+        //Fm=qv X B
 
-        double r1=(double)(mag*Math.cos(forceDir.y));
+        /*double r1=(double)(mag*Math.cos(forceDir.y));
         accelv.z=(double)(mag*Math.sin(forceDir.y));
         accelv.x=(double)(r1*Math.cos(forceDir.x));
-        accelv.y=(double)(r1*Math.sin(forceDir.x));
+        accelv.y=(double)(r1*Math.sin(forceDir.x));*/
         //System.out.println("applying "+accelv);
         //accelv.normalize();
         //System.out.println("applying "+accelv+" now");

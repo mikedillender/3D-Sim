@@ -46,14 +46,15 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
     double lostp=0;
 
     boolean bounded=true;
-    int pathlength=10;
+    int pathlength=100;
     double graconstant=.2;
     double electricconstant=20000;
     int cs=5;
-    double rad1=10f;
+    double rad1=2f;
     boolean efield=false;
     boolean nucleusforming=false;
     boolean esim=false;
+    float fielddir=0;
 
 
 
@@ -206,7 +207,8 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
     int paint=0;
     int paintevery=1;//frames
     public void run() { for (;;){//CALLS UPDATES AND REFRESHES THE GAME
-            Vec2d field=new Vec2d(0,3.1415f/2);
+
+            Vec2d field=new Vec2d(0,3.1415f/2+fielddir);
             //Vec3d f=new Vec3d();
             //UPDATES
             int refspeed=20;
@@ -232,6 +234,11 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
                             continue;
                         }
                         Object o1 = objects.get(z);
+                        /*if (magon){
+                            Vec3d del=o.getDeltaVecBetween(o.loc,o1.loc);
+                            Vec2d d=o.getDeltaOrient(del);
+                            o1.applyField(d,200/(del.length()*del.length()));
+                        }*/
                         //if(objects.indexOf(o)==objects.indexOf(o1)){continue;}
                         try {
                             if (gravon) {
@@ -369,6 +376,13 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
             efield=!efield;
         }else if (e.getKeyCode()==KeyEvent.VK_K){
             nucleusforming=!nucleusforming;
+        }else if (e.getKeyCode()==KeyEvent.VK_1){
+            fielddir-=.02f;
+            System.out.println(fielddir);
+        }else if (e.getKeyCode()==KeyEvent.VK_2){
+            fielddir+=.02f;
+            System.out.println(fielddir);
+
         }else if (e.getKeyCode()==KeyEvent.VK_H){
             bounded=false;
             renderbounds=false;
@@ -411,18 +425,38 @@ public class Main extends Applet implements Runnable, KeyListener, FrameData {
         }
     }
     public void keyTyped(KeyEvent e) { }
-    public void addE(double v,double s, Vec3d pos){
+    public void addE(double v,double s, Vec3d pos,double rad){
         if (!bounded&&(Math.abs(pos.x-BOUNDS[0])>BOUNDS[0]||Math.abs(pos.y-BOUNDS[1])>BOUNDS[1]||Math.abs(pos.z-BOUNDS[2])>BOUNDS[2])){return;}
         int x=BOUNDS[0]+(int)pos.x;
         int y=(BOUNDS[1]+(int)pos.y);
         int z=(BOUNDS[2]*2)-(BOUNDS[2]+(int)pos.z);
         double e=(v*v*s/2.0);
         double gp=(universalgrav*s*z);
-
-        dmap[x/cs][y/cs][z/cs]+=e;
-        if (dmap[x/cs][y/cs][z/cs]>maxE){
-            maxE=dmap[x/cs][y/cs][z/cs];
+        int cx=x/cs;
+        int cy=y/cs;
+        int cz=z/cs;
+        int r=(int)(rad/cs);
+        for (int x1=cx-r;x1<=cx+r;x1++){
+            if (x1<0||x1>=dmap.length){continue;}
+            int dx=x1-cx;
+            for (int y1=cy-r;y1<=cy+r;y1++){
+                if (y1<0||y1>=dmap[0].length){continue;}
+                int dy=y1-cy;
+                for (int z1=cz-r;z1<=cz+r;z1++) {
+                    if (z1<0||z1>=dmap[0][0].length){continue;}
+                    int dz=z1-cz;
+                    if (dz*dz+dy*dy+dz*dz>r*r){continue;}
+                    dmap[x1][y1][z1]+=e;
+                    if (dmap[x1][y1][z1]>maxE){
+                        maxE=dmap[x1][y1][z1];
+                    }
+                }
+            }
         }
+
+        /*
+
+         */
         gravpot+=(gp+e)/100.0;
         totalE+=(e/100.0);
 
